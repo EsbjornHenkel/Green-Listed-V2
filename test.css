@@ -1,0 +1,15 @@
+
+
+.tag {
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  /*overflow: hidden;*/
+  background-color: #fff;
+}
+
+.tag-title {
+  display: block;
+  background-color: #007BFF;
+  color: #fff;
+  border-radius: 12px 12px 0 0;
+}

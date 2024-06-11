@@ -1,0 +1,350 @@
+
+
+:root {
+    /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+      "Nimbus Sans L", Roboto, Noto, "Segoe UI", Arial, Helvetica,
+      "Helvetica Neue", sans-serif;
+    
+    /* Body font size. By default, effectively 18.4px, based on 16px as 'root em' */
+    --base-fontsize: 1.15rem;
+    
+    /* Major third scale progression - see https://type-scale.com/ */
+    --header-scale: 1.25;
+    
+    /* Line height is set to the "Golden ratio" for optimal legibility */
+    --line-height: 1.618;
+    
+    /* Default (light) theme */
+
+    --outlineColor: lightGray;
+    --smallBorderRadius: 5px;
+
+    --plateBackroundColor: white;
+    --mainColor: #78B03D;
+    --mainCollorDark: #6c9e37;
+    --plateRadius: 10px;
+    --titleColor: white;
+
+    --inputColor: white;
+    --buttonColor: rgb(175, 175, 175);
+    --inputRadius: 5px;
+
+    --redColor: rgb(168, 66, 66);
+    --greenColor: green;
+}
+    
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0px;
+    border: 0px;
+    margin: 0px;
+}
+
+header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--mainColor);
+    background: var(--plateBackroundColor);
+
+    font-size: large;
+    /*border-bottom: 1px solid var(--mainColor);*/
+}
+main{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 50px;
+}
+
+main > *{
+    width: 100%;
+}
+
+main > *:last-child{
+    grid-column: span 4;
+}
+select{
+    border-radius: var(--inputRadius);
+    border: 1px solid var(--outlineColor);
+    font-size: 1rem;
+    padding: 0.2rem 0.4rem;
+    background: white;
+    align-self: center;
+}
+
+button{
+    border-radius: var(--inputRadius);
+    font-size: 1rem;
+    padding: 0.7rem 0.9rem;
+    transition: 0.4s;
+    background: var(--buttonColor);
+    align-self: center;
+}
+
+button:hover{
+    filter: brightness(1.2);
+    cursor: pointer;
+}
+
+textarea{
+    background: var(--inputColor);
+    border: 1px solid var(--outlineColor);
+    border-radius: var(--inputRadius);
+    height: 200px;
+}
+
+input {
+    height: 20px;
+    text-align: center;
+    background: var(--inputColor);
+    border: 1px solid var(--outlineColor);
+    border-radius: var(--inputRadius);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+table td{
+    border-top: 1px solid var(--outlineColor);
+    border-bottom: 1px solid var(--outlineColor);
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.plate{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    overflow: hidden;
+    background: var(--plateBackroundColor);
+
+    border-radius: var(--plateRadius);
+    border: 1px solid var(--mainColor);
+}
+
+.plateTitle{
+    background-color: var(--mainColor);
+    color: var(--titleColor);
+    font-size: var(--header-scale);
+    text-align: center;
+
+    border-radius: calc(var(--plateRadius)-4) calc(var(--plateRadius)-4) 0 0;
+    padding: 5px;
+}
+
+.smallPlate{
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+    background: var(--plateBackroundColor);
+
+    border-radius: var(--smallBorderRadius);
+    border: 1px solid var(--outlineColor);
+}
+
+.smallTitle{
+    background-color: var(--outlineColor);
+    font-size: var(--header-scale);
+    text-align: center;
+    border-radius: calc(var(--plateRadius)-4) calc(var(--plateRadius)-4) 0 0;
+    padding: 5px;
+}
+
+.plateContent{
+    padding: 5px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 10px;
+
+}
+
+.flexRow{
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    gap: 10px;
+}
+
+.flexRow > * {
+    width: 100%;
+}
+
+
+.flexColumn{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.inactive{
+    display: none;
+}
+
+#ExampleSequance{
+    align-self: center;
+}
+
+#libraries{
+    background-color: var(--outlineColor);
+    font-size: var(--header-scale);
+    text-align: center;
+    border-radius: calc(var(--plateRadius)-4) calc(var(--plateRadius)-4) 0 0;
+    padding: 5px;
+}
+
+#customFile{
+    border: none;
+}
+
+
+
+.fadeIn {
+    animation: statusUpdateIn 0.2s;
+}
+    
+.fadeOut {
+    animation: statusUpdateOut 0.2s;
+}
+
+@keyframes statusUpdateOut {
+    0% {
+        transform: translate(0px, 0px);
+        opacity: 100%;
+    }
+    100% {
+        transform: translate(0px, -20px);
+        opacity: 0%;
+    }
+}
+
+@keyframes statusUpdateIn {
+    0% {
+        transform: translate(0px, 20px);
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+        transform: translate(0px, 0px);
+    }
+}
+
+
+
+/*
+summary {
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+details {
+    background: var(--accent-bg);
+    padding: 10px;
+    border-radius: var(--plateRadius);
+    font-weight: normal;
+    border: 0;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.smallText{
+    font-size: 0.9rem;
+}
+
+.clickableText{
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#flexlayout{
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    padding: 10px;
+}
+
+#flexlayout > * {
+    width: 100%;
+}
+
+#searchSymbols{
+    margin: 0;
+    height: 50vh;
+    text-align:left;
+    text-align: start;
+}
+
+.hdsTitle{
+    font-size: 1.5rem;
+}
+
+.hdsTitle > img{
+    height: 150px;
+    width: 150px;
+}
+
+.hdsTitle2{
+    font-size: 1.2rem;
+}
+
+.hdsPlate{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+
+    padding: 10px;
+    border-radius: var(--plateRadius);
+    background-color: var(--accent-bg);
+}
+
+.rowSpacedFlex{
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button:focus,
+button:enabled:hover{
+    filter: brightness(1.1);
+}
+
+
+button.actionButton{
+    border-radius: var(--inputRadius);
+    font-size: 1rem;
+    color: var(--bg);
+    padding: 0.7rem 0.9rem;
+    transition: 0.4s;
+    background: var(--accent-light);
+}
+
+button.actionButton.darker{
+
+    background: var(--accent-dark);
+}
+
+button:hover{
+    filter: brightness(1.2);
+    cursor: pointer;
+}
+
+
+*/

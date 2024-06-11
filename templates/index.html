@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" media="all" href="{{ url_for('static', filename='index.css')}}">
+</head>
+<body onload="htmlSetdefaultValues()">
+    <header class="hdsTitle">
+        <img src="{{ url_for('static', filename='/logo.png') }}" width="150px" height="150px">
+        <div>
+            <h1>Green Listed</h1>
+            <h2>- a CRISPR Screen Tool</h2>
+        </div>
+    </header>
+
+<main>
+    <div class="plate">
+        <h2 class="plateTitle">1. Reference Library</h2>
+        <div class="plateContent">
+
+            <div class="smallPlate">
+                <h2 class="smallTitle">
+                    <select id="libraries" onchange="htmlChangeLibrary(this.value)" required>
+                        <option value="None" disabled selected>Select library</option>
+                        <option value="STable 21 Brunello.txt">STable 21 Brunello</option>
+                        <option value="STable 22 Brie.txt">STable 22 Brie</option>
+                        <option value="custom">User Upload</option>
+                    </select>
+                </h2>
+                <form id="User Upload" class="inactive plateContent">
+                    <p class="flexRow">
+                        Select a .txt file to use as Library
+                        <input type="file" accept=".txt" id="customFile" onchange="indexSetLibrarySettings()">
+                    </p>
+                    
+                    <table class="table3x3">
+                        <tr>
+                            <td>Gene ID Column</td>
+                            <td><input type="number" id="GeneSymbolIndex" onchange="indexSetLibrarySettings()"></td>
+                            <td id="statusFileSymbolIndex"></td>
+                        </tr>
+                        <tr>
+                            <td>gRNA Column</td>
+                            <td><input type="number" id="gRNAIndex" onchange="indexSetLibrarySettings()"></td>
+                            <td id="statusFilegRNAIndex"></td>
+                        </tr>
+                        <tr>
+                            <td>Rank Column (optional)</td>
+                            <td><input type="number" id="rankingIndex" onchange="indexSetLibrarySettings()"></td>
+                            <td id="statusRankingIndex"></td>
+                        </tr>
+                    </table>
+                </form>
+                <div id="statusSequencesFound"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="plate">
+        <h2 class="plateTitle">2. Search symbols</h2>
+
+        <div class="plateContent">
+            <p>
+                <a href="" id="dowloadAtag"></a>
+                <input type="checkbox" id="partialMatches" onchange="htmlSettingsChange()">
+                Allow for partial matches
+            </p>
+            <p id="statusSearchSymbols"></p>
+            <textarea id="searchSymbols" onchange="htmlSettingsChange()">
+ZNF32
+TRIM14
+KIAA1644</textarea>
+        </div>
+    </div>
+
+    <div class="plate">
+        
+
+        <h2 class="plateTitle">3. Auxiliary settings</h2>
+        <div class="plateContent">
+        
+            <div class="smallPlate">
+                <h3 class="smallTitle">Ranking</h3>
+                <table class="table3x3">
+                    <tr>
+                        <td>Ranking Order</td>
+                        <td>
+                            <select id="rankingOrder">
+                                <option value="Descending">Descending</option>
+                                <option value="2">2</option>
+                            </select>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Interval</td>
+                        <td><input type="number" id=""></td>
+                        <td><input type="number" id=""></td>
+                    </tr>
+                    <tr>
+                        <td>Limit to top</td>
+                        <td><input type="number" id="numberToRank" onchange="htmlSettingsChange()"></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            
+            <div class="smallPlate">
+                <h3 class="smallTitle">Sequence Modifications</h3>
+                <table class="table3x3">
+                    <tr>
+                        <td></td>
+                        <td>Before</td>
+                        <td> After</td>
+                    </tr>
+                    <tr>
+                        <td>Trim </td>
+                        <td><input type="number" id="trimBefore" min="0" value="0" onchange="htmlSettingsChange()"></td>
+                        <td><input type="number" id="trimAfter" min="0" value="0" onchange="htmlSettingsChange()"></td>
+                        
+                    </tr>
+                    <tr>
+                        <td>Adaptor Sequences</td>
+                        <td><input type="text" id="adaptorBefore" onchange="htmlSettingsChange()"></td>
+                        <td><input type="text" id="adaptorAfter" onchange="htmlSettingsChange()"></td>
+                    </tr>
+                </table>
+                <p class="hdsTitle2" id="ExampleSequance">
+                    EXAMPLESEQUENCE
+                </p>
+            </div>
+
+            
+            
+        </div>
+    </div>
+
+    <div class="plate">
+        <h2 class="plateTitle">4. Output Settings</h2>
+        <div class="plateContent">
+            
+            <input type="number" id="" placeholder="Columns used for compact output">
+            <input type="text" id="" placeholder="Output file name">
+            <button onclick="htmlStartScreening()">Start Search</button>
+    
+        </div>
+    </div>
+
+    <footer class="plate">
+        <h2 class="plateTitle">5. Output </h2>
+        <div class="plateContent" id="fileContent">
+
+        </div>
+
+    </footer>
+
+</main>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='library.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='grnaService.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='screeningHandler.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='settings.js')}}"></script>
+</body>
+</html>
