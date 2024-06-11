@@ -1,21 +1,20 @@
 
 var library = {
-    "filteredRows": [],
-    "rows": [],
+    "filteredRows": {},
+    "rows": {},
 }
 
 function libraryStartScreen(settings){
     var st = performance.now()
     library.filteredRows = Array.from(library.rows).map((row) => Array.from(row))  
-    var textOutput = logicScreening(library.filteredRows, settings)
+    var textOutput = logicScreening(library.rows, settings)
 
     console.log((performance.now()-st)/1000)
     return textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
 }
 
 function libraryAddCustom(data){
-    var rows = _getRowList(data)
-    rows.shift()
+    var rows = _getRowList(data, settings)
     library = {
         "rows": rows, //not including the first row
     }
@@ -27,9 +26,10 @@ function _uppdateSettings(firstRow){
 }
 
 function libraryUppdate(data){
-    var rows = _getRowList(data)
-    var firstRow = rows.shift()
-    _uppdateSettings(firstRow)
+    rows = data.trim().split("\n").map((row) => row.split("\t"))
+    _uppdateSettings(rows.shift())
+    var rows = _getRowList(rows, settings)
+
     library = {
         "rows": rows, //not including the first row
     }
@@ -63,8 +63,23 @@ function _getRankIndex(firstRow){
     return firstRow.indexOf("Rule Set 2 score")
 }
 
-function _getRowList(data){
-    return data.trim().split("\n").map((row) => row.split("\t"))
+function _getRowList(rows, settings){
+    const groupedData = {};
+    
+    // Loop through each row in the 2D list
+    rows.forEach(row => {
+            symbol = row[settings.symbolIndex[0]]
+        // Check if the name already exists as a key in groupedData
+        if (groupedData[symbol]) {
+            // If it exists, push the current row into the array
+            groupedData[symbol].push(row)
+        } else {
+            // If it does not exist, create a new array with the current row
+            groupedData[symbol] = [row]
+        }
+    })
+    return groupedData
+    //return data.trim().split("\n").map((row) => row.split("\t"))
 }
 
 function libraryStatus(settings){
@@ -74,6 +89,7 @@ function libraryStatus(settings){
     //settings["adaptorAfter"][1] = [adaptorSequencesAfter, ""]
     //settings["partialMatches"][1] = [partialMatches, ""]
     //settings["rankingTop"][1] = [rankingTop, ""]
+    settings["searchSymbols"][1] = fileSearchSymbols(settings)
 
     settings["gRNAIndex"][1] = filegRNAIndexStatus(settings)
     settings["symbolIndex"][1] = fileSymbolIndexStatus(settings)
@@ -105,7 +121,7 @@ function fileSymbolIndexStatus(settings){
     if ((settings.symbolIndex[0] == null) || settings.symbolIndex[0] == ""){
         return "X"
     }
-    if (library.rows[0][settings.symbolIndex[0]])
+    if (Object.values(library.rows)[0][settings.symbolIndex[0]])
         return "🗸"
     return "X"
 }
@@ -114,7 +130,7 @@ function fileRankIndexStatus(settings){
     if ((settings.rankingIndex[0] == null) || settings.rankingIndex[0] == ""){
         return "🗸"
     }
-    var cell = library.rows[0][settings.rankingIndex[0]]
+    var cell = Object.values(library.rows)[0][settings.rankingIndex[0]]
 
     if (isNaN(cell))
         return "Found non number in column"
@@ -122,4 +138,19 @@ function fileRankIndexStatus(settings){
         return "🗸"
     }
     return "X"
+}
+
+function fileSearchSymbols(settings){
+    var status = ""
+    settings.searchSymbols[0].forEach(symbol =>{
+        symbol = symbol.trim()
+        console.log()
+        if (!(library.rows.hasOwnProperty(symbol))){
+            status = status + ` ${symbol} Error not found in file <br>`
+        }
+        else{
+        }
+    })
+    
+    return status
 }

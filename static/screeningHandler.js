@@ -2,24 +2,22 @@
 
 
 function logicScreening(rows, settings) {
-    var filteredRows = []
-    console.log(rows[1][settings.gRNAIndex[0]])
-    for (let r = 0; r < rows.length; r++) {
+    var filteredRows = {}
+    
+    for (const symbol in rows) {
         if (settings.partialMatches[0]){
-            if (_partialMatch(rows[r][settings.symbolIndex[0]])){
-                filteredRows.push(rows[r])
+            if (_partialMatch(symbol, settings)){
+                filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
             }
         }
-        
-        else if (_match(rows[r][settings.symbolIndex[0]])){
-            filteredRows.push(rows[r])
+        else if (_match(symbol, settings)){
+            filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
         }
     }
 
     if (settings.rankingTop[0] > 0){
         filteredRows = getTopRankingElements(filteredRows, settings.rankingTop[0])
     }
-
     filteredRows = postProcessing(filteredRows)
     var out = generateTxtOutput(filteredRows)
     
@@ -29,9 +27,11 @@ function logicScreening(rows, settings) {
 
 function generateTxtOutput(rows){
     out = ""
-    rows.forEach(row => {
-        out = out + `${row[settings.symbolIndex[0]]}    ${row[settings.gRNAIndex[0]]}  ${row[settings.rankingIndex[0]]}\n`
-    });
+    for (const [symbol, arr] of Object.entries(rows)) {
+        arr.forEach(element => {
+            out = out + `${symbol}    ${element[settings.gRNAIndex[0]]}  ${element[settings.rankingIndex[0]]}\n`
+        });
+      }
     return out
 }
 
@@ -44,45 +44,37 @@ function _partialMatch(RNAsymbol){
     return false
 }
 
-function _match(RNAsymbol){
-    return settings.searchSymbols[0].includes(RNAsymbol)
+function _match(RNAsymbol, settings){
+    console.log(settings.searchSymbols[0])
+    console.log(RNAsymbol)
+    return settings.searchSymbols[0].includes(RNAsymbol.trim())
 }
 
 function getTopRankingElements(rows, n) {
-    // Step 1: Group rows by symbol
-    const rowsgroupedBySymbol = rows.reduce((acc, row) => {
-        if (!acc[row[settings.symbolIndex[0]]]) {
-            acc[row[settings.symbolIndex[0]]] = []
-        }
-        acc[row[settings.symbolIndex[0]]].push(row);
-        return acc
-    }, {})
+    const topScorers = {};
 
-    // Step 2: Sort each group by score in descending order
-    Object.keys(rowsgroupedBySymbol).forEach(symbol => {
-        rowsgroupedBySymbol[symbol].sort((a, b) => b[settings.rankingIndex[0]] - a[settings.rankingIndex[0]])
-    })
-
-    // Step 3: Pick the top n rows from each group
-    var result = [];
-    Object.keys(rowsgroupedBySymbol).forEach(symbol => {
-        const topN = rowsgroupedBySymbol[symbol].slice(0, n)
-        result.push(...topN) //  ... is a spread operator
-    })
-
-    return result
+    // Loop through each key in the groupedData
+    for (const symbol in rows) {
+        // Sort the array based on scores in descending order
+        const sortedScores = rows[symbol].sort((a, b) => b[settings.rankingIndex[0]] - a[settings.rankingIndex[0]]);
+        // Get the top n scores
+        topScorers[symbol] = sortedScores.slice(0, n);
+    }
+    return topScorers;
   }
 
 function postProcessing(rows){
-    for (let r = 0; r < rows.length; r++) {
-        rows[r][settings.gRNAIndex[0]] = _applyAxiliarySettings(rows[r][settings.gRNAIndex[0]])
+    for (const symbol in rows) {
+        rows[symbol].forEach(RNAstr =>{
+            RNAstr[settings.gRNAIndex[0]] = _applyAxiliarySettings(RNAstr[settings.gRNAIndex[0]]) 
+        })
     }
     return rows
 }
 
 
 function _applyAxiliarySettings(gRNASequence){
-    
+    console.log(gRNASequence)
     if (settings.adaptorAfter[0].lenth == 0){
         adaptorAfter = ""
     }

@@ -242,7 +242,9 @@ table td{
     }
 }
 
-
+#statusSearchSymbols{
+    height: auto;
+}
 
 /*
 summary {

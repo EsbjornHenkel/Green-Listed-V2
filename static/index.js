@@ -17,6 +17,7 @@ function htmlSetdefaultValues(){
 
 
 function htmlStartScreening(){
+    htmlSettingsChange()
     var textOutput = libraryStartScreen(settings)
     document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
 }
@@ -33,6 +34,7 @@ function htmlChangeLibrary(fileName){
         libraryCreateFromServer(fileName, settings)
         htmlSettingsChange()
     }
+    settingsStatusUppdate()
     statusUppdateAll()
 }
 
@@ -48,12 +50,14 @@ document.getElementById('customFile').addEventListener('change', function () {
 })
 
 function htmlSettingsChange(){
+    console.log("IN")
     var trimBefore = document.getElementById("trimBefore").value
     var trimAfter = document.getElementById("trimAfter").value
     var adaptorBefore = document.getElementById("adaptorBefore").value.trim()
     var adaptorAfter = document.getElementById("adaptorAfter").value.trim()
 
-    var searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()})
+    var searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(item =>{return item.trim()})
+
     var partialMatches = document.getElementById("partialMatches").checked
 
     var rankingTop = document.getElementById("numberToRank").value
@@ -103,7 +107,9 @@ function statusUppdateAll(){
 }
 
 function statusDisplayAll(){
-    setStatus("statusSearchSymbols", statusSearchSymbols())
+
+    setStatus("statusSearchSymbols", settings.searchSymbols[1])
+    setStatus("statusSearchSymbolsRows", statusSearchSymbols())
     setStatus("statusFileSymbolIndex", settings.symbolIndex[1])
     setStatus("statusFilegRNAIndex", settings.gRNAIndex[1])
     setStatus("statusRankingIndex", settings.rankingIndex[1])
@@ -131,4 +137,5 @@ function setStatus(elemId, text){
     } else {
         element.style.color = "";  
     }
+    
 }
