@@ -45,8 +45,6 @@ function _partialMatch(RNAsymbol){
 }
 
 function _match(RNAsymbol, settings){
-    console.log(settings.searchSymbols[0])
-    console.log(RNAsymbol)
     return settings.searchSymbols[0].includes(RNAsymbol.trim())
 }
 

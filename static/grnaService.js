@@ -1,7 +1,7 @@
 
 
 
-function serverUppdateFile(libraryFile, settings){
+function serverUppdateFile(libraryFile, settings, fileIndex){
     
     const payload = {libraryFile: libraryFile};
     fetch('/loadTxtFile', {
@@ -16,7 +16,7 @@ function serverUppdateFile(libraryFile, settings){
         return response.text();
     })
     .then(data => {
-        libraryUppdate(data, settings)
+        libraryUppdate(data, settings, fileIndex)
     })
     
 }

@@ -1,42 +1,53 @@
 
+var libraries = [
+    {
+        "name": "Brunello 21",
+        "fileName": "STable 21 Brunello.txt",
+        "symbolColumn": 3,
+        "RNAColumn": 8,
+        "RankColumn": 12
+    },
+    {
+        "name": "Brie 22",
+        "fileName": "STable 22 Brie.txt",
+        "symbolColumn": 2,
+        "RNAColumn": 7,
+        "RankColumn": 11
+    }
+]
+
 var library = {
-    "filteredRows": {},
     "rows": {},
 }
 
 function libraryStartScreen(settings){
     var st = performance.now()
-    library.filteredRows = Array.from(library.rows).map((row) => Array.from(row))  
     var textOutput = logicScreening(library.rows, settings)
 
     console.log((performance.now()-st)/1000)
     return textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
 }
 
-function libraryAddCustom(data){
-    var rows = _getRowList(data, settings)
-    library = {
-        "rows": rows, //not including the first row
-    }
-
-}
-
-function _uppdateSettings(firstRow){
-    settingsSetLibrarySettings(_getgRNAIndex(firstRow), _getSymbolIndex(firstRow), _getRankIndex(firstRow))
-}
-
-function libraryUppdate(data){
+function libraryAddCustom(data, RNAcolumn, symbolColumn, RankColumn){
     rows = data.trim().split("\n").map((row) => row.split("\t"))
-    _uppdateSettings(rows.shift())
+    rows.shift()
+    settingsSetLibrarySettings(RNAcolumn-1, symbolColumn-1, RankColumn-1, library.rows.length)
+    console.log(settings.symbolIndex)
     var rows = _getRowList(rows, settings)
 
-    library = {
-        "rows": rows, //not including the first row
-    }
+    library["rows"] = rows
 }
 
-function libraryCreateFromServer(fileName, settings){
-    serverUppdateFile(fileName, settings)
+function libraryUppdate(data, settings, fileIndex){
+    rows = data.trim().split("\n").map((row) => row.split("\t"))
+    rows.shift()
+    settingsSetLibrarySettings(libraries[fileIndex].RNAColumn-1, libraries[fileIndex].symbolColumn-1, libraries[fileIndex].RankColumn-1, library.rows.length)
+    var rows = _getRowList(rows, settings)
+    library["rows"] = rows
+}
+
+function libraryCreateFromServer(fileIndex, settings){
+    serverUppdateFile(libraries[fileIndex].fileName, settings, fileIndex, )
 }
 
 function fileRowStatus(){
@@ -45,22 +56,6 @@ function fileRowStatus(){
         return "Entries found: 0"
     }
     return `Rows found ${l}`
-}
-
-function _getgRNAIndex(firstRow){
-    return firstRow.indexOf("sgRNA Target Sequence")
-}
-
-function _getIDIndex(firstRow){
-    return firstRow.indexOf("Target Gene Symbol")
-}
-
-function _getSymbolIndex(firstRow){
-    return firstRow.indexOf("Target Gene Symbol")
-}
-
-function _getRankIndex(firstRow){
-    return firstRow.indexOf("Rule Set 2 score")
 }
 
 function _getRowList(rows, settings){
@@ -94,6 +89,8 @@ function libraryStatus(settings){
     settings["gRNAIndex"][1] = filegRNAIndexStatus(settings)
     settings["symbolIndex"][1] = fileSymbolIndexStatus(settings)
     settings["rankingIndex"][1] = fileRankIndexStatus(settings)
+
+    settings["entries"][1] = fileEntriesStatus(settings)
     return settings
 }
 
@@ -144,13 +141,20 @@ function fileSearchSymbols(settings){
     var status = ""
     settings.searchSymbols[0].forEach(symbol =>{
         symbol = symbol.trim()
-        console.log()
         if (!(library.rows.hasOwnProperty(symbol))){
-            status = status + ` ${symbol} Error not found in file <br>`
+            status = status + `${symbol} !not found in file\n`
         }
         else{
+            status = status + symbol +"\n"
         }
     })
     
     return status
+}
+
+function fileEntriesStatus(settings){
+    var len = Object.keys(library.rows).length
+    if (len == 0)
+        return "Error no symbols found"
+    return `unique symbols found: ${len}`
 }

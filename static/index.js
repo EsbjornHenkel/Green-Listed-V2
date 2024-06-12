@@ -11,8 +11,15 @@ function htmlSetdefaultValues(){
     document.getElementById("adaptorBefore").defaultValue = "";
     document.getElementById("adaptorAfter").defaultValue = " ";
     htmlSettingsChange()
+
+    dropdown = document.getElementById("libraries")
+    for (var i = 0; i < libraries.length; i++){
+        var option = document.createElement('option')
+        option.text = libraries[i].name
+        option.value = i
+        dropdown.appendChild(option)
+    }
     statusUppdateAll()
-    
 }
 
 
@@ -22,27 +29,29 @@ function htmlStartScreening(){
     document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
 }
 
-function htmlChangeLibrary(fileName){
+async function htmlChangeLibrary(fileIndex){
     var customLibrarie = document.getElementById("User Upload")
-    if (fileName == "custom"){
+    if (fileIndex == "custom"){
         customLibrarie.classList.remove("inactive")
-        settingsReset()
-        htmlSettingsChange()
     }
     else{
         customLibrarie.classList.add("inactive")
-        libraryCreateFromServer(fileName, settings)
-        htmlSettingsChange()
+        libraryCreateFromServer(fileIndex, settings)
     }
-    settingsStatusUppdate()
+    await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
     statusUppdateAll()
 }
 
 
-document.getElementById('customFile').addEventListener('change', function () {
+document.getElementById('customFile').addEventListener('change', async function () {
     let fr = new FileReader();
-    fr.onload = function () {
-        libraryAddCustom(fr.result)
+    fr.onload = async function () {
+        var symbolColumn = document.getElementById("GeneSymbolIndex").value
+        var RNAcolumn = document.getElementById("gRNAIndex").value
+        var RankColumn = document.getElementById("rankingIndex").value
+
+        libraryAddCustom(fr.result, RNAcolumn, symbolColumn, RankColumn)
+        await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
         statusUppdateAll()
     }
 
@@ -50,16 +59,15 @@ document.getElementById('customFile').addEventListener('change', function () {
 })
 
 function htmlSettingsChange(){
-    console.log("IN")
     var trimBefore = document.getElementById("trimBefore").value
     var trimAfter = document.getElementById("trimAfter").value
     var adaptorBefore = document.getElementById("adaptorBefore").value.trim()
     var adaptorAfter = document.getElementById("adaptorAfter").value.trim()
 
-    var searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(item =>{return item.trim()})
+    var searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(item =>{return item.replace("!not found in file", "").trim()})
 
     var partialMatches = document.getElementById("partialMatches").checked
-
+    
     var rankingTop = document.getElementById("numberToRank").value
     
     settingsSetOptions(parseInt(trimBefore), parseInt(trimAfter), adaptorBefore, adaptorAfter, partialMatches, searchSymbols, rankingTop)
@@ -93,7 +101,7 @@ function indexSetLibrarySettings(){
     var gRNAIndex = document.getElementById("gRNAIndex").value
     var rankingIndex = document.getElementById("rankingIndex").value
 
-    settingsSetLibrarySettings(gRNAIndex, symbolIndex, rankingIndex)
+    settingsSetIndexes(gRNAIndex-1, symbolIndex-1, rankingIndex-1)
 }
 
 
@@ -108,14 +116,29 @@ function statusUppdateAll(){
 
 function statusDisplayAll(){
 
-    setStatus("statusSearchSymbols", settings.searchSymbols[1])
+    setStatus("searchSymbols", settings.searchSymbols[1], false)
     setStatus("statusSearchSymbolsRows", statusSearchSymbols())
     setStatus("statusFileSymbolIndex", settings.symbolIndex[1])
     setStatus("statusFilegRNAIndex", settings.gRNAIndex[1])
     setStatus("statusRankingIndex", settings.rankingIndex[1])
+
+    setStatus("statusSequencesFound", settings.entries[1])
+
+    setColor("trimBefore", settings.trimBefore[1])
+    setColor("trimAfter", settings.trimAfter[1])
+    setColor("numberToRank", settings.rankingTop[1])
 }
 
-function setStatus(elemId, text){
+function setColor(elemId, color){
+    const element = document.getElementById(elemId)
+    element.style.backgroundColor = color
+
+}
+
+function setStatus(elemId, text, html){
+    if (html == undefined){
+        html = true
+    }
     const element = document.getElementById(elemId)
     if (!element) {
         console.error(`Index.js: setStatus() Element with id '${elemId}' does not exist`);
@@ -127,7 +150,13 @@ function setStatus(elemId, text){
     element.classList.add("fadeOut"); // Add class to fade out the old text
 
     element.addEventListener("animationend", function() {    // Listen for the "transitionend" event
-        element.innerHTML = text;
+        if (html){
+            element.innerHTML = text;
+        }
+        else{
+            element.value = text;
+        }
+        
         element.classList.remove("fadeOut"); // Remove class to fade in the new text
         element.classList.add("fadeIn"); // Add class to fade in the new text
     }, { once: true }); // Ensure the event listener is called only once

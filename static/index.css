@@ -116,8 +116,7 @@ table td{
     border-top: 1px solid var(--outlineColor);
     border-bottom: 1px solid var(--outlineColor);
 
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 5px;
 }
 
 .plate{

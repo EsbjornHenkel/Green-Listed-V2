@@ -22,8 +22,7 @@
                 <h2 class="smallTitle">
                     <select id="libraries" onchange="htmlChangeLibrary(this.value)" required>
                         <option value="None" disabled selected>Select library</option>
-                        <option value="STable 21 Brunello.txt">STable 21 Brunello</option>
-                        <option value="STable 22 Brie.txt">STable 22 Brie</option>
+
                         <option value="custom">User Upload</option>
                     </select>
                 </h2>
@@ -151,6 +150,11 @@ KIAA1644</textarea>
     <footer class="plate">
         <h2 class="plateTitle">5. Output </h2>
         <div class="plateContent" id="fileContent">
+            <div class="flexRow">
+                <a href="" id="FullDownload">Download Output</a>
+                <a href="" id="CompactDownload">Download Compact </a>
+                <a href="" id="SettingsDowload">Download Settings</a>
+            </div>
 
         </div>
 
@@ -159,9 +163,10 @@ KIAA1644</textarea>
 </main>
 
     <script type="text/javascript" src="{{ url_for('static', filename='library.js')}}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='index.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='settings.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='grnaService.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='screeningHandler.js')}}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='settings.js')}}"></script>
+    
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js')}}"></script>
 </body>
 </html>
