@@ -33,17 +33,17 @@
                     </p>
                     
                     <table class="table3x3">
-                        <tr>
+                        <tr id="GeneSymbolIndexRow">
                             <td>Gene ID Column</td>
                             <td><input type="number" id="GeneSymbolIndex" onchange="indexSetLibrarySettings()"></td>
                             <td id="statusFileSymbolIndex"></td>
                         </tr>
-                        <tr>
+                        <tr id="gRNAIndexRow">
                             <td>gRNA Column</td>
                             <td><input type="number" id="gRNAIndex" onchange="indexSetLibrarySettings()"></td>
                             <td id="statusFilegRNAIndex"></td>
                         </tr>
-                        <tr>
+                        <tr id="rankingIndexRow">
                             <td>Rank Column (optional)</td>
                             <td><input type="number" id="rankingIndex" onchange="indexSetLibrarySettings()"></td>
                             <td id="statusRankingIndex"></td>
@@ -86,17 +86,17 @@ KIAA1644</textarea>
                         <td>Ranking Order</td>
                         <td>
                             <select id="rankingOrder">
-                                <option value="Descending">Descending</option>
-                                <option value="2">2</option>
+                                <option value="descending">Descending</option>
+                                <option value="ascending">Ascending</option>
                             </select>
                         </td>
                         <td></td>
                     </tr>
-                    <tr>
+                   <!-- <tr>
                         <td>Interval</td>
                         <td><input type="number" id=""></td>
                         <td><input type="number" id=""></td>
-                    </tr>
+                    </tr>-->
                     <tr>
                         <td>Limit to top</td>
                         <td><input type="number" id="numberToRank" onchange="htmlSettingsChange()"></td>
@@ -141,7 +141,7 @@ KIAA1644</textarea>
         <div class="plateContent">
             
             <input type="number" id="" placeholder="Columns used for compact output">
-            <input type="text" id="" placeholder="Output file name">
+            <input type="text" id="outputFileName" placeholder="Output file name" onchange="htmlSettingsChange()">
             <button onclick="htmlStartScreening()">Start Search</button>
     
         </div>
@@ -149,11 +149,14 @@ KIAA1644</textarea>
 
     <footer class="plate">
         <h2 class="plateTitle">5. Output </h2>
-        <div class="plateContent" id="fileContent">
+        <div class="plateContent">
             <div class="flexRow">
                 <a href="" id="FullDownload">Download Output</a>
                 <a href="" id="CompactDownload">Download Compact </a>
-                <a href="" id="SettingsDowload">Download Settings</a>
+                <a href="" id="SettingsDowload" onclick="dowloadSettings()">Download Settings</a>
+            </div>
+            <div id="fileContent"> 
+
             </div>
 
         </div>

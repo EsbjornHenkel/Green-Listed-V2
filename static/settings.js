@@ -8,16 +8,20 @@ var settings = {
     "partialMatches": [false, ""],
     "searchSymbols": ["", ""],
     "rankingTop": [0, ""],
+    "rankingOrder": [null, ""],
+    "outputName": ["", "", ""],
 
-    "gRNAIndex": [null, ""],
-    "symbolIndex": [null, ""],
-    "rankingIndex": [null, ""],
+
+    "gRNAIndex": [null, "", ""],
+    "symbolIndex": [null, "", ""],
+    "rankingIndex": [null, "", ""],
 
     "entries": [null, ""]
 }
 
 
-function settingsSetOptions(trimBefore, trimAfter, adaptorSequencesBefore, adaptorSequencesAfter, partialMatches, searchSymbols, rankingTop){
+function settingsSetOptions(trimBefore, trimAfter, adaptorSequencesBefore, adaptorSequencesAfter, partialMatches, searchSymbols, rankingTop, rankgingOrder, outputName){
+    // each setting is saved as [value, status message, status color]
     settings["trimBefore"] = [trimBefore, ""]
     settings["trimAfter"] = [trimAfter, ""]
     settings["adaptorBefore"] = [adaptorSequencesBefore, ""]
@@ -25,12 +29,14 @@ function settingsSetOptions(trimBefore, trimAfter, adaptorSequencesBefore, adapt
     settings["partialMatches"] = [partialMatches, ""]
     settings["searchSymbols"] = [searchSymbols, ""]
     settings["rankingTop"] = [rankingTop, ""]
+    settings["rankingOrder"] = [rankgingOrder, ""]
+    settings["outputName"] = [outputName, "", ""]
 }
 
 function settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex){
-    settings["gRNAIndex"] = [gRNAIndex, ""]
-    settings["symbolIndex"] = [symbolIndex, ""]
-    settings["rankingIndex"] = [rankingIndex, ""]
+    settings["gRNAIndex"] = [gRNAIndex, "", ""]
+    settings["symbolIndex"] = [symbolIndex, "", ""]
+    settings["rankingIndex"] = [rankingIndex, "", ""]
 }
 
 function settingsSetLibrarySettings(gRNAIndex, symbolIndex, rankingIndex, entries){
@@ -43,6 +49,7 @@ function settingsSetLibrarySettings(gRNAIndex, symbolIndex, rankingIndex, entrie
 function settingsStatusUppdate(){
     settings = libraryStatus(settings)
     settings["rankingTop"][1] = rankTopStatus()
+    settings["outputName"][2] = outputNameStatusColor()
     trimStatus()
 }
 
@@ -53,18 +60,25 @@ function trimStatus(){
 
 function _checkTrim(trim){
     if (trim < 0){
-        return "red"
+        return "var(--redColor)"
     }
-    return "white"
+    return "var(--plateBackroundColor)"
 }
 
 function rankTopStatus(){
     if (settings.rankingIndex[0] < 0){
-        return "red"
+        return "var(--redColor)"
     }
-    return "white"
+    return "var(--plateBackroundColor)"
 }
 
 function statusSearchSymbols(){
     return `Rows found: ${settings.searchSymbols[0].length}`
+}
+
+function outputNameStatusColor(){
+    if (settings["outputName"][0] == ""){
+        return "var(--redColor)"
+    }
+    return "var(--plateBackroundColor)"
 }

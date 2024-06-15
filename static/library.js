@@ -23,9 +23,9 @@ var library = {
 function libraryStartScreen(settings){
     var st = performance.now()
     var textOutput = logicScreening(library.rows, settings)
-
     console.log((performance.now()-st)/1000)
-    return textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
+
+    return textOutput
 }
 
 function libraryAddCustom(data, RNAcolumn, symbolColumn, RankColumn){
@@ -87,8 +87,11 @@ function libraryStatus(settings){
     settings["searchSymbols"][1] = fileSearchSymbols(settings)
 
     settings["gRNAIndex"][1] = filegRNAIndexStatus(settings)
+    //settings["gRNAIndex"][2] = filegRNAIndexStatusColor(settings)
     settings["symbolIndex"][1] = fileSymbolIndexStatus(settings)
+    //settings["symbolIndex"][2] = fileSymbolIndexStatusColor(settings)
     settings["rankingIndex"][1] = fileRankIndexStatus(settings)
+    //settings["rankingIndex"][2] = fileRankIndexStatusColor(settings)
 
     settings["entries"][1] = fileEntriesStatus(settings)
     return settings

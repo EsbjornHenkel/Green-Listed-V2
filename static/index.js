@@ -26,8 +26,18 @@ function htmlSetdefaultValues(){
 function htmlStartScreening(){
     htmlSettingsChange()
     var textOutput = libraryStartScreen(settings)
+    var element = document.getElementById("FullDownload")
+    _generateDownload(textOutput, settings["outputName"][0], element)
     document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
 }
+
+function _generateDownload(text, name, element) {
+    var file = new Blob([text], {type: "text/plain"});
+    element.href = URL.createObjectURL(file);
+    element.download = name;
+    //a.click()
+}
+
 
 async function htmlChangeLibrary(fileIndex){
     var customLibrarie = document.getElementById("User Upload")
@@ -58,6 +68,18 @@ document.getElementById('customFile').addEventListener('change', async function 
     fr.readAsText(this.files[0]);
 })
 
+function dowloadSettings(){
+    var element = document.getElementById("SettingsDowload")
+
+    var text = ""
+    for (const setting in settings){
+        text = text + ` ${setting} = ${settings[setting][0]}\n`
+    }
+
+    
+    _generateDownload(text, `${settings["outputName"][0]} Settings`, element)
+}
+
 function htmlSettingsChange(){
     var trimBefore = document.getElementById("trimBefore").value
     var trimAfter = document.getElementById("trimAfter").value
@@ -69,9 +91,12 @@ function htmlSettingsChange(){
     var partialMatches = document.getElementById("partialMatches").checked
     
     var rankingTop = document.getElementById("numberToRank").value
+    var rankgingOrder = document.getElementById("rankingOrder").value
     
-    settingsSetOptions(parseInt(trimBefore), parseInt(trimAfter), adaptorBefore, adaptorAfter, partialMatches, searchSymbols, rankingTop)
+    var outputName = document.getElementById("outputFileName").value
 
+    settingsSetOptions(parseInt(trimBefore), parseInt(trimAfter), adaptorBefore, adaptorAfter, partialMatches, searchSymbols, rankingTop, rankgingOrder, outputName)
+    
     _EditAuxiliaryExampleText()
     statusUppdateAll()
 }
@@ -127,6 +152,7 @@ function statusDisplayAll(){
     setColor("trimBefore", settings.trimBefore[1])
     setColor("trimAfter", settings.trimAfter[1])
     setColor("numberToRank", settings.rankingTop[1])
+    setColor("outputFileName", settings.outputName[2])
 }
 
 function setColor(elemId, color){
@@ -144,7 +170,10 @@ function setStatus(elemId, text, html){
         console.error(`Index.js: setStatus() Element with id '${elemId}' does not exist`);
         return;
     }
-    if (element.textContent == text){
+    if ((element.textContent == text) && html){
+        return
+    }
+    if ((element.value == text) && !html){
         return
     }
     element.classList.add("fadeOut"); // Add class to fade out the old text

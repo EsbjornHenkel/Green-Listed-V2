@@ -16,23 +16,22 @@ function logicScreening(rows, settings) {
     }
 
     if (settings.rankingTop[0] > 0){
-        filteredRows = getTopRankingElements(filteredRows, settings.rankingTop[0])
+        filteredRows = getTopRankingElements(filteredRows, settings.rankingTop[0], settings.rankingOrder[0])
     }
-    filteredRows = postProcessing(filteredRows)
-    var out = generateTxtOutput(filteredRows)
-    
-    _download(out, "outfile.txt", 'text/plain')
+
+    filteredRows = postProcessing(filteredRows, settings)
+    var out = generateFullTxtOutput(filteredRows, settings)
     return out
 }
 
-function generateTxtOutput(rows){
-    out = ""
+function generateFullTxtOutput(rows, settings){
+    out = "Symbol   gRNA    Score\n"
     for (const [symbol, arr] of Object.entries(rows)) {
         arr.forEach(element => {
             out = out + `${symbol}    ${element[settings.gRNAIndex[0]]}  ${element[settings.rankingIndex[0]]}\n`
         });
       }
-    return out
+    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
 }
 
 function _partialMatch(RNAsymbol){
@@ -48,20 +47,26 @@ function _match(RNAsymbol, settings){
     return settings.searchSymbols[0].includes(RNAsymbol.trim())
 }
 
-function getTopRankingElements(rows, n) {
+function getTopRankingElements(rows, n, rankingOrder) {
     const topScorers = {};
 
     // Loop through each key in the groupedData
     for (const symbol in rows) {
         // Sort the array based on scores in descending order
-        const sortedScores = rows[symbol].sort((a, b) => b[settings.rankingIndex[0]] - a[settings.rankingIndex[0]]);
+        var sortedScores = {}
+        if (rankingOrder == "ascending"){
+            sortedScores = rows[symbol].sort((a, b) => a[settings.rankingIndex[0]] - b[settings.rankingIndex[0]])
+        }
+        else{
+            sortedScores = rows[symbol].sort((a, b) => b[settings.rankingIndex[0]] - a[settings.rankingIndex[0]])
+        }
         // Get the top n scores
         topScorers[symbol] = sortedScores.slice(0, n);
     }
     return topScorers;
   }
 
-function postProcessing(rows){
+function postProcessing(rows, settings){
     for (const symbol in rows) {
         rows[symbol].forEach(RNAstr =>{
             RNAstr[settings.gRNAIndex[0]] = _applyAxiliarySettings(RNAstr[settings.gRNAIndex[0]]) 
@@ -72,7 +77,6 @@ function postProcessing(rows){
 
 
 function _applyAxiliarySettings(gRNASequence){
-    console.log(gRNASequence)
     if (settings.adaptorAfter[0].lenth == 0){
         adaptorAfter = ""
     }
@@ -87,11 +91,5 @@ function _applyAxiliarySettings(gRNASequence){
     return gRNASequence
 }
 
-function _download(text, name, type) {
-    var a = document.getElementById("dowloadAtag");
-    var file = new Blob([text], {type: type});
-    a.href = URL.createObjectURL(file);
-    a.download = name;
-    //a.click()
-}
+
 
