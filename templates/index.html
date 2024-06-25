@@ -32,7 +32,7 @@
                         <input type="file" accept=".txt" id="customFile" onchange="indexSetLibrarySettings()">
                     </p>
                     
-                    <table class="table3x3">
+                    <table>
                         <tr id="GeneSymbolIndexRow">
                             <td>Gene ID Column</td>
                             <td><input type="number" id="GeneSymbolIndex" onchange="indexSetLibrarySettings()"></td>
@@ -57,31 +57,52 @@
 
     <div class="plate">
         <h2 class="plateTitle">2. Search symbols</h2>
-
         <div class="plateContent">
-            <p>
-                <a href="" id="dowloadAtag"></a>
-                <input type="checkbox" id="partialMatches" onchange="htmlSettingsChange()">
-                Allow for partial matches
-            </p>
-            <p id="statusSearchSymbolsRows"></p>
-            <p id="statusSearchSymbols"></p>
-            <textarea id="searchSymbols" onchange="htmlSettingsChange()">
-ZNF32
-TRIM14
-KIAA1644</textarea>
+
+            <div class="smallPlate">
+                <h3 class="smallTitle">Symbols</h3>
+                <form class="justifyCenter">
+                        <input type="checkbox" id="partialMatches" onchange="htmlSettingsChange()">
+                        <label class="justifyCenter">Allow for partial matches</label>
+                </form>
+                <div>
+                    
+                    <textarea id="searchSymbols" onchange="htmlSettingsChange()">
+                        ZNF32
+                        TRIM14
+                        KIAA1644   
+                    </textarea>
+                </div>
+                <p id="statusSearchSymbolsRows"></p>
+            </div>
+
+
+            <div class="smallPlate">
+                <h3 class="smallTitle">Symbols not found</h3>
+                <p id="symboldWithoutSynonyms">
+
+                </p>
+                <table id="availableSynonyms"><!--
+                    <tr>
+                        <td>Symbol</td>
+                        <td>Synonym</td>
+                        <td>Swap</td>
+                    </tr>-->
+                    <tbody id="dropdownBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
-
+    
     <div class="plate">
         
 
-        <h2 class="plateTitle">3. Auxiliary settings</h2>
+        <h2 class="plateTitle">3. Post processing</h2>
         <div class="plateContent">
         
             <div class="smallPlate">
                 <h3 class="smallTitle">Ranking</h3>
-                <table class="table3x3">
+                <table>
                     <tr>
                         <td>Ranking Order</td>
                         <td>
@@ -104,11 +125,9 @@ KIAA1644</textarea>
                     </tr>
                 </table>
             </div>
-
-            
             <div class="smallPlate">
                 <h3 class="smallTitle">Sequence Modifications</h3>
-                <table class="table3x3">
+                <table>
                     <tr>
                         <td></td>
                         <td>Before</td>
@@ -130,15 +149,16 @@ KIAA1644</textarea>
                     EXAMPLESEQUENCE
                 </p>
             </div>
-
-            
-            
         </div>
     </div>
 
     <div class="plate">
         <h2 class="plateTitle">4. Output Settings</h2>
         <div class="plateContent">
+
+
+            
+
             
             <input type="number" id="" placeholder="Columns used for compact output">
             <input type="text" id="outputFileName" placeholder="Output file name" onchange="htmlSettingsChange()">

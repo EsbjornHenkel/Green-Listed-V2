@@ -95,6 +95,7 @@ textarea{
     background: var(--inputColor);
     border: 1px solid var(--outlineColor);
     border-radius: var(--inputRadius);
+    width: 100%;
     height: 200px;
 }
 
@@ -107,16 +108,24 @@ input {
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
 }
 
+td > input{
+    width: 80%;
+}
 
-table td{
+td{
     border-top: 1px solid var(--outlineColor);
     border-bottom: 1px solid var(--outlineColor);
 
     padding: 5px;
+}
+
+.justifyCenter{
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .plate{
@@ -142,6 +151,7 @@ table td{
 }
 
 .smallPlate{
+
     display: flex;
     flex-direction: column;
 
@@ -161,7 +171,7 @@ table td{
 }
 
 .plateContent{
-    padding: 5px;
+    padding: 10px;
 
     display: flex;
     flex-direction: column;
@@ -193,6 +203,10 @@ table td{
     display: none;
 }
 
+.swapButton{
+    padding: 0.5rem;
+}
+
 #ExampleSequance{
     align-self: center;
 }
@@ -208,8 +222,6 @@ table td{
 #customFile{
     border: none;
 }
-
-
 
 .fadeIn {
     animation: statusUpdateIn 0.2s;
@@ -244,108 +256,3 @@ table td{
 #statusSearchSymbols{
     height: auto;
 }
-
-/*
-summary {
-    padding-bottom: 5px;
-    cursor: pointer;
-}
-
-details {
-    background: var(--accent-bg);
-    padding: 10px;
-    border-radius: var(--plateRadius);
-    font-weight: normal;
-    border: 0;
-}
-
-a:hover {
-    text-decoration: none;
-}
-
-.smallText{
-    font-size: 0.9rem;
-}
-
-.clickableText{
-    cursor: pointer;
-    text-decoration: none;
-}
-
-#flexlayout{
-    display: flex;
-    justify-content: space-around;
-    gap: 10px;
-    padding: 10px;
-}
-
-#flexlayout > * {
-    width: 100%;
-}
-
-#searchSymbols{
-    margin: 0;
-    height: 50vh;
-    text-align:left;
-    text-align: start;
-}
-
-.hdsTitle{
-    font-size: 1.5rem;
-}
-
-.hdsTitle > img{
-    height: 150px;
-    width: 150px;
-}
-
-.hdsTitle2{
-    font-size: 1.2rem;
-}
-
-.hdsPlate{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    align-items: flex-start;
-
-    padding: 10px;
-    border-radius: var(--plateRadius);
-    background-color: var(--accent-bg);
-}
-
-.rowSpacedFlex{
-    text-align: left;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-button:focus,
-button:enabled:hover{
-    filter: brightness(1.1);
-}
-
-
-button.actionButton{
-    border-radius: var(--inputRadius);
-    font-size: 1rem;
-    color: var(--bg);
-    padding: 0.7rem 0.9rem;
-    transition: 0.4s;
-    background: var(--accent-light);
-}
-
-button.actionButton.darker{
-
-    background: var(--accent-dark);
-}
-
-button:hover{
-    filter: brightness(1.2);
-    cursor: pointer;
-}
-
-
-*/

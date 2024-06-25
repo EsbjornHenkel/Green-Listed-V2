@@ -129,6 +129,62 @@ function indexSetLibrarySettings(){
     settingsSetIndexes(gRNAIndex-1, symbolIndex-1, rankingIndex-1)
 }
 
+function createSynonymDropworns(){
+    var synonymdict = librarySynonymStatus(settings)
+    const table = document.getElementById("availableSynonyms")
+    var dropdownBody = document.getElementById("dropdownBody")
+    dropdownBody.innerHTML = ""
+    if(Object.keys(synonymdict).length == 0){
+        const row = document.createElement("tr")
+        row.textContent = "All symbols found in file"
+        dropdownBody.appendChild(row)
+        return
+    }
+    for (const key in synonymdict) {
+        const row = document.createElement("tr")
+        symboldWithoutSynonyms
+
+        // Create the key cell
+        const keyCell = document.createElement("td")
+        keyCell.textContent = key
+        row.appendChild(keyCell)
+
+        if (synonymdict[key].length == 0){
+            dropdownBody.appendChild(row)
+            const dropdownCell = document.createElement("td")
+            dropdownCell.textContent = "No synonyms"
+            row.appendChild(dropdownCell)
+            c3 = document.createElement("td") // empty cell to make borderls look nice
+            row.appendChild(c3)
+            continue
+        }
+        // Create the dropdown cell
+        const dropdownCell = document.createElement("td")
+        const select = document.createElement("select")
+        synonymdict[key].forEach(optionText => {
+            const option = document.createElement("option")
+            option.value = optionText
+            option.textContent = optionText
+            select.appendChild(option)
+        })
+        dropdownCell.appendChild(select)
+        row.appendChild(dropdownCell)
+        
+        // Create the button cell
+        const buttonCell = document.createElement("td")
+        const button = document.createElement("button")
+        button.classList.add("swapButton")
+        button.textContent = "⇆"                         //text on button
+        button.addEventListener("click", () => {
+            settingsSwapSymbol(key, select.value)
+            statusUppdateAll()
+        })
+        buttonCell.appendChild(button)
+        row.appendChild(buttonCell)
+
+        dropdownBody.appendChild(row)
+    }
+}
 
 /* ------------------ STATUS ----------------- */
 
@@ -141,7 +197,8 @@ function statusUppdateAll(){
 
 function statusDisplayAll(){
 
-    setStatus("searchSymbols", settings.searchSymbols[1], false)
+    createSynonymDropworns()
+    setStatus("searchSymbols", settings.searchSymbols[0].join("\n"), false)
     setStatus("statusSearchSymbolsRows", statusSearchSymbols())
     setStatus("statusFileSymbolIndex", settings.symbolIndex[1])
     setStatus("statusFilegRNAIndex", settings.gRNAIndex[1])
@@ -153,7 +210,10 @@ function statusDisplayAll(){
     setColor("trimAfter", settings.trimAfter[1])
     setColor("numberToRank", settings.rankingTop[1])
     setColor("outputFileName", settings.outputName[2])
+
+    
 }
+
 
 function setColor(elemId, color){
     const element = document.getElementById(elemId)

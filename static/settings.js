@@ -33,6 +33,11 @@ function settingsSetOptions(trimBefore, trimAfter, adaptorSequencesBefore, adapt
     settings["outputName"] = [outputName, "", ""]
 }
 
+function settingsSwapSymbol(oldSym, newSym){
+    const index = settings["searchSymbols"][0].indexOf(oldSym)
+    settings["searchSymbols"][0][index] = newSym
+}
+
 function settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex){
     settings["gRNAIndex"] = [gRNAIndex, "", ""]
     settings["symbolIndex"] = [symbolIndex, "", ""]

@@ -16,6 +16,11 @@ var libraries = [
     }
 ]
 
+var synonyms = [
+    ["", "a", "d", "KIAA1644", "Abca1"],
+    ["b", "c", "ZNF32",]
+]
+
 var library = {
     "rows": {},
 }
@@ -84,7 +89,7 @@ function libraryStatus(settings){
     //settings["adaptorAfter"][1] = [adaptorSequencesAfter, ""]
     //settings["partialMatches"][1] = [partialMatches, ""]
     //settings["rankingTop"][1] = [rankingTop, ""]
-    settings["searchSymbols"][1] = fileSearchSymbols(settings)
+    //settings["searchSymbols"][1] = librarySynonymStatus(settings)
 
     settings["gRNAIndex"][1] = filegRNAIndexStatus(settings)
     //settings["gRNAIndex"][2] = filegRNAIndexStatusColor(settings)
@@ -140,24 +145,40 @@ function fileRankIndexStatus(settings){
     return "X"
 }
 
-function fileSearchSymbols(settings){
-    var status = ""
-    settings.searchSymbols[0].forEach(symbol =>{
-        symbol = symbol.trim()
-        if (!(library.rows.hasOwnProperty(symbol))){
-            status = status + `${symbol} !not found in file\n`
-        }
-        else{
-            status = status + symbol +"\n"
-        }
-    })
-    
-    return status
-}
-
 function fileEntriesStatus(settings){
     var len = Object.keys(library.rows).length
     if (len == 0)
         return "Error no symbols found"
     return `unique symbols found: ${len}`
+}
+
+function librarySynonymStatus(settings){
+    var status = {}
+    settings.searchSymbols[0].forEach(symbol =>{
+        symbol = symbol.trim()
+        if (!(library.rows.hasOwnProperty(symbol))){
+            var synonyms = _getSynonymsInLibrary(symbol)
+            status[symbol] = synonyms
+            //if (synonyms.length != 0){
+             //   status[symbol] = synonyms
+            //}
+        }
+    })
+    return status
+}
+
+function _getSynonyms(element){
+    for (let i = 0; i < synonyms.length; i++) {
+        if (synonyms[i].includes(element)){
+            return synonyms[i].filter(symbol => symbol !== element)
+        }
+            
+    }
+    return []
+}
+
+function _getSynonymsInLibrary(element){
+    var synonymList = _getSynonyms(element)
+    synonymList = synonymList.filter(synonym => library.rows.hasOwnProperty(synonym))
+    return synonymList
 }
