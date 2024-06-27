@@ -5,7 +5,7 @@ var examplesequence = "EXAMPLESEQUENCE"
 //  }
 
 function htmlSetdefaultValues(){
-    fetch("./defaultSettings.json")
+    fetch("/defaultSettings")
     .then((res) => {
         if (!res.ok) {
             throw new Error
@@ -13,31 +13,40 @@ function htmlSetdefaultValues(){
         }
         return res.json();
     })
-    .then((data) => 
-            console.log(data))
+    .then((data) => {
+        document.getElementById("trimBefore").min = 0
+        document.getElementById("trimBefore").value = data.trimBefore
+
+        document.getElementById("trimAfter").min = 0
+        document.getElementById("trimAfter").value = data.trimAfter
+
+        document.getElementById("adaptorBefore").defaultValue = data.adaptorBefore;
+        document.getElementById("adaptorAfter").defaultValue = data.adaptorAfter;
+
+        document.getElementById("numberToRank").value = data.rankingTop
+        document.getElementById("searchSymbols").textContent = data.searchSymbols
+        document.getElementById("outputFileName").value = data.outputName
+
+        document.getElementById("partialMatches").checked = data.partialMatches
+
+        settingsSetOptions(data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.partialMatches, data.searchSymbols, data.rankingTop, data.rankgingOrder, data.outputName)
+
+        dropdown = document.getElementById("libraries")
+
+        data.libraryNames.forEach(name => {
+            var option = document.createElement('option')
+            option.text = name
+            option.value = name
+            dropdown.appendChild(option)
+        })
+        _EditAuxiliaryExampleText()
+        statusUppdateAll()
+    })
+
     .catch((error) => 
-            console.error("Unable to fetch data:", error));
+            console.error("Default settings unable to fetch data:", error));
 
 
-    var e = document.getElementById("trimBefore").min = 0
-    e.value = 0
-    e = document.getElementById("trimAfter").min = 0
-    e.value = 0
-    e = document.getElementById("numberToRank").value
-    e.value = 0
-
-    document.getElementById("adaptorBefore").defaultValue = "";
-    document.getElementById("adaptorAfter").defaultValue = " ";
-    htmlSettingsChange()
-
-    dropdown = document.getElementById("libraries")
-    for (var i = 0; i < libraries.length; i++){
-        var option = document.createElement('option')
-        option.text = libraries[i].name
-        option.value = i
-        dropdown.appendChild(option)
-    }
-    statusUppdateAll()
 }
 
 
@@ -67,14 +76,14 @@ function _generateDownload(text, name, element) {
 }
 
 
-async function htmlChangeLibrary(fileIndex){
+async function htmlChangeLibrary(fileName){
     var customLibrarie = document.getElementById("User Upload")
-    if (fileIndex == "custom"){
+    if (fileName == "custom"){
         customLibrarie.classList.remove("inactive")
     }
     else{
         customLibrarie.classList.add("inactive")
-        libraryCreateFromServer(fileIndex, settings)
+        libraryGetLibraryData(fileName, settings)
     }
     await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
     statusUppdateAll()
@@ -83,15 +92,13 @@ async function htmlChangeLibrary(fileIndex){
 
 document.getElementById('customFile').addEventListener('change', async function () {
     let fr = new FileReader();
-    fr.onload = async function () {
-        var symbolColumn = document.getElementById("GeneSymbolIndex").value
-        var RNAcolumn = document.getElementById("gRNAIndex").value
-        var RankColumn = document.getElementById("rankingIndex").value
+    var symbolColumn = document.getElementById("GeneSymbolIndex").value
+    var RNAcolumn = document.getElementById("gRNAIndex").value
+    var RankColumn = document.getElementById("rankingIndex").value
 
-        libraryAddCustom(fr.result, RNAcolumn, symbolColumn, RankColumn)
-        await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
-        statusUppdateAll()
-    }
+    libraryAddCustom(fr.result, RNAcolumn, symbolColumn, RankColumn)
+    await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
+    statusUppdateAll()
 
     fr.readAsText(this.files[0]);
 })
@@ -229,7 +236,7 @@ function statusDisplayAll(){
     setStatus("statusFilegRNAIndex", settings.gRNAIndex[1])
     setStatus("statusRankingIndex", settings.rankingIndex[1])
 
-    setStatus("statusSequencesFound", settings.entries[1])
+    setStatus("statusSequencesFound", settings.LibraryName[1])
 
     setColor("trimBefore", settings.trimBefore[1])
     setColor("trimAfter", settings.trimAfter[1])

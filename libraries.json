@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Brunello 21",
+        "fileName": "STable 21 Brunello.txt",
+        "symbolColumn": 3,
+        "RNAColumn": 8,
+        "RankColumn": 12
+    },
+    {
+        "name": "Brie 22",
+        "fileName": "STable 22 Brie.txt",
+        "symbolColumn": 2,
+        "RNAColumn": 7,
+        "RankColumn": 11
+    }
+]

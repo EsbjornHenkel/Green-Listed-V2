@@ -16,7 +16,7 @@ var settings = {
     "symbolIndex": [null, "", ""],
     "rankingIndex": [null, "", ""],
 
-    "entries": [null, ""]
+    "LibraryName": [null, ""]
 }
 
 
@@ -33,9 +33,9 @@ function settingsSetOptions(trimBefore, trimAfter, adaptorSequencesBefore, adapt
     settings["outputName"] = [outputName, "", ""]
 }
 
-function settingsSwapSymbol(oldSym, newSym){
-    const index = settings["searchSymbols"][0].indexOf(oldSym)
-    settings["searchSymbols"][0][index] = newSym
+function settingsSwapSymbol(oldSymbol, newSymbol){
+    const index = settings["searchSymbols"][0].indexOf(oldSymbol)
+    settings["searchSymbols"][0][index] = newSymbol
 }
 
 function settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex){
@@ -44,11 +44,11 @@ function settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex){
     settings["rankingIndex"] = [rankingIndex, "", ""]
 }
 
-function settingsSetLibrarySettings(gRNAIndex, symbolIndex, rankingIndex, entries){
+function settingsSetLibrarySettings(gRNAIndex, symbolIndex, rankingIndex, LibraryName){
     settings["gRNAIndex"] = [gRNAIndex, ""]
     settings["symbolIndex"] = [symbolIndex, ""]
     settings["rankingIndex"] = [rankingIndex, ""]
-    settings["entries"] = [entries, ""]
+    settings["entries"] = [LibraryName, ""]
 }
 
 function settingsStatusUppdate(){

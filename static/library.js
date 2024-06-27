@@ -1,21 +1,4 @@
 
-var libraries = [
-    {
-        "name": "Brunello 21",
-        "fileName": "STable 21 Brunello.txt",
-        "symbolColumn": 3,
-        "RNAColumn": 8,
-        "RankColumn": 12
-    },
-    {
-        "name": "Brie 22",
-        "fileName": "STable 22 Brie.txt",
-        "symbolColumn": 2,
-        "RNAColumn": 7,
-        "RankColumn": 11
-    }
-]
-
 var synonyms = [
     ["", "a", "d", "KIAA1644", "Abca1"],
     ["b", "c", "ZNF32",]
@@ -24,7 +7,6 @@ var synonyms = [
 var library = {
     "rows": {},
     "status": "",
-    "fileIndex": -1
 }
 
 function libraryStartScreen(settings){
@@ -45,17 +27,19 @@ function libraryAddCustom(data, RNAcolumn, symbolColumn, RankColumn){
     library["rows"] = rows
 }
 
-function libraryUppdate(data, settings, fileIndex){
-    library.fileIndex = fileIndex
-    rows = data.trim().split("\n").map((row) => row.split("\t"))
+function libraryUppdate(data){
+    rows = data["fileData"].trim().split("\n").map((row) => row.split("\t"))
     rows.shift()
-    settingsSetLibrarySettings(libraries[fileIndex].RNAColumn-1, libraries[fileIndex].symbolColumn-1, libraries[fileIndex].RankColumn-1, library.rows.length)
+    settingsSetLibrarySettings(data["RNAColumn"]-1, data["symbolColumn"]-1, data["RankColumn"]-1, data["libraryName"])
     var rows = _getRowList(rows, settings)
     library["rows"] = rows
 }
 
-function libraryCreateFromServer(fileIndex, settings){
-    serverUppdateFile(libraries[fileIndex].fileName, settings, fileIndex, )
+async function libraryGetLibraryData(fileName, settings){
+    serverUppdateFile(fileName, settings).then((data)=>{
+        libraryUppdate(data)
+    })
+    
 }
 
 function fileRowStatus(){
@@ -86,22 +70,11 @@ function _getRowList(rows, settings){
 }
 
 function libraryStatus(settings){
-    //settings["trimBefore"][1] = [trimBefore, ""]
-    //settings["trimAfter"][1] = [trimAfter, ""]
-    //settings["adaptorBefore"][1] = [adaptorSequencesBefore, ""]
-    //settings["adaptorAfter"][1] = [adaptorSequencesAfter, ""]
-    //settings["partialMatches"][1] = [partialMatches, ""]
-    //settings["rankingTop"][1] = [rankingTop, ""]
-    //settings["searchSymbols"][1] = librarySynonymStatus(settings)
-
-    settings["gRNAIndex"][1] = filegRNAIndexStatus(settings)
-    //settings["gRNAIndex"][2] = filegRNAIndexStatusColor(settings)
-    settings["symbolIndex"][1] = fileSymbolIndexStatus(settings)
-    //settings["symbolIndex"][2] = fileSymbolIndexStatusColor(settings)
+    settings["gRNAIndex"][1] = libraryStatusRNAIndex(settings)
+    settings["symbolIndex"][1] = libraryStatusSymbolIndex(settings)
     settings["rankingIndex"][1] = fileRankIndexStatus(settings)
-    //settings["rankingIndex"][2] = fileRankIndexStatusColor(settings)
 
-    settings["entries"][1] = fileEntriesStatus(settings)
+    settings["LibraryName"][1] = libraryStatusNumberOfSymbols(settings)
     return settings
 }
 
@@ -112,7 +85,7 @@ function fileRowStatus(settings){
     return "NO library selected"
 }
 
-function filegRNAIndexStatus(settings){
+function libraryStatusRNAIndex(settings){
     if ((settings.gRNAIndex[0] == null) || settings.gRNAIndex[0] == ""){
         return "X"
     }
@@ -125,7 +98,7 @@ function filegRNAIndexStatus(settings){
     return "🗸"
 }
 
-function fileSymbolIndexStatus(settings){
+function libraryStatusSymbolIndex(settings){
     if ((settings.symbolIndex[0] == null) || settings.symbolIndex[0] == ""){
         return "X"
     }
@@ -152,9 +125,9 @@ function getSearchstatus(){
     return library["status"]
 }
 
-function fileEntriesStatus(settings){
+function libraryStatusNumberOfSymbols(settings){
 
-    if (library["fileIndex"] == -1){
+    if (settings["libraryName"] == ""){
         return "Error no library selected"
     }
     var len = Object.keys(library.rows).length
