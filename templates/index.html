@@ -15,42 +15,46 @@
 
 <main>
     <div class="plate">
-        <h2 class="plateTitle">1. Reference Library</h2>
+        <h2 class="plateTitle">1. Reference library</h2>
         <div class="plateContent">
 
             <div class="smallPlate">
-                <h2 class="smallTitle">
+                <h3 class="smallTitle">
                     <select id="libraries" onchange="htmlChangeLibrary(this.value)" required>
-                        <option value="None" disabled selected>Select library</option>
+                        <option value="None" disabled selected style="display:none" >Select library</option>
 
                         <option value="custom">User Upload</option>
                     </select>
-                </h2>
-                <form id="User Upload" class="inactive plateContent">
-                    <p class="flexRow">
-                        Select a .txt file to use as Library
-                        <input type="file" accept=".txt" id="customFile" onchange="indexSetLibrarySettings()">
-                    </p>
-                    
-                    <table>
-                        <tr id="GeneSymbolIndexRow">
-                            <td>Gene ID Column</td>
-                            <td><input type="number" id="GeneSymbolIndex" onchange="indexSetLibrarySettings()"></td>
-                            <td id="statusFileSymbolIndex"></td>
-                        </tr>
-                        <tr id="gRNAIndexRow">
-                            <td>gRNA Column</td>
-                            <td><input type="number" id="gRNAIndex" onchange="indexSetLibrarySettings()"></td>
-                            <td id="statusFilegRNAIndex"></td>
-                        </tr>
-                        <tr id="rankingIndexRow">
-                            <td>Rank Column (optional)</td>
-                            <td><input type="number" id="rankingIndex" onchange="indexSetLibrarySettings()"></td>
-                            <td id="statusRankingIndex"></td>
-                        </tr>
-                    </table>
-                </form>
-                <div id="statusSequencesFound"></div>
+                </h3>
+                <div class="plateContent">
+                    <form id="User Upload" class="inactive">
+                        <p class="flexRow">
+                            Select a .txt file to use as Library
+                            <input type="file" accept=".txt" id="customFile" onchange="indexSetLibrarySettings()">
+                        </p>
+                        
+                        <table>
+                            <tr id="GeneSymbolIndexRow">
+                                <td>Gene ID Column</td>
+                                <td><input type="number" id="GeneSymbolIndex" onchange="indexSetLibrarySettings()"></td>
+                                <td id="statusFileSymbolIndex"></td>
+                            </tr>
+                            <tr id="gRNAIndexRow">
+                                <td>gRNA Column</td>
+                                <td><input type="number" id="gRNAIndex" onchange="indexSetLibrarySettings()"></td>
+                                <td id="statusFilegRNAIndex"></td>
+                            </tr>
+                            <tr id="rankingIndexRow">
+                                <td>Rank Column (optional)</td>
+                                <td><input type="number" id="rankingIndex" onchange="indexSetLibrarySettings()"></td>
+                                <td id="statusRankingIndex"></td>
+                            </tr>
+                        </table>
+                        
+                    </form>
+                    <div id="statusSequencesFound"></div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -61,50 +65,47 @@
 
             <div class="smallPlate">
                 <h3 class="smallTitle">Symbols</h3>
-                <form class="justifyCenter">
-                        <input type="checkbox" id="partialMatches" onchange="htmlSettingsChange()">
-                        <label class="justifyCenter">Allow for partial matches</label>
-                </form>
-                <div>
-                    
-                    <textarea id="searchSymbols" onchange="htmlSettingsChange()">
-                        ZNF32
-                        TRIM14
-                        KIAA1644   
-                    </textarea>
+                <div class="plateContent">
+                    <form class="justifyCenter">
+                            <input type="checkbox" id="partialMatches" onchange="htmlSettingsChange()">
+                            <label class="justifyCenter">Allow for partial matches</label>
+                    </form>
+                    <div>
+                        <textarea id="searchSymbols" onchange="htmlSettingsChange()">
+                            ZNF32
+                            TRIM14
+                            KIAA1644   
+                        </textarea>
+                    </div>
+                    <p id="statusSearchSymbolsRows"></p>
                 </div>
-                <p id="statusSearchSymbolsRows"></p>
             </div>
 
 
             <div class="smallPlate">
                 <h3 class="smallTitle">Symbols not found</h3>
-                <p id="symboldWithoutSynonyms">
+                <div class="plateContent scrollablePlate">
+                    <table id="availableSynonyms">
+                        <span class="tooltiptext">Tooltip text</span>
+                        <tbody id="dropdownBody">
+    
+                        </tbody>
+                    </table>
+                </div>
 
-                </p>
-                <table id="availableSynonyms"><!--
-                    <tr>
-                        <td>Symbol</td>
-                        <td>Synonym</td>
-                        <td>Swap</td>
-                    </tr>-->
-                    <tbody id="dropdownBody"></tbody>
-                </table>
             </div>
         </div>
     </div>
     
     <div class="plate">
-        
-
         <h2 class="plateTitle">3. Post processing</h2>
         <div class="plateContent">
-        
+
             <div class="smallPlate">
                 <h3 class="smallTitle">Ranking</h3>
-                <table>
+                <table class="plateContent">
                     <tr>
-                        <td>Ranking Order</td>
+                        <td>Ranking order</td>
                         <td>
                             <select id="rankingOrder">
                                 <option value="descending">Descending</option>
@@ -113,11 +114,6 @@
                         </td>
                         <td></td>
                     </tr>
-                   <!-- <tr>
-                        <td>Interval</td>
-                        <td><input type="number" id=""></td>
-                        <td><input type="number" id=""></td>
-                    </tr>-->
                     <tr>
                         <td>Limit to top</td>
                         <td><input type="number" id="numberToRank" onchange="htmlSettingsChange()"></td>
@@ -125,66 +121,74 @@
                     </tr>
                 </table>
             </div>
+
+
             <div class="smallPlate">
-                <h3 class="smallTitle">Sequence Modifications</h3>
-                <table>
-                    <tr>
-                        <td></td>
-                        <td>Before</td>
-                        <td> After</td>
-                    </tr>
-                    <tr>
-                        <td>Trim </td>
-                        <td><input type="number" id="trimBefore" min="0" value="0" onchange="htmlSettingsChange()"></td>
-                        <td><input type="number" id="trimAfter" min="0" value="0" onchange="htmlSettingsChange()"></td>
-                        
-                    </tr>
-                    <tr>
-                        <td>Adaptor Sequences</td>
-                        <td><input type="text" id="adaptorBefore" onchange="htmlSettingsChange()"></td>
-                        <td><input type="text" id="adaptorAfter" onchange="htmlSettingsChange()"></td>
-                    </tr>
-                </table>
-                <p class="hdsTitle2" id="ExampleSequance">
-                    EXAMPLESEQUENCE
-                </p>
+                <h3 class="smallTitle">Sequence modifications</h3>
+                <div class="plateContent">
+                    <table>
+                        <tr>
+                            <td>Trim </td>
+                            <td>3'<input type="number" id="trimBefore" min="0" value="0" onchange="htmlSettingsChange()"></td>
+                            <td>5'<input type="number" id="trimAfter" min="0" value="0" onchange="htmlSettingsChange()"></td>
+                            
+                        </tr>
+                        <tr>
+                            <td>Adaptor Sequences</td>
+                            <td>3'<input type="text" id="adaptorBefore" onchange="htmlSettingsChange()"></td>
+                            <td>5'<input type="text" id="adaptorAfter" onchange="htmlSettingsChange()"></td>
+                        </tr>
+                    </table>
+                    <p class="hdsTitle2" id="ExampleSequance">
+                        EXAMPLESEQUENCE
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="plate">
-        <h2 class="plateTitle">4. Output Settings</h2>
+        <h2 class="plateTitle">4. Output</h2>
+
         <div class="plateContent">
-
+            <div class="smallPlate">
+                <h3 class="smallTitle"> Output Settings </h3>
+                <div class="plateContent">
+                    <input type="number" id="" placeholder="Columns used for compact output">
+                    <input type="text" id="outputFileName" placeholder="Output file name" onchange="htmlSettingsChange()">
+                    <button onclick="htmlStartScreening()">Start Search</button>
+                    <div id="statusSearch"></div>
+            
+                </div>
+            </div>
 
             
+            <div class="smallPlate">
+                <h3 class="smallTitle"> Final output</h3>
+                <div class="plateContent" id="output">
+                    <a href="" id="FullDownload">Download Output</a>
+                    <a href="" id="CompactDownload">Download Compact </a>
+                    <a href="" id="SettingsDowload" onclick="dowloadSettings()">Download Settings</a>
+                </div>
 
-            
-            <input type="number" id="" placeholder="Columns used for compact output">
-            <input type="text" id="outputFileName" placeholder="Output file name" onchange="htmlSettingsChange()">
-            <button onclick="htmlStartScreening()">Start Search</button>
-    
+            </div>
         </div>
     </div>
 
     <footer class="plate">
-        <h2 class="plateTitle">5. Output </h2>
+        <h2 class="plateTitle">5. Show output </h2>
         <div class="plateContent">
-            <div class="flexRow">
-                <a href="" id="FullDownload">Download Output</a>
-                <a href="" id="CompactDownload">Download Compact </a>
-                <a href="" id="SettingsDowload" onclick="dowloadSettings()">Download Settings</a>
-            </div>
             <div id="fileContent"> 
 
             </div>
-
         </div>
 
     </footer>
 
 </main>
+    <script>
 
+    </script>
     <script type="text/javascript" src="{{ url_for('static', filename='library.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='settings.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='grnaService.js')}}"></script>

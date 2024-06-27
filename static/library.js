@@ -23,13 +23,15 @@ var synonyms = [
 
 var library = {
     "rows": {},
+    "status": "",
+    "fileIndex": -1
 }
 
 function libraryStartScreen(settings){
+    library.status = "Starting search"
     var st = performance.now()
-    var textOutput = logicScreening(library.rows, settings)
-    console.log((performance.now()-st)/1000)
-
+    var textOutput = logicScreening(library, settings)
+    library.status = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s`
     return textOutput
 }
 
@@ -44,6 +46,7 @@ function libraryAddCustom(data, RNAcolumn, symbolColumn, RankColumn){
 }
 
 function libraryUppdate(data, settings, fileIndex){
+    library.fileIndex = fileIndex
     rows = data.trim().split("\n").map((row) => row.split("\t"))
     rows.shift()
     settingsSetLibrarySettings(libraries[fileIndex].RNAColumn-1, libraries[fileIndex].symbolColumn-1, libraries[fileIndex].RankColumn-1, library.rows.length)
@@ -145,11 +148,19 @@ function fileRankIndexStatus(settings){
     return "X"
 }
 
+function getSearchstatus(){
+    return library["status"]
+}
+
 function fileEntriesStatus(settings){
+
+    if (library["fileIndex"] == -1){
+        return "Error no library selected"
+    }
     var len = Object.keys(library.rows).length
     if (len == 0)
         return "Error no symbols found"
-    return `unique symbols found: ${len}`
+    return `Unique symbols found: ${len}`
 }
 
 function librarySynonymStatus(settings){

@@ -1,17 +1,19 @@
 
 
 
-function logicScreening(rows, settings) {
+function logicScreening(library, settings) {
     var filteredRows = {}
-    
-    for (const symbol in rows) {
+    const symbols = Object.keys(library["rows"])
+    for (let i = 0; i < symbols.length; i++) {
+        const symbol = symbols[i]
+        library["status"] = `${i}/${symbols.length} symbols searched`
         if (settings.partialMatches[0]){
             if (_partialMatch(symbol, settings)){
-                filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
+                filteredRows[symbol] = library["rows"][symbol].slice().map((row) => row.slice()) //makes coppy not pointer
             }
         }
         else if (_match(symbol, settings)){
-            filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
+            filteredRows[symbol] = library["rows"][symbol].slice().map((row) => row.slice()) //makes coppy not pointer
         }
     }
 
@@ -25,11 +27,11 @@ function logicScreening(rows, settings) {
 }
 
 function generateFullTxtOutput(rows, settings){
-    out = "Symbol   gRNA    Score\n"
+    out = "Symbol   gRNA    Compliment  Score \n"
     for (const [symbol, arr] of Object.entries(rows)) {
         arr.forEach(element => {
-            out = out + `${symbol}    ${element[settings.gRNAIndex[0]]}  ${element[settings.rankingIndex[0]]}\n`
-        });
+            out = out + `${symbol}    ${element[settings.gRNAIndex[0]]}    ${complimentSequence(element[settings.gRNAIndex[0]])}    ${element[settings.rankingIndex[0]]}\n`
+        })
       }
     return out.replace(/(?:\r\n|\r|\n)/g, '\n')
 }
@@ -91,5 +93,20 @@ function _applyAxiliarySettings(gRNASequence){
     return gRNASequence
 }
 
-
-
+function complimentSequence(gRNASequence){
+    var complimentMap ={
+        "A": "T",
+        "a": "t",
+        "T": "A",
+        "t": "a",
+        "C": "G",
+        "c": "g",
+        "G": "C",
+        "g": "c",
+    }
+    // Replace each character using the mapping table
+    var complimentStr = gRNASequence.split('').map(char => {
+        return complimentMap[char] !== undefined ? complimentMap[char] : char;
+      }).join('')
+      return complimentStr
+}

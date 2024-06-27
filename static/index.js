@@ -1,6 +1,24 @@
 var examplesequence = "EXAMPLESEQUENCE"
 
+//window.onbeforeunload = function() {
+//    return ""
+//  }
+
 function htmlSetdefaultValues(){
+    fetch("./defaultSettings.json")
+    .then((res) => {
+        if (!res.ok) {
+            throw new Error
+                (`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+    })
+    .then((data) => 
+            console.log(data))
+    .catch((error) => 
+            console.error("Unable to fetch data:", error));
+
+
     var e = document.getElementById("trimBefore").min = 0
     e.value = 0
     e = document.getElementById("trimAfter").min = 0
@@ -24,11 +42,21 @@ function htmlSetdefaultValues(){
 
 
 function htmlStartScreening(){
+    var st = performance.now()
+
+    var statusInterval = setInterval(statusSearchUppdate, 100);
+    
     htmlSettingsChange()
     var textOutput = libraryStartScreen(settings)
+    
+    statusSearchUppdate()
+
     var element = document.getElementById("FullDownload")
     _generateDownload(textOutput, settings["outputName"][0], element)
     document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
+
+    console.log((performance.now()-st)/1000)
+    clearInterval(statusInterval)
 }
 
 function _generateDownload(text, name, element) {
@@ -130,37 +158,36 @@ function indexSetLibrarySettings(){
 }
 
 function createSynonymDropworns(){
-    var synonymdict = librarySynonymStatus(settings)
-    const table = document.getElementById("availableSynonyms")
-    var dropdownBody = document.getElementById("dropdownBody")
+    const synonymdict = librarySynonymStatus(settings)
+
+    const dropdownBody = document.getElementById("dropdownBody")
     dropdownBody.innerHTML = ""
     if(Object.keys(synonymdict).length == 0){
         const row = document.createElement("tr")
-        row.textContent = "All symbols found in file"
+        row.textContent = "All symbols found in library"
         dropdownBody.appendChild(row)
         return
     }
     for (const key in synonymdict) {
         const row = document.createElement("tr")
-        symboldWithoutSynonyms
 
         // Create the key cell
         const keyCell = document.createElement("td")
         keyCell.textContent = key
         row.appendChild(keyCell)
 
-        if (synonymdict[key].length == 0){
+        if (synonymdict[key].length == 0){ //symbol has no synonyms
             dropdownBody.appendChild(row)
-            const dropdownCell = document.createElement("td")
-            dropdownCell.textContent = "No synonyms"
-            row.appendChild(dropdownCell)
-            c3 = document.createElement("td") // empty cell to make borderls look nice
-            row.appendChild(c3)
             continue
         }
         // Create the dropdown cell
         const dropdownCell = document.createElement("td")
         const select = document.createElement("select")
+        select.classList.add("synonymSelect")
+        if (synonymdict[key].length == 1){
+            
+            select.classList.add("oneSynonyme")
+        }
         synonymdict[key].forEach(optionText => {
             const option = document.createElement("option")
             option.value = optionText
@@ -175,20 +202,18 @@ function createSynonymDropworns(){
         const button = document.createElement("button")
         button.classList.add("swapButton")
         button.textContent = "⇆"                         //text on button
+        button.title = "Press to use this synonym"
         button.addEventListener("click", () => {
             settingsSwapSymbol(key, select.value)
             statusUppdateAll()
         })
         buttonCell.appendChild(button)
         row.appendChild(buttonCell)
-
-        dropdownBody.appendChild(row)
+        dropdownBody.insertBefore(row, dropdownBody.firstChild);
     }
 }
 
 /* ------------------ STATUS ----------------- */
-
-//var intervalId = setInterval(statusUppdateAll, 1000);
 
 function statusUppdateAll(){
     settingsStatusUppdate()
@@ -210,8 +235,6 @@ function statusDisplayAll(){
     setColor("trimAfter", settings.trimAfter[1])
     setColor("numberToRank", settings.rankingTop[1])
     setColor("outputFileName", settings.outputName[2])
-
-    
 }
 
 
@@ -221,25 +244,31 @@ function setColor(elemId, color){
 
 }
 
-function setStatus(elemId, text, html){
-    if (html == undefined){
-        html = true
+function statusSearchUppdate(){
+    console.log("uppdate search status")
+    setStatus("statusSearch", getSearchstatus())
+}
+
+
+function setStatus(elemId, text, isNotInnerHtml){
+    if (isNotInnerHtml == undefined){
+        isNotInnerHtml = true
     }
     const element = document.getElementById(elemId)
     if (!element) {
         console.error(`Index.js: setStatus() Element with id '${elemId}' does not exist`);
         return;
     }
-    if ((element.textContent == text) && html){
+    if ((element.textContent == text) && isNotInnerHtml){
         return
     }
-    if ((element.value == text) && !html){
+    if ((element.value == text) && !isNotInnerHtml){
         return
     }
     element.classList.add("fadeOut"); // Add class to fade out the old text
 
     element.addEventListener("animationend", function() {    // Listen for the "transitionend" event
-        if (html){
+        if (isNotInnerHtml){
             element.innerHTML = text;
         }
         else{

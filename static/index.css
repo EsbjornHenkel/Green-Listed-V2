@@ -10,7 +10,7 @@
     --base-fontsize: 1.15rem;
     
     /* Major third scale progression - see https://type-scale.com/ */
-    --header-scale: 1.25;
+    --header-scale: 1.25rem;
     
     /* Line height is set to the "Golden ratio" for optimal legibility */
     --line-height: 1.618;
@@ -92,6 +92,7 @@ button:hover{
 }
 
 textarea{
+    padding: 5px;
     background: var(--inputColor);
     border: 1px solid var(--outlineColor);
     border-radius: var(--inputRadius);
@@ -116,10 +117,11 @@ td > input{
 }
 
 td{
-    border-top: 1px solid var(--outlineColor);
-    border-bottom: 1px solid var(--outlineColor);
-
     padding: 5px;
+}
+
+td:not(:first-child) {
+    text-align: center;
 }
 
 .justifyCenter{
@@ -147,7 +149,7 @@ td{
     text-align: center;
 
     border-radius: calc(var(--plateRadius)-4) calc(var(--plateRadius)-4) 0 0;
-    padding: 5px;
+    padding: 8px;
 }
 
 .smallPlate{
@@ -164,7 +166,7 @@ td{
 
 .smallTitle{
     background-color: var(--outlineColor);
-    font-size: var(--header-scale);
+    font-size: var(--base-fontsize);
     text-align: center;
     border-radius: calc(var(--plateRadius)-4) calc(var(--plateRadius)-4) 0 0;
     padding: 5px;
@@ -172,12 +174,16 @@ td{
 
 .plateContent{
     padding: 10px;
-
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     gap: 10px;
 
+}
+
+.scrollablePlate{
+    max-height: 118px;
+    overflow-y: auto;
 }
 
 .flexRow{
@@ -205,7 +211,39 @@ td{
 
 .swapButton{
     padding: 0.5rem;
+    width: 1.2rem;
+    height: 25px;
+    line-height: 0;
 }
+
+.synonymSelect{
+    font-size: 0.8rem;
+}
+
+.oneSynonyme {
+    /* for Firefox */
+    -moz-appearance: none;
+    /* for Chrome */
+    -webkit-appearance: none;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+  }
+
+  .swapButton:hover + .hover-content {
+    visibility: visible;
+  }
 
 #ExampleSequance{
     align-self: center;
@@ -255,4 +293,14 @@ td{
 
 #statusSearchSymbols{
     height: auto;
+}
+
+#dropdownBody * {
+    padding: 2px;
+    /*border-top: 1px solid var(--outlineColor);*/
+
+}
+
+#rankingOrder{
+    width: 80%;
 }
