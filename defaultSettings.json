@@ -1,19 +1,21 @@
 {
-    "trimBefore": 1, 
-    "trimAfter": 2, 
-    "adaptorBefore": "a",
-    "adaptorAfter": "s",
+    "trimBefore": 0, 
+    "trimAfter": 0, 
+    "adaptorBefore": "",
+    "adaptorAfter": "",
 
-    "partialMatches": true,     
+    "partialMatches": false,     
     "rankingTop": 2,
-    "rankgingOrder": "descending",
+
     "outputName": "test",
 
     "searchSymbols": ["TRIM14", "KIAA1644", "ZNF32"],       
     "gRNAIndex": null,
     "symbolIndex": null,
     "rankingIndex": null,
-
-    "libraryNames": ["Brunello 21", "Brie 22"]
+    "synonyms": [
+        ["", "a", "d", "KIAA1644", "Abca1"],
+        ["b", "c", "ZNF32"]
+    ]
 }
 

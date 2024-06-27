@@ -4,67 +4,56 @@ var examplesequence = "EXAMPLESEQUENCE"
 //    return ""
 //  }
 
-function htmlSetdefaultValues(){
-    fetch("/defaultSettings")
-    .then((res) => {
-        if (!res.ok) {
-            throw new Error
-                (`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
+async function htmlSetdefaultValues(){
+    data = await getDefaultSettings()
+
+    document.getElementById("trimBefore").min = 0
+    document.getElementById("trimBefore").value = data.trimBefore
+
+    document.getElementById("trimAfter").min = 0
+    document.getElementById("trimAfter").value = data.trimAfter
+
+    document.getElementById("adaptorBefore").defaultValue = data.adaptorBefore;
+    document.getElementById("adaptorAfter").defaultValue = data.adaptorAfter;
+
+    document.getElementById("numberToRank").value = data.rankingTop
+    document.getElementById("searchSymbols").textContent = data.searchSymbols
+    document.getElementById("outputFileName").value = data.outputName
+
+    document.getElementById("partialMatches").checked = data.partialMatches
+    
+    
+
+    dropdown = document.getElementById("libraries")
+
+    data.libraryNames.forEach(name => {
+        var option = document.createElement('option')
+        option.text = name
+        option.value = name
+        dropdown.appendChild(option)
+        dropdown.value = name
     })
-    .then((data) => {
-        document.getElementById("trimBefore").min = 0
-        document.getElementById("trimBefore").value = data.trimBefore
-
-        document.getElementById("trimAfter").min = 0
-        document.getElementById("trimAfter").value = data.trimAfter
-
-        document.getElementById("adaptorBefore").defaultValue = data.adaptorBefore;
-        document.getElementById("adaptorAfter").defaultValue = data.adaptorAfter;
-
-        document.getElementById("numberToRank").value = data.rankingTop
-        document.getElementById("searchSymbols").textContent = data.searchSymbols
-        document.getElementById("outputFileName").value = data.outputName
-
-        document.getElementById("partialMatches").checked = data.partialMatches
-
-        settingsSetOptions(data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.partialMatches, data.searchSymbols, data.rankingTop, data.rankgingOrder, data.outputName)
-
-        dropdown = document.getElementById("libraries")
-
-        data.libraryNames.forEach(name => {
-            var option = document.createElement('option')
-            option.text = name
-            option.value = name
-            dropdown.appendChild(option)
-        })
-        _EditAuxiliaryExampleText()
-        statusUppdateAll()
-    })
-
-    .catch((error) => 
-            console.error("Default settings unable to fetch data:", error));
-
-
+    const rankingOrder = document.getElementById("rankingOrder").vaklue
+    settingsSetAll(data.searchSymbols, data.partialMatches, dropdown.value, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.synonyms)
+    indexChangeLibrary(dropdown.value)
+    _editExampleText()
+    statusUppdateAll()
 }
 
 
-function htmlStartScreening(){
-    var st = performance.now()
-
+function indexStartScreening(){
+    button = document.getElementById("startButton")
+    button.classList.add("pulse")
     var statusInterval = setInterval(statusSearchUppdate, 100);
     
-    htmlSettingsChange()
     var textOutput = libraryStartScreen(settings)
     
-    statusSearchUppdate()
-
     var element = document.getElementById("FullDownload")
     _generateDownload(textOutput, settings["outputName"][0], element)
+    
     document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
-
-    console.log((performance.now()-st)/1000)
+    button.classList.remove("pulse")
+    statusSearchUppdate()
     clearInterval(statusInterval)
 }
 
@@ -76,31 +65,28 @@ function _generateDownload(text, name, element) {
 }
 
 
-async function htmlChangeLibrary(fileName){
+async function indexChangeLibrary(fileName){
+
     var customLibrarie = document.getElementById("User Upload")
     if (fileName == "custom"){
         customLibrarie.classList.remove("inactive")
     }
     else{
         customLibrarie.classList.add("inactive")
-        libraryGetLibraryData(fileName, settings)
+        data = await libraryGetLibraryData(fileName, settings)
     }
     await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
-    statusUppdateAll()
+    indexLibraryChanges()
 }
 
 
 document.getElementById('customFile').addEventListener('change', async function () {
     let fr = new FileReader();
-    var symbolColumn = document.getElementById("GeneSymbolIndex").value
-    var RNAcolumn = document.getElementById("gRNAIndex").value
-    var RankColumn = document.getElementById("rankingIndex").value
-
-    libraryAddCustom(fr.result, RNAcolumn, symbolColumn, RankColumn)
+    //libraryAddCustom(fr.result, RNAcolumn, symbolColumn, RankColumn)
     await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
-    statusUppdateAll()
 
     fr.readAsText(this.files[0]);
+    statusUppdateSymbols()
 })
 
 function dowloadSettings(){
@@ -110,33 +96,45 @@ function dowloadSettings(){
     for (const setting in settings){
         text = text + ` ${setting} = ${settings[setting][0]}\n`
     }
-
-    
     _generateDownload(text, `${settings["outputName"][0]} Settings`, element)
 }
 
-function htmlSettingsChange(){
-    var trimBefore = document.getElementById("trimBefore").value
-    var trimAfter = document.getElementById("trimAfter").value
-    var adaptorBefore = document.getElementById("adaptorBefore").value.trim()
-    var adaptorAfter = document.getElementById("adaptorAfter").value.trim()
-
-    var searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(item =>{return item.replace("!not found in file", "").trim()})
-
-    var partialMatches = document.getElementById("partialMatches").checked
-    
-    var rankingTop = document.getElementById("numberToRank").value
-    var rankgingOrder = document.getElementById("rankingOrder").value
-    
-    var outputName = document.getElementById("outputFileName").value
-
-    settingsSetOptions(parseInt(trimBefore), parseInt(trimAfter), adaptorBefore, adaptorAfter, partialMatches, searchSymbols, rankingTop, rankgingOrder, outputName)
-    
-    _EditAuxiliaryExampleText()
-    statusUppdateAll()
+function indexLibraryChanges(){
+    const libraryName = document.getElementById("libraries").value
+    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()})
+    const partialMatches = document.getElementById("partialMatches").checked
+    settingsSetLibrary(searchSymbols, partialMatches, libraryName)
+    statusUppdateSymbols()
 }
 
-function _EditAuxiliaryExampleText(){
+function indexLibraryIndexChanges(){
+    const symbolIndex = document.getElementById("GeneSymbolIndex").value
+    const gRNAIndex = document.getElementById("gRNAIndex").value
+    const rankingIndex = document.getElementById("rankingIndex").value
+
+    settingsSetIndexes(gRNAIndex-1, symbolIndex-1, rankingIndex-1)
+    statusUppdateNonSymbolSettings()
+}
+
+function indexSettingsChanges(){
+    const trimBefore = document.getElementById("trimBefore").value
+    const trimAfter = document.getElementById("trimAfter").value
+    const adaptorBefore = document.getElementById("adaptorBefore").value.trim()
+    const adaptorAfter = document.getElementById("adaptorAfter").value.trim()
+
+    const rankingTop = document.getElementById("numberToRank").value
+    const rankgingOrder = document.getElementById("rankingOrder").value
+    
+    const outputName = document.getElementById("outputFileName").value
+
+    settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankgingOrder, outputName)
+    statusUppdateNonSymbolSettings()
+
+    _editExampleText()
+    statusUppdateSymbols()
+}
+
+function _editExampleText(){
     var example = examplesequence
     
     if (settings.adaptorAfter[0].lenth == 0){
@@ -156,25 +154,21 @@ function _EditAuxiliaryExampleText(){
     document.getElementById("ExampleSequance").innerHTML = example
 }
 
-function indexSetLibrarySettings(){
-    var symbolIndex = document.getElementById("GeneSymbolIndex").value
-    var gRNAIndex = document.getElementById("gRNAIndex").value
-    var rankingIndex = document.getElementById("rankingIndex").value
-
-    settingsSetIndexes(gRNAIndex-1, symbolIndex-1, rankingIndex-1)
-}
-
-function createSynonymDropworns(){
-    const synonymdict = librarySynonymStatus(settings)
+async function _createSynonymDropworns(){
+    const title = document.getElementById("symbolsNotFound")
+    const synonymdict = libraryStatusSynonyms(settings)
 
     const dropdownBody = document.getElementById("dropdownBody")
     dropdownBody.innerHTML = ""
+    
     if(Object.keys(synonymdict).length == 0){
         const row = document.createElement("tr")
         row.textContent = "All symbols found in library"
         dropdownBody.appendChild(row)
         return
     }
+    title.classList.add("pulse")
+    
     for (const key in synonymdict) {
         const row = document.createElement("tr")
 
@@ -192,7 +186,6 @@ function createSynonymDropworns(){
         const select = document.createElement("select")
         select.classList.add("synonymSelect")
         if (synonymdict[key].length == 1){
-            
             select.classList.add("oneSynonyme")
         }
         synonymdict[key].forEach(optionText => {
@@ -216,34 +209,36 @@ function createSynonymDropworns(){
         })
         buttonCell.appendChild(button)
         row.appendChild(buttonCell)
-        dropdownBody.insertBefore(row, dropdownBody.firstChild);
+        dropdownBody.insertBefore(row, dropdownBody.firstChild)
     }
+    title.classList.remove("pulse")
 }
 
 /* ------------------ STATUS ----------------- */
 
 function statusUppdateAll(){
-    settingsStatusUppdate()
-    statusDisplayAll()
+    statusUppdateSymbols()
+    statusUppdateNonSymbolSettings()
 }
 
-function statusDisplayAll(){
+function statusUppdateSymbols(){
+    _createSynonymDropworns()
+    setStatus("statusSequencesFound", settings.LibraryName[1])
 
-    createSynonymDropworns()
     setStatus("searchSymbols", settings.searchSymbols[0].join("\n"), false)
-    setStatus("statusSearchSymbolsRows", statusSearchSymbols())
+    setStatus("statusSearchSymbolsRows", settings["searchSymbols"][1])
+}
+
+function statusUppdateNonSymbolSettings(){
     setStatus("statusFileSymbolIndex", settings.symbolIndex[1])
     setStatus("statusFilegRNAIndex", settings.gRNAIndex[1])
     setStatus("statusRankingIndex", settings.rankingIndex[1])
-
-    setStatus("statusSequencesFound", settings.LibraryName[1])
 
     setColor("trimBefore", settings.trimBefore[1])
     setColor("trimAfter", settings.trimAfter[1])
     setColor("numberToRank", settings.rankingTop[1])
     setColor("outputFileName", settings.outputName[2])
 }
-
 
 function setColor(elemId, color){
     const element = document.getElementById(elemId)

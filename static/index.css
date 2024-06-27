@@ -241,9 +241,9 @@ td:not(:first-child) {
     z-index: 1;
   }
 
-  .swapButton:hover + .hover-content {
-    visibility: visible;
-  }
+.pulse{
+    animation: pulse 4s ease-in-out infinite;
+}
 
 #ExampleSequance{
     align-self: center;
@@ -269,6 +269,27 @@ td:not(:first-child) {
     animation: statusUpdateOut 0.2s;
 }
 
+
+
+#statusSearchSymbols{
+    height: auto;
+}
+
+#dropdownBody * {
+    padding: 2px;
+    /*border-top: 1px solid var(--outlineColor);*/
+
+}
+
+#rankingOrder{
+    width: 80%;
+}
+
+#startButton{
+    width: 100%;
+}
+
+
 @keyframes statusUpdateOut {
     0% {
         transform: translate(0px, 0px);
@@ -291,16 +312,15 @@ td:not(:first-child) {
     }
 }
 
-#statusSearchSymbols{
-    height: auto;
-}
 
-#dropdownBody * {
-    padding: 2px;
-    /*border-top: 1px solid var(--outlineColor);*/
-
-}
-
-#rankingOrder{
-    width: 80%;
+@keyframes pulse{
+    0% { 
+        color: black;
+    }
+    50% { 
+        color: var(--outlineColor);
+    }
+    100% { 
+        color: black;
+    }
 }

@@ -6,7 +6,7 @@ function logicScreening(library, settings) {
     const symbols = Object.keys(library["rows"])
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
-        library["status"] = `${i}/${symbols.length} symbols searched`
+        library.statusSearch = `${i}/${symbols.length} symbols searched`
         if (settings.partialMatches[0]){
             if (_partialMatch(symbol, settings)){
                 filteredRows[symbol] = library["rows"][symbol].slice().map((row) => row.slice()) //makes coppy not pointer

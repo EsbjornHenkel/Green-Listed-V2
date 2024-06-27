@@ -20,8 +20,8 @@
 
             <div class="smallPlate">
                 <h3 class="smallTitle">
-                    <select id="libraries" onchange="htmlChangeLibrary(this.value)" required>
-                        <option value="None" disabled selected style="display:none" >Select library</option>
+                    <select id="libraries" onchange="indexChangeLibrary(this.value)" required>
+                        <!--<option value="None" disabled selected style="display:none" >Select library</option>-->
 
                         <option value="custom">User Upload</option>
                     </select>
@@ -30,7 +30,7 @@
                     <form id="User Upload" class="inactive">
                         <p class="flexRow">
                             Select a .txt file to use as Library
-                            <input type="file" accept=".txt" id="customFile" onchange="indexSetLibrarySettings()">
+                            <input type="file" accept=".txt" id="customFile" onchange="indexLibraryChanges()">
                         </p>
                         
                         <table>
@@ -67,11 +67,11 @@
                 <h3 class="smallTitle">Symbols</h3>
                 <div class="plateContent">
                     <form class="justifyCenter">
-                            <input type="checkbox" id="partialMatches" onchange="htmlSettingsChange()">
+                            <input type="checkbox" id="partialMatches" onchange="indexLibraryChanges()">
                             <label class="justifyCenter">Allow for partial matches</label>
                     </form>
                     <div>
-                        <textarea id="searchSymbols" onchange="htmlSettingsChange()">
+                        <textarea id="searchSymbols" onchange="indexLibraryChanges()">
 
                         </textarea>
                     </div>
@@ -81,10 +81,9 @@
 
 
             <div class="smallPlate">
-                <h3 class="smallTitle">Symbols not found</h3>
+                <h3 class="smallTitle" id="symbolsNotFound">Symbols not found</h3>
                 <div class="plateContent scrollablePlate">
                     <table id="availableSynonyms">
-                        <span class="tooltiptext">Tooltip text</span>
                         <tbody id="dropdownBody">
     
                         </tbody>
@@ -114,7 +113,7 @@
                     </tr>
                     <tr>
                         <td>Limit to top</td>
-                        <td><input type="number" id="numberToRank" onchange="htmlSettingsChange()"></td>
+                        <td><input type="number" id="numberToRank" onchange="indexSettingsChanges()"></td>
                         <td></td>
                     </tr>
                 </table>
@@ -127,18 +126,18 @@
                     <table>
                         <tr>
                             <td>Trim </td>
-                            <td>3'<input type="number" id="trimBefore" min="0" value="0" onchange="htmlSettingsChange()"></td>
-                            <td>5'<input type="number" id="trimAfter" min="0" value="0" onchange="htmlSettingsChange()"></td>
+                            <td>3'<input type="number" id="trimBefore" min="0" value="0" onchange="indexSettingsChanges()"></td>
+                            <td>5'<input type="number" id="trimAfter" min="0" value="0" onchange="indexSettingsChanges()"></td>
                             
                         </tr>
                         <tr>
                             <td>Adaptor Sequences</td>
-                            <td>3'<input type="text" id="adaptorBefore" onchange="htmlSettingsChange()"></td>
-                            <td>5'<input type="text" id="adaptorAfter" onchange="htmlSettingsChange()"></td>
+                            <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
+                            <td>5'<input type="text" id="adaptorAfter" onchange="indexSettingsChanges()"></td>
                         </tr>
                     </table>
                     <p class="hdsTitle2" id="ExampleSequance">
-                        EXAMPLESEQUENCE
+                        
                     </p>
                 </div>
             </div>
@@ -153,10 +152,11 @@
                 <h3 class="smallTitle"> Output Settings </h3>
                 <div class="plateContent">
                     <input type="number" id="" placeholder="Columns used for compact output">
-                    <input type="text" id="outputFileName" placeholder="Output file name" onchange="htmlSettingsChange()">
-                    <button onclick="htmlStartScreening()">Start Search</button>
-                    <div id="statusSearch"></div>
-            
+                    <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
+                    <div class="smallPlate"> 
+                        <button id="startButton" onclick="indexStartScreening()">Start Search</button>
+                        <div id="statusSearch"></div>
+                    </div>
                 </div>
             </div>
 

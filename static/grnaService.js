@@ -20,25 +20,19 @@ async function serverUppdateFile(libraryName){
     }
 }
 
-async function serverUppdateFileOLD(libraryName, settings){
-    
-    const payload = {libraryName: libraryName};
-    fetch('/loadLibrary', {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
+
+async function getDefaultSettings(){
+    try {
+        
+        const response = await fetch('/defaultSettings')
         if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
+            throw new Error('/loadLibrary Network response was not ok');
         }
-        return response.text()
-    })
-    .then(data => {
-        return data
-        libraryUppdate(data, settings)
-    })
-    
+        const settings = await response.json();
+        return settings
+    } catch (error) {
+        console.error('/loadLibrary There has been a problem with your fetch operation:', error);
+    }
 }
 
 
