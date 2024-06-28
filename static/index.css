@@ -49,9 +49,16 @@ header{
     color: var(--mainColor);
     background: var(--plateBackroundColor);
 
-    font-size: large;
+    font-size: var(--header-scale);
+    height: 200px;
     /*border-bottom: 1px solid var(--mainColor);*/
 }
+
+header img{
+    width: 175px;
+    height: 175px;
+}
+
 main{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -176,9 +183,8 @@ td:not(:first-child) {
     padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-evenly;
     gap: 10px;
-
 }
 
 .scrollablePlate{
@@ -186,23 +192,15 @@ td:not(:first-child) {
     overflow-y: auto;
 }
 
-.flexRow{
+.plateContentRow{
+    padding: 5px;
     display: flex;
-    justify-content: space-around;
-    text-align: center;
+    justify-content: space-evenly;
     gap: 10px;
 }
 
 .flexRow > * {
     width: 100%;
-}
-
-
-.flexColumn{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    gap: 10px;
 }
 
 .inactive{
@@ -287,6 +285,13 @@ td:not(:first-child) {
 
 #startButton{
     width: 100%;
+}
+#searchSymbolsPlate > :nth-child(1) {
+    flex: 0 0 50%;
+}
+
+#searchSymbolsPlate > :nth-child(2) {
+    flex: 0 0 40%;
 }
 
 

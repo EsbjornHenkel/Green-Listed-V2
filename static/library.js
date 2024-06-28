@@ -13,11 +13,9 @@ function libraryStartScreen(settings){
     return textOutput
 }
 
-function libraryAddCustom(data, RNAcolumn, symbolColumn, RankColumn){
-    rows = data.trim().split("\n").map((row) => row.split("\t"))
+function libraryAddCustom(fileData){
+    rows = fileData.trim().split("\n").map((row) => row.split("\t"))
     rows.shift()
-    settingsSetLibrarySettings(RNAcolumn-1, symbolColumn-1, RankColumn-1, library.rows.length)
-    console.log(settings.symbolIndex)
     var rows = _getRowList(rows, settings)
 
     library["rows"] = rows

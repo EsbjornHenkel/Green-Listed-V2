@@ -21,9 +21,8 @@ async function htmlSetdefaultValues(){
     document.getElementById("outputFileName").value = data.outputName
 
     document.getElementById("partialMatches").checked = data.partialMatches
+    document.getElementById("enableSynonyms").checked = data.enableSynonyms
     
-    
-
     dropdown = document.getElementById("libraries")
 
     data.libraryNames.forEach(name => {
@@ -34,7 +33,7 @@ async function htmlSetdefaultValues(){
         dropdown.value = name
     })
     const rankingOrder = document.getElementById("rankingOrder").vaklue
-    settingsSetAll(data.searchSymbols, data.partialMatches, dropdown.value, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.synonyms)
+    settingsSetAll(data.searchSymbols, data.partialMatches, dropdown.value, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.synonyms, data.enableSynonyms)
     indexChangeLibrary(dropdown.value)
     _editExampleText()
     statusUppdateAll()
@@ -82,7 +81,7 @@ async function indexChangeLibrary(fileName){
 
 document.getElementById('customFile').addEventListener('change', async function () {
     let fr = new FileReader();
-    //libraryAddCustom(fr.result, RNAcolumn, symbolColumn, RankColumn)
+    libraryAddCustom(fr.result)
     await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
 
     fr.readAsText(this.files[0]);
@@ -101,9 +100,11 @@ function dowloadSettings(){
 
 function indexLibraryChanges(){
     const libraryName = document.getElementById("libraries").value
+    const enableSynonyms = document.getElementById("enableSynonyms").checked
     const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()})
     const partialMatches = document.getElementById("partialMatches").checked
-    settingsSetLibrary(searchSymbols, partialMatches, libraryName)
+
+    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms, libraryName)
     statusUppdateSymbols()
 }
 
@@ -156,61 +157,23 @@ function _editExampleText(){
 
 async function _createSynonymDropworns(){
     const title = document.getElementById("symbolsNotFound")
-    const synonymdict = libraryStatusSynonyms(settings)
 
-    const dropdownBody = document.getElementById("dropdownBody")
-    dropdownBody.innerHTML = ""
-    
-    if(Object.keys(synonymdict).length == 0){
-        const row = document.createElement("tr")
-        row.textContent = "All symbols found in library"
-        dropdownBody.appendChild(row)
-        return
+    const symbolsNotFound = document.getElementById("displaySynonyms")
+    symbolsNotFound.innerHTML = ""
+    if (Object.keys(settings.usedSynonyms).length == 0){
+        symbolsNotFound.textContent = "All symbols found in file"
     }
-    title.classList.add("pulse")
-    
-    for (const key in synonymdict) {
-        const row = document.createElement("tr")
-
-        // Create the key cell
-        const keyCell = document.createElement("td")
-        keyCell.textContent = key
-        row.appendChild(keyCell)
-
-        if (synonymdict[key].length == 0){ //symbol has no synonyms
-            dropdownBody.appendChild(row)
-            continue
+    Object.keys(settings.usedSynonyms).forEach(symbol => {
+        const symbolContainer = document.createElement("p")
+        if (settings.enableSynonyms[0] && (settings.usedSynonyms[symbol].length != 0)){
+            symbolContainer.innerHTML = `${symbol}<b style="font-size:1.25rem"> → </b>${settings.usedSynonyms[symbol]}`
+            symbolsNotFound.insertBefore(symbolContainer, symbolsNotFound.firstChild)
         }
-        // Create the dropdown cell
-        const dropdownCell = document.createElement("td")
-        const select = document.createElement("select")
-        select.classList.add("synonymSelect")
-        if (synonymdict[key].length == 1){
-            select.classList.add("oneSynonyme")
+        else{
+            symbolContainer.textContent = `${symbol}`
+            symbolsNotFound.appendChild(symbolContainer)
         }
-        synonymdict[key].forEach(optionText => {
-            const option = document.createElement("option")
-            option.value = optionText
-            option.textContent = optionText
-            select.appendChild(option)
-        })
-        dropdownCell.appendChild(select)
-        row.appendChild(dropdownCell)
-        
-        // Create the button cell
-        const buttonCell = document.createElement("td")
-        const button = document.createElement("button")
-        button.classList.add("swapButton")
-        button.textContent = "⇆"                         //text on button
-        button.title = "Press to use this synonym"
-        button.addEventListener("click", () => {
-            settingsSwapSymbol(key, select.value)
-            statusUppdateAll()
-        })
-        buttonCell.appendChild(button)
-        row.appendChild(buttonCell)
-        dropdownBody.insertBefore(row, dropdownBody.firstChild)
-    }
+    })
     title.classList.remove("pulse")
 }
 

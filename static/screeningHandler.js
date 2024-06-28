@@ -2,18 +2,19 @@
 
 
 function logicScreening(library, settings) {
+    
     var filteredRows = {}
-    const symbols = Object.keys(library["rows"])
+    const symbols = Object.keys(rows)
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
         if (settings.partialMatches[0]){
             if (_partialMatch(symbol, settings)){
-                filteredRows[symbol] = library["rows"][symbol].slice().map((row) => row.slice()) //makes coppy not pointer
+                filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
             }
         }
         else if (_match(symbol, settings)){
-            filteredRows[symbol] = library["rows"][symbol].slice().map((row) => row.slice()) //makes coppy not pointer
+            filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
         }
     }
 
@@ -36,7 +37,7 @@ function generateFullTxtOutput(rows, settings){
     return out.replace(/(?:\r\n|\r|\n)/g, '\n')
 }
 
-function _partialMatch(RNAsymbol){
+function _partialMatch(RNAsymbol, settings){
     for (let i = 0; i < settings.searchSymbols[0].length; i++) {
         if(RNAsymbol.includes(settings.searchSymbols[0][i])){
             return true

@@ -6,36 +6,26 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/defaultSettings")
-def defaultSettings():
+
+@app.route("/getSettings")
+def getsettings():
     with open("defaultSettings.json", "r") as f:
         settings = json.load(f)
-    with open("libraries.json", "r") as jsonFile:
-        libraries = json.load(jsonFile)
-        libraryNames = [library["name"] for library in libraries]
-    settings["libraryNames"] = libraryNames
     return settings
 
-
-
-@app.route("/loadLibrary", methods=['PATCH'])
-def loadLibrary():
-    data = request.get_json()
-    libraryName = data.get('libraryName', "")
+@app.route("/getLibraries")
+def getLibraries():
     with open("libraries.json", "r") as jsonFile:
-        
         libraries = json.load(jsonFile)
-        
-        for library in libraries:
-            print(libraryName)
-            if library.get("name") == libraryName:
-                with open(library["fileName"], "r") as dataFile:
-                    fileData = dataFile.read()
-                    library["fileData"] = fileData
-                    
-                    return library
+    return libraries
 
-    return ""
+@app.route("/getLibraryData", methods=['PATCH'])
+def getLibraryData():
+    data = request.get_json()
+    libraryFileName = data.get('libraryFileName', "")
+    with open(libraryFileName, "r") as dataFile:
+        fileData = dataFile.read()
+    return fileData
 
 
 if __name__ == '__main__':

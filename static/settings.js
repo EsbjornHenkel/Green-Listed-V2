@@ -3,20 +3,21 @@ settings = {
 
 }
 
-function settingsSetAll(searchSymbols, partialMatches, libraryName, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, gRNAIndex, symbolIndex, rankingIndex, synonyms){
+function settingsSetAll(searchSymbols, partialMatches, libraryName, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, gRNAIndex, symbolIndex, rankingIndex, synonyms, enableSynonyms){
     // each setting is saved as [value, status message, status color]
     settings["synonyms"] = [synonyms]
-    settingsSetLibrary(searchSymbols, partialMatches, libraryName)
+    
     settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName)
     settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
-
-    
+    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms, libraryName)
 }
 
-function settingsSetLibrary(searchSymbols, partialMatches, libraryName){
+function settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms, libraryName){
     settings["LibraryName"] = [libraryName ,libraryStatusNumberOfSymbols(settings)]
     settings["searchSymbols"] = [searchSymbols, statusSearchSymbols(searchSymbols)]
     settings["partialMatches"] = [partialMatches]
+    settings["enableSynonyms"] = [enableSynonyms]
+    settings["usedSynonyms"] = libraryStatusSynonyms(settings)
 }
 
 function settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName){

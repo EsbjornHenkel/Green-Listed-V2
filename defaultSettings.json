@@ -13,6 +13,8 @@
     "gRNAIndex": null,
     "symbolIndex": null,
     "rankingIndex": null,
+
+    "enableSynonyms": true,
     "synonyms": [
         ["", "a", "d", "KIAA1644", "Abca1"],
         ["b", "c", "ZNF32"]

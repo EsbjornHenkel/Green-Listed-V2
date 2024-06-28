@@ -66,14 +66,16 @@
                 <h3 class="smallTitle">Symbols</h3>
                 <div class="plateContent">
                     <form class="justifyCenter">
-                            <input type="checkbox" id="partialMatches" onchange="indexLibraryChanges()">
-                            <label class="justifyCenter">Allow for partial matches</label>
+                        <input type="checkbox" id="enableSynonyms" onchange="indexLibraryChanges()">
+                        <label class="justifyCenter">Use synonyms</label>
                     </form>
-                    <div>
-                        <textarea id="searchSymbols" onchange="indexLibraryChanges()">
+                    <form class="justifyCenter">
+                        <input type="checkbox" id="partialMatches" onchange="indexLibraryChanges()">
+                        <label class="justifyCenter">Allow for partial matches</label>
+                    </form>
+                    <textarea id="searchSymbols" onchange="indexLibraryChanges()">
 
-                        </textarea>
-                    </div>
+                    </textarea>
                     <p id="statusSearchSymbolsRows"></p>
                 </div>
             </div>
@@ -81,12 +83,8 @@
 
             <div class="smallPlate">
                 <h3 class="smallTitle" id="symbolsNotFound">Symbols not found</h3>
-                <div class="plateContent scrollablePlate">
-                    <table id="availableSynonyms">
-                        <tbody id="dropdownBody">
-    
-                        </tbody>
-                    </table>
+                <div class="plateContent scrollablePlate" id="displaySynonyms">
+  
                 </div>
 
             </div>
@@ -150,7 +148,6 @@
             <div class="smallPlate">
                 <h3 class="smallTitle"> Output Settings </h3>
                 <div class="plateContent">
-                    <input type="number" id="" placeholder="Columns used for compact output">
                     <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
                     <div class="smallPlate"> 
                         <button id="startButton" onclick="indexStartScreening()">Start Search</button>
