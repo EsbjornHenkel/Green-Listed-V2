@@ -9,13 +9,13 @@ def index():
 
 @app.route("/getSettings")
 def getsettings():
-    with open("defaultSettings.json", "r") as f:
+    with open("settingsDefault.json", "r") as f:
         settings = json.load(f)
     return settings
 
 @app.route("/getLibraries")
 def getLibraries():
-    with open("libraries.json", "r") as jsonFile:
+    with open("settingsLibraries.json", "r") as jsonFile:
         libraries = json.load(jsonFile)
     return libraries
 
