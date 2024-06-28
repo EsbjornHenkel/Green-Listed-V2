@@ -1,21 +1,16 @@
 
 
 :root {
-    /* Set sans-serif & mono fonts */
+    /* Set sans-serif fonts */
       --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
-      "Nimbus Sans L", Roboto, Noto, "Segoe UI", Arial, Helvetica,
+      Roboto, Noto, "Segoe UI", Arial, Helvetica,
       "Helvetica Neue", sans-serif;
-    
-    /* Body font size. By default, effectively 18.4px, based on 16px as 'root em' */
+
     --base-fontsize: 1.15rem;
-    
-    /* Major third scale progression - see https://type-scale.com/ */
     --header-scale: 1.25rem;
-    
-    /* Line height is set to the "Golden ratio" for optimal legibility */
     --line-height: 1.618;
     
-    /* Default (light) theme */
+    /* Default  theme */
 
     --outlineColor: lightGray;
     --smallBorderRadius: 5px;
@@ -219,9 +214,7 @@ td:not(:first-child) {
 }
 
 .oneSynonyme {
-    /* for Firefox */
     -moz-appearance: none;
-    /* for Chrome */
     -webkit-appearance: none;
 }
 
@@ -234,7 +227,6 @@ td:not(:first-child) {
     padding: 5px 0;
     border-radius: 6px;
    
-    /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
   }
