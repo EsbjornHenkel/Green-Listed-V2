@@ -21,7 +21,6 @@
             <div class="smallPlate">
                 <h3 class="smallTitle">
                     <select id="libraries" onchange="indexChangeLibrary(this.value)" required>
-                        <!--<option value="None" disabled selected style="display:none" >Select library</option>-->
 
                         <option value="custom">User Upload</option>
                     </select>
@@ -161,13 +160,49 @@
             </div>
 
             
-            <div class="smallPlate">
+           <div class="smallPlate">
                 <h3 class="smallTitle"> Final output</h3>
+        <!--         <table>
+                    <tr>
+                        <td>Output</td>
+                        <td>Compact</td>
+                        <td>Settings</td>
+                    </tr>
+                    <tr>
+                        <td><a href="" id="FullDownload">Download</a></td>
+                        <td><a href="" id="CompactDownload">Download</a></td>
+                        <td><a href="" id="SettingsDowload">Download</a></td>
+                    </tr>
+                    <tr>
+                        <td><button>Show</button></td>
+                        <td><button>Show</button></td>
+                        <td><button>Show</button></td>
+                    </tr>
+                </table>
+
+                <table>
+                    <tr>
+                        <td>Output</td>
+                        <td><a href="" id="FullDownload">Download</a></td>
+                        <td><button>Show</button></td>
+                    </tr>
+                    <tr>
+                        <td>Compact</td>
+                        <td><a href="" id="CompactDownload">Download</a></td>
+                        <td><button>Show</button></td>
+                    </tr>
+                    <tr>
+                        <td>Settings</td>
+                        <td><a href="" id="SettingsDowload" onclick="dowloadSettings()">Download</a></td>
+                        <td><button>Show</button></td>
+                    </tr>
+                </table> -->
+
                 <div class="plateContent" id="output">
                     <a href="" id="FullDownload">Download Output</a>
                     <a href="" id="CompactDownload">Download Compact </a>
                     <a href="" id="SettingsDowload" onclick="dowloadSettings()">Download Settings</a>
-                </div>
+                </div> 
 
             </div>
         </div>
@@ -175,6 +210,8 @@
 
     <footer class="plate">
         <h2 class="plateTitle">5. Show output </h2>
+        
+
         <div class="plateContent">
             <div id="fileContent"> 
 
