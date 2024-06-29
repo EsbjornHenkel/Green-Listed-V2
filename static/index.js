@@ -1,4 +1,9 @@
 var examplesequence = "EXAMPLESEQUENCE"
+var searchOutput = {
+    full: "",
+    compact: "",
+    notFound: ""
+}
 
 //window.onbeforeunload = function() {
 //    return ""
@@ -48,12 +53,17 @@ function indexStartScreening(){
     
     var foundRows = libraryStartScreen(settings)
     
-    const textOutput =_generateFullTxtOutput(foundRows, swapedSynonyms)
-    _generateDownload(textOutput, settings["outputName"][0]+" full", document.getElementById("fullDownload"))
+    const textOutputFull =_generateFullTxtOutput(foundRows, swapedSynonyms)
+    searchOutput.full = textOutputFull
+    _generateDownload(textOutputFull, settings["outputName"][0], document.getElementById("fullDownload"))
     
     
-    _generateDownload(_generateDownloadSymboldNotFound(), settings["outputName"][0]+" not found", document.getElementById("notFoundDownload"))
-    document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
+    const textOutputNotFound = _generateDownloadSymboldNotFound()
+    searchOutput.notFound = textOutputNotFound
+
+    _generateDownload(textOutputNotFound, settings["outputName"][0], document.getElementById("notFoundDownload"))
+
+    document.getElementById("fileContent").innerHTML = searchOutput.full.replace(/(?:\r\n|\r|\n)/g, '<br>')
     button.classList.remove("pulse")
     statusSearchUppdate()
     clearInterval(statusInterval)
@@ -111,6 +121,25 @@ function _generateDownload(text, name, element) {
     //a.click()
 }
 
+function showFullOutput(){
+    if (searchOutput.full == ""){
+        document.getElementById("fileContent").innerHTML = "No output"
+        return
+    }
+    document.getElementById("fileContent").innerHTML = searchOutput.full.replace(/\n/g, "<br>")
+}
+
+function showNotFound(){
+    if (searchOutput.notFound == ""){
+        document.getElementById("fileContent").innerHTML = "No output"
+        return
+    }
+    document.getElementById("fileContent").innerHTML = searchOutput.notFound.replace(/\n/g, "<br>")
+}
+
+function showSettings(){
+    document.getElementById("fileContent").innerHTML = settingsToStr().replace(/\n/g, "<br>")
+}
 
 async function indexChangeLibrary(fileName){
 
@@ -137,13 +166,8 @@ document.getElementById('customFile').addEventListener('change', async function 
 })
 
 function dowloadSettings(){
-    var element = document.getElementById("SettingsDowload")
-
-    var text = ""
-    for (const setting in settings){
-        text = text + ` ${setting} = ${settings[setting][0]}\n`
-    }
-    _generateDownload(text, `${settings["outputName"][0]} Settings`, element)
+    element = document.getElementById("settingsDowload")
+    _generateDownload(settingsToStr(), settings.outputName[0]+" Settings", element)
 }
 
 function indexLibraryChanges(){

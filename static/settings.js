@@ -37,6 +37,17 @@ function settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex){
     settings["rankingIndex"] = [rankingIndex, libraryStatusRankIndex(rankingIndex), ""]
 }
 
+function settingsToStr(){
+    var text =  ""
+    for (const setting in settings){
+        if (["synonyms", "usedSynonyms"].includes(setting)){
+            continue
+        }
+        text = text + ` ${setting} = ${settings[setting][0]}\n`
+    }
+    return `${text}`
+}
+
 function settingsSwapSymbol(oldSymbol, newSymbol){
     const index = settings["searchSymbols"][0].indexOf(oldSymbol)
     settings["searchSymbols"][0][index] = newSymbol

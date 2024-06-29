@@ -7,7 +7,7 @@
     "partialMatches": false,     
     "rankingTop": 2,
 
-    "outputName": "test",
+    "outputName": "",
 
     "searchSymbols": ["TRIM14", "KIAA1644", "ZNF32"],       
     "gRNAIndex": null,
