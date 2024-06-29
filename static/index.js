@@ -43,17 +43,65 @@ async function htmlSetdefaultValues(){
 function indexStartScreening(){
     button = document.getElementById("startButton")
     button.classList.add("pulse")
+    const swapedSynonyms = Object.fromEntries(Object.entries(settings.usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
     var statusInterval = setInterval(statusSearchUppdate, 100);
     
-    var textOutput = libraryStartScreen(settings)
+    var foundRows = libraryStartScreen(settings)
     
-    var element = document.getElementById("FullDownload")
-    _generateDownload(textOutput, settings["outputName"][0], element)
+    const textOutput =_generateFullTxtOutput(foundRows, swapedSynonyms)
+    _generateDownload(textOutput, settings["outputName"][0]+" full", document.getElementById("fullDownload"))
     
+    
+    _generateDownload(_generateDownloadSymboldNotFound(), settings["outputName"][0]+" not found", document.getElementById("notFoundDownload"))
     document.getElementById("fileContent").innerHTML = textOutput.replace(/(?:\r\n|\r|\n)/g, '<br>')
     button.classList.remove("pulse")
     statusSearchUppdate()
     clearInterval(statusInterval)
+}
+
+
+function _generateFullTxtOutput(rows, swapedSynonyms){
+    out = "SymbolSearched SymbolUsed  gRNA    Compliment  Score \n"
+    for (var [symbol, arr] of Object.entries(rows)) {
+        var SymbolSearched = ""
+        if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
+            SymbolSearched = `${swapedSynonyms[symbol]}→`
+            symbol = `${symbol} `
+        }
+        arr.forEach(element => {
+            out = out + `${SymbolSearched}  ${symbol}   ${element[settings.gRNAIndex[0]]}    ${_complimentSequence(element[settings.gRNAIndex[0]])}    ${element[settings.rankingIndex[0]]}\n`
+        })
+      }
+    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+}
+
+function _generateDownloadSymboldNotFound(){
+    out = "Symbol\n"
+    for (var symbol of Object.keys(settings.usedSynonyms)) {
+        if (settings.enableSynonyms[0] && settings.usedSynonyms[symbol] != ""){
+            continue
+        }
+        out = out + `${symbol}\n`
+      }
+    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+}
+
+function _complimentSequence(gRNASequence){
+    var complimentMap ={
+        "A": "T",
+        "a": "t",
+        "T": "A",
+        "t": "a",
+        "C": "G",
+        "c": "g",
+        "G": "C",
+        "g": "c",
+    }
+    // Replace each character using the mapping table
+    var complimentStr = gRNASequence.split('').map(char => {
+        return complimentMap[char] !== undefined ? complimentMap[char] : char;
+      }).join('')
+      return complimentStr
 }
 
 function _generateDownload(text, name, element) {
@@ -210,7 +258,6 @@ function setColor(elemId, color){
 }
 
 function statusSearchUppdate(){
-    console.log("uppdate search status")
     setStatus("statusSearch", getSearchstatus())
 }
 

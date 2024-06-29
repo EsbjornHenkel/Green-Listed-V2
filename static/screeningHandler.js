@@ -2,18 +2,18 @@
 
 
 function logicScreening(library, settings) {
-    
+    const swapedSynonyms = Object.fromEntries(Object.entries(settings.usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
+
     var filteredRows = {}
+    var rows = library.rows
+
+
     const symbols = Object.keys(rows)
+
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
-        if (settings.partialMatches[0]){
-            if (_partialMatch(symbol, settings)){
-                filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
-            }
-        }
-        else if (_match(symbol, settings)){
+        if (_match(symbol, settings, swapedSynonyms)){
             filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
         }
     }
@@ -23,31 +23,32 @@ function logicScreening(library, settings) {
     }
 
     filteredRows = postProcessing(filteredRows, settings)
-    var out = generateFullTxtOutput(filteredRows, settings)
-    return out
+    //var out = _generateFullTxtOutput(filteredRows, settings, swapedSynonyms)
+    return filteredRows
 }
 
-function generateFullTxtOutput(rows, settings){
-    out = "Symbol   gRNA    Compliment  Score \n"
-    for (const [symbol, arr] of Object.entries(rows)) {
-        arr.forEach(element => {
-            out = out + `${symbol}    ${element[settings.gRNAIndex[0]]}    ${complimentSequence(element[settings.gRNAIndex[0]])}    ${element[settings.rankingIndex[0]]}\n`
-        })
-      }
-    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+function _match(symbol, settings, swapedSynonyms){
+    if (settings.enableSynonyms[0] && swapedSynonyms.hasOwnProperty(symbol)){
+        symbol = swapedSynonyms[symbol]
+        console.log(symbol)
+    }
+    if (settings.partialMatches[0]){
+        return _matchPartial(symbol, settings)
+    }
+    return _matchNonpartial(symbol, settings)
 }
 
-function _partialMatch(RNAsymbol, settings){
+function _matchPartial(symbol, settings){
     for (let i = 0; i < settings.searchSymbols[0].length; i++) {
-        if(RNAsymbol.includes(settings.searchSymbols[0][i])){
+        if(symbol.includes(settings.searchSymbols[0][i])){
             return true
         }
     }
     return false
 }
 
-function _match(RNAsymbol, settings){
-    return settings.searchSymbols[0].includes(RNAsymbol.trim())
+function _matchNonpartial(symbol, settings){
+    return settings.searchSymbols[0].includes(symbol.trim())
 }
 
 function getTopRankingElements(rows, n, rankingOrder) {
@@ -92,22 +93,4 @@ function _applyAxiliarySettings(gRNASequence){
     }
     gRNASequence = settings.adaptorBefore[0] + gRNASequence + settings.adaptorAfter[0]
     return gRNASequence
-}
-
-function complimentSequence(gRNASequence){
-    var complimentMap ={
-        "A": "T",
-        "a": "t",
-        "T": "A",
-        "t": "a",
-        "C": "G",
-        "c": "g",
-        "G": "C",
-        "g": "c",
-    }
-    // Replace each character using the mapping table
-    var complimentStr = gRNASequence.split('').map(char => {
-        return complimentMap[char] !== undefined ? complimentMap[char] : char;
-      }).join('')
-      return complimentStr
 }

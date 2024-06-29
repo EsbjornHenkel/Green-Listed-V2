@@ -9,7 +9,7 @@ function libraryStartScreen(settings){
     var st = performance.now()
     var textOutput = logicScreening(library, settings)
     library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s`
-    console.log(performance.now()-st)
+    console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
     return textOutput
 }
 
@@ -109,32 +109,22 @@ function getSearchstatus(){
 }
 
 function libraryStatusSynonyms(settings){
-    var status = {}
-    settings.searchSymbols[0].forEach(symbol =>{
-        symbol = symbol.trim()
-        if (!(library.rows.hasOwnProperty(symbol))){
-            var synonyms = _getSynonymsInLibrary(symbol, settings)
-            status[symbol] = synonyms
-            //if (synonyms.length != 0){
-             //   status[symbol] = synonyms
-            //}
+    var synonymMaping = {}
+    const symbolsNotFound = settings.searchSymbols[0].filter(symbol => !library.rows.hasOwnProperty(symbol))
+
+    symbolsNotFound.forEach(symbol => {
+        var row = settings.synonyms[0].find(row => row.includes(symbol))
+        if (!row){
+            synonym = ""
         }
+        else{
+            synonym = row.find(synonym => library.rows.hasOwnProperty(synonym))
+            if (!synonym){
+                synonym = ""
+            }
+        }
+        synonymMaping[symbol] = synonym
     })
-    return status
-}
 
-function _getSynonyms(element, settings){
-    for (let i = 0; i < settings["synonyms"][0].length; i++) {
-        if (settings["synonyms"][0][i].includes(element)){
-            return settings["synonyms"][0][i].filter(symbol => symbol !== element)
-        }
-            
-    }
-    return []
-}
-
-function _getSynonymsInLibrary(element, setting){
-    var synonymList = _getSynonyms(element, setting)
-    synonymList = synonymList.filter(synonym => library.rows.hasOwnProperty(synonym))
-    return synonymList
+    return synonymMaping
 }
