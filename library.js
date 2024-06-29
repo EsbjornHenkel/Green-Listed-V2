@@ -29,8 +29,8 @@ function libraryUppdate(data){
     library["rows"] = rows
 }
 
-async function libraryGetLibraryData(fileName, settings){
-    serverUppdateFile(fileName, settings).then((data)=>{
+async function libraryGetLibraryData(libname, settings){
+    searchLibrary(libname, settings).then((data)=>{
         libraryUppdate(data)
     })
 }
