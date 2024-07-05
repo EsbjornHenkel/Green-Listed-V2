@@ -12,16 +12,21 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 // does pre-processing
 async function selectLibrary(libraryName){
     try {
+        //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
+        
         // Read library data - can be 80000 rows...
         const libraries = await fetchJsonFile(LIBRARIES_URL)
         const libSettings = libraries.find(library => library.name == libraryName)
-        const libData = await fetchTextFile(library.fileName)
+        const libData = await fetchTextFile(libSettings.fileName)
 
         // read synonyms
-        const synonyms = await fetchJsonFile(library.synonymFileName)
+        const synonyms = await fetchJsonFile(libSettings.synonymFileName)
 
         // pre-process to create search structure
         libraryUpdate(libSettings, libData, synonyms)
+
+        //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
+
         return libSettings
         
     } catch (error) {
