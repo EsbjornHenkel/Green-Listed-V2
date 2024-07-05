@@ -1,40 +1,53 @@
 
 settings = {
+    "trimBefore": null, 
+    "trimAfter": null, 
+    "adaptorBefore": null,
+    "adaptorAfter": null,
 
+    "partialMatches": null,     
+    "rankingTop": null,
+
+    "outputName": null,
+
+    "searchSymbols": null,       
+
+    "enableSynonyms": true,
+    "synonyms": null
 }
 
-function settingsSetAll(searchSymbols, partialMatches, libraryName, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, gRNAIndex, symbolIndex, rankingIndex, synonyms, enableSynonyms){
-    // each setting is saved as [value, status message, status color]
-    settings["synonyms"] = [synonyms]
-    
+function settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms){
     settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName)
-    settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
-    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms, libraryName)
+    settingsSetIndexes(RNAIndex, symbolIndex, rankingIndex)
+    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
 }
 
-function settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms, libraryName){
-    settings["LibraryName"] = [libraryName ,libraryStatusNumberOfSymbols(settings)]
-    settings["searchSymbols"] = [searchSymbols, statusSearchSymbols(searchSymbols)]
-    settings["partialMatches"] = [partialMatches]
-    settings["enableSynonyms"] = [enableSynonyms]
-    settings["usedSynonyms"] = libraryStatusSynonyms(settings)
+function settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms){
+    settings["searchSymbols"] = searchSymbols
+    settings["partialMatches"] = partialMatches
+    settings["enableSynonyms"] = enableSynonyms
 }
 
 function settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName){
-    settings["trimBefore"] = [trimBefore, _checkTrim(trimBefore)]
-    settings["trimAfter"] = [trimAfter, _checkTrim(trimBefore)]
-    settings["adaptorBefore"] = [adaptorBefore]
-    settings["adaptorAfter"] = [adaptorAfter]
+    settings["trimBefore"] = trimBefore
+    settings["trimAfter"] = trimAfter
+    settings["adaptorBefore"] = adaptorBefore
+    settings["adaptorAfter"] = adaptorAfter
 
-    settings["rankingTop"] = [rankingTop, rankTopStatus(rankingTop)]
-    settings["rankingOrder"] = [rankingOrder]
-    settings["outputName"] = [outputName, "" , outputNameStatusColor(outputName)]
+    settings["rankingTop"] = rankingTop
+    settings["rankingOrder"] = rankingOrder
+    settings["outputName"] = outputName
 }
 
-function settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex){
-    settings["gRNAIndex"] = [gRNAIndex, libraryStatusRNAIndex(gRNAIndex), ""]
-    settings["symbolIndex"] = [symbolIndex, libraryStatusSymbolIndex(symbolIndex), ""]
-    settings["rankingIndex"] = [rankingIndex, libraryStatusRankIndex(rankingIndex), ""]
+function settingsSetIndexes(RNAColumn, symbolColumn, rankingColumn){
+    settings["RNAColumn"] = RNAColumn
+    settings["symbolColumn"] = symbolColumn
+    settings["rankingColumn"] = rankingColumn
+}
+
+function settingsSwapSymbol(oldSymbol, newSymbol){
+    const index = settings["searchSymbols"].indexOf(oldSymbol)
+    settings["searchSymbols"][index] = newSymbol
 }
 
 function settingsToStr(){
@@ -43,37 +56,15 @@ function settingsToStr(){
         if (["synonyms", "usedSynonyms"].includes(setting)){
             continue
         }
-        text = text + ` ${setting} = ${settings[setting][0]}\n`
+        text = text + ` ${setting} = ${settings[setting]}\n`
     }
     return `${text}`
 }
 
-function settingsSwapSymbol(oldSymbol, newSymbol){
-    const index = settings["searchSymbols"][0].indexOf(oldSymbol)
-    settings["searchSymbols"][0][index] = newSymbol
+
+// ------------------- STATUS ---------------
+
+function settingsStatusSymbolsFound(){
+    settings
 }
 
-function _checkTrim(trim){
-    if (trim < 0){
-        return "var(--redColor)"
-    }
-    return "var(--plateBackroundColor)"
-}
-
-function rankTopStatus(rankingTop){
-    if (rankingTop[0] < 0){
-        return "var(--redColor)"
-    }
-    return "var(--plateBackroundColor)"
-}
-
-function statusSearchSymbols(searchSymbols){
-    return `Rows found: ${searchSymbols.length}`
-}
-
-function outputNameStatusColor(outputName){
-    if (outputName == ""){
-        return "var(--redColor)"
-    }
-    return "var(--plateBackroundColor)"
-}

@@ -4,13 +4,17 @@
         "fileName": "STable 22 Brie.txt",
         "symbolColumn": 2,
         "RNAColumn": 7,
-        "RankColumn": 11
+        "RankColumn": 11,
+
+        "synonymFileName": "defaultSynonyms.json"
     },
     {
         "name": "Brunello 21",
         "fileName": "STable 21 Brunello.txt",
         "symbolColumn": 3,
         "RNAColumn": 8,
-        "RankColumn": 12
+        "RankColumn": 12,
+        
+        "synonymFileName": "defaultSynonyms.json"
     }
 ]

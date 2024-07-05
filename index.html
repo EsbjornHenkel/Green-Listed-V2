@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" media="all" href="index.css">
 </head>
-<body onload="htmlSetdefaultValues()">
+<body onload="init()">
     <header class="hdsTitle">
         <img src="logo.png" width="150px" height="150px">
         <div>
@@ -35,23 +35,23 @@
                         <table>
                             <tr id="GeneSymbolIndexRow">
                                 <td>Gene ID Column</td>
-                                <td><input type="number" id="GeneSymbolIndex" onchange="indexSetLibrarySettings()"></td>
+                                <td><input type="number" id="GeneSymbolIndex" onchange="indexLibraryColumnChanges()"></td>
                                 <td id="statusFileSymbolIndex"></td>
                             </tr>
                             <tr id="gRNAIndexRow">
                                 <td>gRNA Column</td>
-                                <td><input type="number" id="gRNAIndex" onchange="indexSetLibrarySettings()"></td>
+                                <td><input type="number" id="gRNAIndex" onchange="indexLibraryColumnChanges()"></td>
                                 <td id="statusFilegRNAIndex"></td>
                             </tr>
                             <tr id="rankingIndexRow">
                                 <td>Rank Column (optional)</td>
-                                <td><input type="number" id="rankingIndex" onchange="indexSetLibrarySettings()"></td>
+                                <td><input type="number" id="rankingIndex" onchange="indexLibraryColumnChanges()"></td>
                                 <td id="statusRankingIndex"></td>
                             </tr>
                         </table>
                         
                     </form>
-                    <div id="statusSequencesFound"></div>
+                    <div id="symbolsFound"></div>
                 </div>
 
             </div>
@@ -101,7 +101,7 @@
                     <tr>
                         <td>Ranking order</td>
                         <td>
-                            <select id="rankingOrder">
+                            <select id="rankingOrder" onchange="indexSettingsChanges()">
                                 <option value="descending">Descending</option>
                                 <option value="ascending">Ascending</option>
                             </select>
@@ -227,6 +227,8 @@
     <script type="text/javascript" src="grnaService.js"></script>
     <script type="text/javascript" src="screeningHandler.js"></script>
     <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="fileHandler.js"></script>
+    
 
 </body>
 </html>

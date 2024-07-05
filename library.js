@@ -1,67 +1,76 @@
 
+
+//
+// Handles a library
+//
+
+
+// State holding the currently selected library
 var library = {
-    "rows": {},
+    "libraryMap": {},
+    "headers": "",
+    "synonyms": null,
     "statusSearch": "",
+}
+
+function libraryStartScreenTEST(settings){
+    library.statusSearch = "Starting search"
+    var ost = performance.now()
+    for (let i = 0; i < 10; i++) {
+        var st = performance.now()
+        logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
+        console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
+    }
+    console.log(`final: ${Math.round((performance.now()-ost)/1000 * 1000) / 1000/10}`)
+    return searchOutput
 }
 
 function libraryStartScreen(settings){
     library.statusSearch = "Starting search"
     var st = performance.now()
-    var textOutput = logicScreening(library, settings)
+    var searchOutput = logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
     library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s`
     console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
-    return textOutput
+    return searchOutput
 }
 
-function libraryAddCustom(fileData){
-    rows = fileData.trim().split("\n").map((row) => row.split("\t"))
-    rows.shift()
-    var rows = _getRowList(rows, settings)
-
-    library["rows"] = rows
-}
-
-function libraryUppdate(data){
-    rows = data["fileData"].trim().split("\n").map((row) => row.split("\t"))
-    rows.shift()
-    settingsSetIndexes(data["RNAColumn"]-1, data["symbolColumn"]-1, data["RankColumn"]-1)
-    var rows = _getRowList(rows, settings)
-    library["rows"] = rows
-}
-
-async function libraryGetLibraryData(libname, settings){
-    searchLibrary(libname, settings).then((data)=>{
-        libraryUppdate(data)
-    })
+function libraryCustomData(fileData, symbolColumn){
+    //library.synonyms = synonyms
+    libraryMap = fileData.trim().split("\n").map((row) => row.split("\t"))
+    library.headers = libraryMap.shift()
+    var libraryMap = _getRowList(libraryMap, symbolColumn)
+    library["libraryMap"] = libraryMap
 }
 
 
-function _getRowList(rows, settings){
-    const groupedData = {};
-    
-    // Loop through each row in the 2D list
+function libraryUpdate(librarySettings, fileData, synonyms){
+    library.synonyms = synonyms
+    libraryMap = fileData.trim().split("\n").map((row) => row.split("\t"))
+    library.headers = libraryMap.shift()
+    var libraryMap = _getRowList(libraryMap, librarySettings.symbolColumn)
+    library["libraryMap"] = libraryMap
+}
+
+function _getRowList(rows, symbolColumn){
+    const libraryMap = {};
     rows.forEach(row => {
-            symbol = row[settings.symbolIndex[0]]
-        // Check if the name already exists as a key in groupedData
-        if (groupedData[symbol]) {
-            // If it exists, push the current row into the array
-            groupedData[symbol].push(row)
+            symbol = row[symbolColumn-1]
+        if (libraryMap[symbol]) {
+            libraryMap[symbol].push(row)
         } else {
-            // If it does not exist, create a new array with the current row
-            groupedData[symbol] = [row]
+            libraryMap[symbol] = [row]
         }
     })
-    return groupedData
-    //return data.trim().split("\n").map((row) => row.split("\t"))
+    return libraryMap
 }
 
 function libraryStatusRNAIndex(gRNAIndex){
-    if ((gRNAIndex == null) || gRNAIndex == "" || Object.values(library.rows).length == 0){
+    if ((gRNAIndex == null) || gRNAIndex == "" || Object.values(library.libraryMap).length == 0){
         return "X"
     }
     const regex = /^[ACGTU ]+$/
-    for (let i = 0; i < library.rows.length; i++) {
-        if (!regex.test(library.rows[i][gRNAIndex])){
+    for (let i = 0; i < library.libraryMap.length; i++) {
+        if (!regex.test(library.libraryMap[i][gRNAIndex])){
             return "Found non ACGTU character"
         }
     }
@@ -69,22 +78,22 @@ function libraryStatusRNAIndex(gRNAIndex){
 }
 
 function libraryStatusSymbolIndex(symbolIndex){
-    if ((symbolIndex == null) || symbolIndex == "" || Object.values(library.rows).length == 0){
+    if ((symbolIndex == null) || symbolIndex == "" || Object.values(library.libraryMap).length == 0){
         return "X"
     }
-    if (Object.values(library.rows)[0][symbolIndex])
+    if (Object.values(library.libraryMap)[0][symbolIndex])
         return "🗸"
     return "X"
 }
 
 function libraryStatusRankIndex(rankingIndex){
-    if (Object.values(library.rows).length == 0){
+    if (Object.values(library.libraryMap).length == 0){
         return "X"
     }
     if ((rankingIndex == null) || rankingIndex == "" ){
         return "🗸"
     }
-    var cell = Object.values(library.rows)[0][rankingIndex]
+    var cell = Object.values(library.libraryMap)[0][rankingIndex]
 
     if (isNaN(cell))
         return "Found non number in column"
@@ -94,11 +103,8 @@ function libraryStatusRankIndex(rankingIndex){
     return "X"
 }
 
-function libraryStatusNumberOfSymbols(settings){
-    if (settings["libraryName"] == ""){
-        return "Error no library selected"
-    }
-    var len = Object.keys(library.rows).length
+function libraryUniqueSymbols(){
+    var len = Object.keys(library.libraryMap).length
     if (len == 0)
         return "Error no symbols found"
     return `Unique symbols found: ${len}`
@@ -108,17 +114,17 @@ function getSearchstatus(){
     return library["statusSearch"]
 }
 
-function libraryStatusSynonyms(settings){
+function libraryStatusSynonyms(searchSymbols){
     var synonymMaping = {}
-    const symbolsNotFound = settings.searchSymbols[0].filter(symbol => !library.rows.hasOwnProperty(symbol))
+    const symbolsNotFound = searchSymbols.filter(symbol => !library.libraryMap.hasOwnProperty(symbol))
 
     symbolsNotFound.forEach(symbol => {
-        var row = settings.synonyms[0].find(row => row.includes(symbol))
+        var row = library.synonyms.find(row => row.includes(symbol))
         if (!row){
             synonym = ""
         }
         else{
-            synonym = row.find(synonym => library.rows.hasOwnProperty(synonym))
+            synonym = row.find(synonym => library.libraryMap.hasOwnProperty(synonym))
             if (!synonym){
                 synonym = ""
             }
@@ -127,4 +133,8 @@ function libraryStatusSynonyms(settings){
     })
 
     return synonymMaping
+}
+
+function libraryStatusScreening(){
+    return library.statusSearch
 }

@@ -1,96 +1,158 @@
 
+//
+// Library screening
+//
 
-
-function logicScreening(library, settings) {
-    const swapedSynonyms = Object.fromEntries(Object.entries(settings.usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
-
-    var filteredRows = {}
-    var rows = library.rows
-
-
-    const symbols = Object.keys(rows)
+async function logicScreening(library, settings, usedSynonyms) {
+    const swappedSynonyms = Object.fromEntries(Object.entries(usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
+    var symbols = Object.keys(library.libraryMap)
+    var filteredLibraryMap = {}
 
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
-        if (_match(symbol, settings, swapedSynonyms)){
-            filteredRows[symbol] = rows[symbol].slice().map((row) => row.slice()) //makes coppy not pointer
+        if (_match(symbol, settings, swappedSynonyms)){
+            filteredLibraryMap[symbol] = library.libraryMap[symbol] //makes coppy not pointer
         }
     }
 
-    if (settings.rankingTop[0] > 0){
-        filteredRows = getTopRankingElements(filteredRows, settings.rankingTop[0], settings.rankingOrder[0])
+    if ((settings.rankingColumn !=  0) || (settings.rankingColumn == null)){
+        filteredLibraryMap = sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
+    }
+    if (settings.rankingTop > 0){
+        filteredLibraryMap = getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
 
-    filteredRows = postProcessing(filteredRows, settings)
-    //var out = _generateFullTxtOutput(filteredRows, settings, swapedSynonyms)
-    return filteredRows
+    filteredLibraryMap = postProcessing(filteredLibraryMap, settings)
+
+    const textOutputFull = _generateFullTxtOutput(settings, filteredLibraryMap, swappedSynonyms)
+    const textOutputNotFound = _generateDownloadSymboldNotFound(settings, usedSynonyms)
+    var searchOutput = {
+        "textOutputFull": textOutputFull,
+        "textOutputNotFound": textOutputNotFound
+    }
+    return searchOutput
 }
+
+function removeMatchingKeys(libraryMap, settings, swappedSynonyms) {
+    return Object.keys(libraryMap).reduce((acc, key) => {
+      if (_match(key, settings, swappedSynonyms)) {
+        acc[key] = libraryMap[key];
+      }
+      return acc;
+    }, {});
+  }
+
 
 function _match(symbol, settings, swapedSynonyms){
-    if (settings.enableSynonyms[0] && swapedSynonyms.hasOwnProperty(symbol)){
+    if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
         symbol = swapedSynonyms[symbol]
-        console.log(symbol)
     }
-    if (settings.partialMatches[0]){
-        return _matchPartial(symbol, settings)
+    if (settings.partialMatches){
+        return _matchPartial(symbol, settings.searchSymbols)
     }
-    return _matchNonpartial(symbol, settings)
+    return _matchNonpartial(symbol, settings.searchSymbols)
 }
 
-function _matchPartial(symbol, settings){
-    for (let i = 0; i < settings.searchSymbols[0].length; i++) {
-        if(symbol.includes(settings.searchSymbols[0][i])){
-            return true
-        }
-    }
-    return false
+function _matchPartial(symbol, searchSymbols){
+    return searchSymbols.some(searchSymbol => symbol.includes(searchSymbol))
 }
 
-function _matchNonpartial(symbol, settings){
-    return settings.searchSymbols[0].includes(symbol.trim())
+function _matchNonpartial(symbol, searchSymbols){
+    return searchSymbols.includes(symbol.trim())
 }
 
-function getTopRankingElements(rows, n, rankingOrder) {
-    const topScorers = {};
-
+function sortOnScore(libraryMap, rankingOrder, rankingColumn){
+    var sorted = {}
     // Loop through each key in the groupedData
-    for (const symbol in rows) {
+    for (const symbol in libraryMap) {
         // Sort the array based on scores in descending order
         var sortedScores = {}
         if (rankingOrder == "ascending"){
-            sortedScores = rows[symbol].sort((a, b) => a[settings.rankingIndex[0]] - b[settings.rankingIndex[0]])
+            sortedScores = libraryMap[symbol].sort((a, b) => a[rankingColumn-1] - b[rankingColumn-1])
         }
         else{
-            sortedScores = rows[symbol].sort((a, b) => b[settings.rankingIndex[0]] - a[settings.rankingIndex[0]])
+            sortedScores = libraryMap[symbol].sort((a, b) => b[rankingColumn-1] - a[rankingColumn-1])
         }
         // Get the top n scores
-        topScorers[symbol] = sortedScores.slice(0, n);
+        sorted[symbol] = sortedScores
     }
-    return topScorers;
-  }
+    return sorted
+}
 
-function postProcessing(rows, settings){
-    for (const symbol in rows) {
-        rows[symbol].forEach(RNAstr =>{
-            RNAstr[settings.gRNAIndex[0]] = _applyAxiliarySettings(RNAstr[settings.gRNAIndex[0]]) 
+function getTopRankingElements(libraryMap, n) {
+    for (let key in libraryMap) {
+        libraryMap[key] = libraryMap[key].slice(0, n);
+      }
+    return libraryMap
+}
+
+function postProcessing(libraryMap, settings){
+    for (const symbol in libraryMap) {
+        libraryMap[symbol].forEach(RNAstr =>{
+            RNAstr[settings.gRNAColumn-1] = _applyAxiliarySettings(RNAstr[settings.RNAColumn-1]) 
         })
     }
-    return rows
+    return libraryMap
 }
 
 
 function _applyAxiliarySettings(gRNASequence){
-    if (settings.adaptorAfter[0].lenth == 0){
+    if (settings.adaptorAfter.lenth == 0){
         adaptorAfter = ""
     }
-    if (settings.adaptorBefore[0].lenth == 0){
+    if (settings.adaptorBefore.lenth == 0){
         adaptorBefore = ""
     }
-    gRNASequence = gRNASequence.slice(settings.trimBefore[0])
-    if (settings.trimAfter[0] != 0){
-        gRNASequence = gRNASequence.slice(0, -settings.trimAfter[0])
+    gRNASequence = gRNASequence.slice(settings.trimBefore)
+    if (settings.trimAfter != 0){
+        gRNASequence = gRNASequence.slice(0, -settings.trimAfter)
     }
-    gRNASequence = settings.adaptorBefore[0] + gRNASequence + settings.adaptorAfter[0]
+    gRNASequence = settings.adaptorBefore + gRNASequence + settings.adaptorAfter
     return gRNASequence
+}
+
+
+function _generateFullTxtOutput(settings, libraryMap, swapedSynonyms){
+    out = "SymbolSearched SymbolUsed  gRNA    Compliment  Score \n"
+    for (var [symbol, arr] of Object.entries(libraryMap)) {
+        var SymbolSearched = ""
+        if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
+            SymbolSearched = `${swapedSynonyms[symbol]}→`
+            symbol = `${symbol} `
+        }
+        arr.forEach(element => {
+            out = out + `${SymbolSearched}  ${symbol}   ${element[settings.gRNAColumn-1]}    ${_complimentSequence(element[settings.gRNAColumn-1])}    ${element[settings.rankingColumn-1]}\n`
+        })
+      }
+    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+}
+
+function _generateDownloadSymboldNotFound(settings, usedSynonyms){
+    out = "Symbol\n"
+    for (var symbol of Object.keys(usedSynonyms)) {
+        if (settings.enableSynonyms && (usedSynonyms[symbol] != "")){
+            continue
+        }
+        out = out + `${symbol}\n`
+      }
+    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+}
+
+function _complimentSequence(gRNASequence){
+    var complimentMap ={
+        "A": "T",
+        "a": "t",
+        "T": "A",
+        "t": "a",
+        "C": "G",
+        "c": "g",
+        "G": "C",
+        "g": "c",
+    }
+    // Replace each character using the mapping table
+    var complimentStr = gRNASequence.split('').map(char => {
+        return complimentMap[char] !== undefined ? complimentMap[char] : char;
+      }).join('')
+      return complimentStr
 }

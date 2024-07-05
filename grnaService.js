@@ -1,76 +1,70 @@
 
-const SETTINGS_URL = 'settingsDefault.json';
-const LIBRARIES_URL = 'settingsLibraries.json';
+//
+// GRNA logic for searches etc
+// Used by the UI
+//
 
-// Return a libarary jsen for the given linname, with data in "fileData"
-async function searchLibrary(libraryName){
+const SETTINGS_URL = 'settingsDefault.json'
+const LIBRARIES_URL = 'settingsLibraries.json'
+
+
+// Selects/activates a library
+// does pre-processing
+async function selectLibrary(libraryName){
     try {
-        const libraries = await _fetchJsonFile(LIBRARIES_URL)
-        const library = libraries.find(library => library.name == libraryName)
-        const fileData = await _fetchTextFile(library.fileName)
+        // Read library data - can be 80000 rows...
+        const libraries = await fetchJsonFile(LIBRARIES_URL)
+        const libSettings = libraries.find(library => library.name == libraryName)
+        const libData = await fetchTextFile(library.fileName)
 
-        library["fileData"] = fileData
+        // read synonyms
+        const synonyms = await fetchJsonFile(library.synonymFileName)
 
-        console.log(`grnaService.searchLibrary(${libraryName}) loaded from file '${library.fileName}'. ${fileData.split(/\r\n|\r|\n/).length} rows.` )
-
-        return library
+        // pre-process to create search structure
+        libraryUpdate(libSettings, libData, synonyms)
+        return libSettings
         
     } catch (error) {
-        console.error(`grnaService.searchLibrary (${libraryName}) serverUppdateFile There has been a problem with your fetch operation:`, error);
+        console.error(`grnaService.selectLibrary(${libraryName}) failed:`, error);
     }
 }
 
+// returns settings json, see settingsDefault.json for an example
 async function getDefaultSettings() {
-   
-        const settings = await _fetchJsonFile(SETTINGS_URL)
-        const libraries = await _fetchJsonFile(LIBRARIES_URL)
-
-        // Add the library names to the settings object
-        settings["libraryNames"] = libraries.map(library => library.name)
-
-        return settings;
+        const settings = await fetchJsonFile(SETTINGS_URL)
+        return settings
 }
 
-// --------------------------------------------------------------------------------------------
-
-async function _fetchJsonFile(url) {
-    try {
-        const response = await fetch(url)
-        if (!response.ok) {
-            throw new Error(`Network response was not ok (${response.status} ${response.statusText})`)
-        }
-        // Ensure content type is application/json
-        const contentType = response.headers.get('content-type')
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error(`GRNAService._fetchJsonFile(${url}) Expected application/json content type, but received: ${contentType}`)
-        }
-        return await response.json()
-    } catch (error) {
-        console.error(`GRNAService._fetchJsonFile(${url}) failed to fetch :`, error)
-        throw error 
-    }
+async function getLibraryNames() {
+    const libraries = await fetchJsonFile(LIBRARIES_URL)
+    const libraryNames = libraries.map(library => library.name)
+    return libraryNames
 }
 
-async function _fetchTextFile(url) {
-    try {
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Network response was not ok (${response.status} ${response.statusText})`);
-        }
-
-        // Ensure content type is text/plain
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('text/plain')) {
-            throw new Error(`GRNAService._fetchJsonFile(${url}) Expected text/plain content type, but received: ${contentType}`);
-        }
-
-        return await response.text();
-    } catch (error) {
-        console.error(`GRNAService._fetchJsonFile(${url}) Error fetching text file (${url}):`, error);
-        throw error; 
-    }
+// Start the screening. 
+// Settings contains all param, see default settings in settingsDefault.json
+function runScreening(settings){
+    return libraryStartScreen(settings)
 }
 
+function addCustomLibraryData(data, symbolColumn){
+    return libraryCustomData(data, symbolColumn)
+}
+
+// ---------------------------- Status functions ------------------------------------------------
 
 
+// Return a string describing the library status - for example "Unique symbols found: 19674"
+function getLibraryUniqueSymbols(){
+    return libraryUniqueSymbols()
+}
+
+// Return a map with symbols not found (keys) and an synonym used (value - often Null)
+function getUsedSynonyms(searchSymbols){
+    return libraryStatusSynonyms(searchSymbols)
+}
+
+// Return string with status of screening run- for example "Done. Time to complete: 0.2s"
+function getScreeningStatus(){
+    return libraryStatusScreening()
+}

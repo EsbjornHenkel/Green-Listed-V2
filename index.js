@@ -1,17 +1,11 @@
 var examplesequence = "EXAMPLESEQUENCE"
-var searchOutput = {
-    full: "",
-    compact: "",
-    notFound: ""
-}
-
+searchOutput = {}
 //window.onbeforeunload = function() {
 //    return ""
 //  }
 
-async function htmlSetdefaultValues(){
+async function init(){
     data = await getDefaultSettings()
-
     document.getElementById("trimBefore").min = 0
     document.getElementById("trimBefore").value = data.trimBefore
 
@@ -22,97 +16,49 @@ async function htmlSetdefaultValues(){
     document.getElementById("adaptorAfter").defaultValue = data.adaptorAfter;
 
     document.getElementById("numberToRank").value = data.rankingTop
-    document.getElementById("searchSymbols").textContent = data.searchSymbols
+    document.getElementById("searchSymbols").textContent = data.searchSymbols.join("\n")
     document.getElementById("outputFileName").value = data.outputName
 
     document.getElementById("partialMatches").checked = data.partialMatches
     document.getElementById("enableSynonyms").checked = data.enableSynonyms
     
+    libraryNames = await getLibraryNames()
     dropdown = document.getElementById("libraries")
-
-    data.libraryNames.forEach(name => {
+    libraryNames.forEach(name => {
         var option = document.createElement('option')
         option.text = name
         option.value = name
         dropdown.appendChild(option)
-        dropdown.value = name
+        
     })
-    const rankingOrder = document.getElementById("rankingOrder").vaklue
-    settingsSetAll(data.searchSymbols, data.partialMatches, dropdown.value, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.synonyms, data.enableSynonyms)
+    dropdown.value = data.defaultLibrary
+
+
+    const rankingOrder = document.getElementById("rankingOrder").value
+    settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms)
     indexChangeLibrary(dropdown.value)
+    
     _editExampleText()
-    statusUppdateAll()
 }
 
 
-function indexStartScreening(){
+async function indexStartScreening(){
     button = document.getElementById("startButton")
     button.classList.add("pulse")
-    const swapedSynonyms = Object.fromEntries(Object.entries(settings.usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
+
     var statusInterval = setInterval(statusSearchUppdate, 100);
     
-    var foundRows = libraryStartScreen(settings)
-    
-    const textOutputFull =_generateFullTxtOutput(foundRows, swapedSynonyms)
-    searchOutput.full = textOutputFull
-    _generateDownload(textOutputFull, settings["outputName"][0], document.getElementById("fullDownload"))
-    
-    
-    const textOutputNotFound = _generateDownloadSymboldNotFound()
-    searchOutput.notFound = textOutputNotFound
+    var newSearchOutput = await runScreening(settings)
+    searchOutput = newSearchOutput
+    _generateDownload(searchOutput.textOutputFull, settings["outputName"][0], document.getElementById("fullDownload"))
 
-    _generateDownload(textOutputNotFound, settings["outputName"][0], document.getElementById("notFoundDownload"))
-
-    document.getElementById("fileContent").innerHTML = searchOutput.full.replace(/(?:\r\n|\r|\n)/g, '<br>')
+    _generateDownload(searchOutput.notFound, settings["outputName"][0], document.getElementById("notFoundDownload"))
+    document.getElementById("fileContent").innerHTML = searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>')
     button.classList.remove("pulse")
     statusSearchUppdate()
     clearInterval(statusInterval)
 }
 
-
-function _generateFullTxtOutput(rows, swapedSynonyms){
-    out = "SymbolSearched SymbolUsed  gRNA    Compliment  Score \n"
-    for (var [symbol, arr] of Object.entries(rows)) {
-        var SymbolSearched = ""
-        if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
-            SymbolSearched = `${swapedSynonyms[symbol]}→`
-            symbol = `${symbol} `
-        }
-        arr.forEach(element => {
-            out = out + `${SymbolSearched}  ${symbol}   ${element[settings.gRNAIndex[0]]}    ${_complimentSequence(element[settings.gRNAIndex[0]])}    ${element[settings.rankingIndex[0]]}\n`
-        })
-      }
-    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
-}
-
-function _generateDownloadSymboldNotFound(){
-    out = "Symbol\n"
-    for (var symbol of Object.keys(settings.usedSynonyms)) {
-        if (settings.enableSynonyms[0] && settings.usedSynonyms[symbol] != ""){
-            continue
-        }
-        out = out + `${symbol}\n`
-      }
-    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
-}
-
-function _complimentSequence(gRNASequence){
-    var complimentMap ={
-        "A": "T",
-        "a": "t",
-        "T": "A",
-        "t": "a",
-        "C": "G",
-        "c": "g",
-        "G": "C",
-        "g": "c",
-    }
-    // Replace each character using the mapping table
-    var complimentStr = gRNASequence.split('').map(char => {
-        return complimentMap[char] !== undefined ? complimentMap[char] : char;
-      }).join('')
-      return complimentStr
-}
 
 function _generateDownload(text, name, element) {
     var file = new Blob([text], {type: "text/plain"});
@@ -126,7 +72,8 @@ function showFullOutput(){
         document.getElementById("fileContent").innerHTML = "No output"
         return
     }
-    document.getElementById("fileContent").innerHTML = searchOutput.full.replace(/\n/g, "<br>")
+    console.log(searchOutput)
+    document.getElementById("fileContent").innerHTML = searchOutput.textOutputFull.replace(/\n/g, "<br>")
 }
 
 function showNotFound(){
@@ -141,29 +88,36 @@ function showSettings(){
     document.getElementById("fileContent").innerHTML = settingsToStr().replace(/\n/g, "<br>")
 }
 
-async function indexChangeLibrary(fileName){
-
+async function indexChangeLibrary(libraryName){
+    
     var customLibrarie = document.getElementById("User Upload")
-    if (fileName == "custom"){
+    if (libraryName == "custom"){
         customLibrarie.classList.remove("inactive")
+        let fr = new FileReader()
+        addCustomLibraryData(fr.result, settings.symbolColumn)
+        await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
+    
+        fr.readAsText(this.files[0])
+        statusUppdateSymbols()
     }
     else{
         customLibrarie.classList.add("inactive")
-        data = await libraryGetLibraryData(fileName, settings)
+        const librarySettings = await selectLibrary(libraryName)
+        settings.libraryName = libraryName
+        settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
     }
-    await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
     indexLibraryChanges()
 }
 
-
+/*
 document.getElementById('customFile').addEventListener('change', async function () {
-    let fr = new FileReader();
-    libraryAddCustom(fr.result)
+    let fr = new FileReader()
+    addCustomData(fr.result, settings.symbolColumn)
     await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
 
-    fr.readAsText(this.files[0]);
+    fr.readAsText(this.files[0])
     statusUppdateSymbols()
-})
+})*/
 
 function dowloadSettings(){
     element = document.getElementById("settingsDowload")
@@ -171,22 +125,22 @@ function dowloadSettings(){
 }
 
 function indexLibraryChanges(){
-    const libraryName = document.getElementById("libraries").value
     const enableSynonyms = document.getElementById("enableSynonyms").checked
     const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()})
     const partialMatches = document.getElementById("partialMatches").checked
 
-    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms, libraryName)
+    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
     statusUppdateSymbols()
 }
 
-function indexLibraryIndexChanges(){
+function indexLibraryColumnChanges(){
     const symbolIndex = document.getElementById("GeneSymbolIndex").value
     const gRNAIndex = document.getElementById("gRNAIndex").value
     const rankingIndex = document.getElementById("rankingIndex").value
 
-    settingsSetIndexes(gRNAIndex-1, symbolIndex-1, rankingIndex-1)
-    statusUppdateNonSymbolSettings()
+    settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
+    let fr = new FileReader()
+    addCustomLibraryData(fr.result, settings.symbolColumn)
 }
 
 function indexSettingsChanges(){
@@ -201,44 +155,43 @@ function indexSettingsChanges(){
     const outputName = document.getElementById("outputFileName").value
 
     settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankgingOrder, outputName)
-    statusUppdateNonSymbolSettings()
 
     _editExampleText()
-    statusUppdateSymbols()
 }
 
 function _editExampleText(){
     var example = examplesequence
     
-    if (settings.adaptorAfter[0].lenth == 0){
+    if (settings.adaptorAfter.lenth == 0){
         adaptorAfter = ""
     }
-    if (settings.adaptorBefore[0].lenth == 0){
+    if (settings.adaptorBefore.lenth == 0){
         adaptorBefore = ""
     }
-    example = example.slice(settings.trimBefore[0])
+    example = example.slice(settings.trimBefore)
     
-    if (settings.trimAfter[0] != 0){
-        example = example.slice(0, -settings.trimAfter[0])
+    if (settings.trimAfter != 0){
+        example = example.slice(0, -settings.trimAfter)
     }
     
 
-    example = settings.adaptorBefore[0] + example + settings.adaptorAfter[0]
+    example = settings.adaptorBefore + example + settings.adaptorAfter
     document.getElementById("ExampleSequance").innerHTML = example
 }
 
 async function _createSynonymDropworns(){
+    var usedSynonyms = getUsedSynonyms(settings.searchSymbols)
     const title = document.getElementById("symbolsNotFound")
 
     const symbolsNotFound = document.getElementById("displaySynonyms")
     symbolsNotFound.innerHTML = ""
-    if (Object.keys(settings.usedSynonyms).length == 0){
+    if (Object.keys(usedSynonyms).length == 0){
         symbolsNotFound.textContent = "All symbols found in file"
     }
-    Object.keys(settings.usedSynonyms).forEach(symbol => {
+    Object.keys(usedSynonyms).forEach(symbol => {
         const symbolContainer = document.createElement("p")
-        if (settings.enableSynonyms[0] && (settings.usedSynonyms[symbol].length != 0)){
-            symbolContainer.innerHTML = `${symbol}<b style="font-size:1.25rem"> → </b>${settings.usedSynonyms[symbol]}`
+        if (settings.enableSynonyms && (usedSynonyms[symbol].length != 0)){
+            symbolContainer.innerHTML = `${symbol}<b style="font-size:1.25rem"> → </b>${usedSynonyms[symbol]}`
             symbolsNotFound.insertBefore(symbolContainer, symbolsNotFound.firstChild)
         }
         else{
@@ -251,28 +204,11 @@ async function _createSynonymDropworns(){
 
 /* ------------------ STATUS ----------------- */
 
-function statusUppdateAll(){
-    statusUppdateSymbols()
-    statusUppdateNonSymbolSettings()
-}
-
 function statusUppdateSymbols(){
     _createSynonymDropworns()
-    setStatus("statusSequencesFound", settings.LibraryName[1])
-
-    setStatus("searchSymbols", settings.searchSymbols[0].join("\n"), false)
-    setStatus("statusSearchSymbolsRows", settings["searchSymbols"][1])
-}
-
-function statusUppdateNonSymbolSettings(){
-    setStatus("statusFileSymbolIndex", settings.symbolIndex[1])
-    setStatus("statusFilegRNAIndex", settings.gRNAIndex[1])
-    setStatus("statusRankingIndex", settings.rankingIndex[1])
-
-    setColor("trimBefore", settings.trimBefore[1])
-    setColor("trimAfter", settings.trimAfter[1])
-    setColor("numberToRank", settings.rankingTop[1])
-    setColor("outputFileName", settings.outputName[2])
+    setStatus("symbolsFound", getLibraryUniqueSymbols())
+    setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
+    setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
 }
 
 function setColor(elemId, color){
