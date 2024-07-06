@@ -25,10 +25,10 @@ function libraryStartScreenTEST(settings){
     return searchOutput
 }
 
-function libraryStartScreen(settings){
+async function libraryStartScreen(settings){
     library.statusSearch = "Starting search"
     var st = performance.now()
-    var searchOutput = logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
+    var searchOutput = await logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
     library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s`
     console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
     return searchOutput

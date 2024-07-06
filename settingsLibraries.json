@@ -15,6 +15,6 @@
         "RNAColumn": 8,
         "RankColumn": 12,
         
-        "synonymFileName": "mouse synonym.txt"
+        "synonymFileName": "defaultSynonyms.json"
     }
 ]

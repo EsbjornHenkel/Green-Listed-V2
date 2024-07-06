@@ -47,26 +47,51 @@ async function init(){
 
 async function indexStartScreening(){
     button = document.getElementById("startButton")
-    button.classList.add("pulse")
-    setStatus()
+
 
     var statusInterval = setInterval(statusSearchUppdate, 100);
     setStatus("statusSearch", "Runnung screening")
 
     var newSearchOutput = await runScreening(settings)
+    
     searchOutput = newSearchOutput
-    _generateDownload(searchOutput.textOutputFull, settings["outputName"][0], document.getElementById("fullDownload"))
+    searchOutput.notFound = _generateNotFound()
+    _generateDownload(searchOutput.textOutputFull, settings["outputName"], document.getElementById("fullDownload"))
 
-    _generateDownload(searchOutput.notFound, settings["outputName"][0], document.getElementById("notFoundDownload"))
+    _generateDownload(searchOutput.notFound, settings["outputName"], document.getElementById("notFoundDownload"))
+
 
     setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
-    button.classList.remove("pulse")
+
+    setStatus("statusSearch", "Screening Complete")
     statusSearchUppdate()
     clearInterval(statusInterval)
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
 }
 
+function _generateNotFound(){
+    var usedSynonyms = getUsedSynonyms(settings.searchSymbols)
+    if (Object.keys(usedSynonyms).length == 0){
+        var out = "All symbols found in file"
+        return out
+    }
+    var out = "Symbols not found\t"
+    if (settings.enableSynonyms){
+        out = out + "Used synonym"
+    }
+    out = out +"\n"
+    Object.keys(usedSynonyms).forEach(symbol => {
+        if (settings.enableSynonyms){
+            out = out + `${symbol}\t${usedSynonyms[symbol]}\n`
+        }
+        else{
+            out = out + `${symbol}\n`
+        }
+        
+    })
+    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+}
 
 function _generateDownload(text, name, element) {
     var file = new Blob([text], {type: "text/plain"});
@@ -87,17 +112,13 @@ function showSettings(){
     setStatus("fileContent", settingsToStr().replace(/\n/g, "<br>"))
 }
 
-async function indexChangeLibrary(libraryName){
-    
+async function indexChangeLibrary(){
+    selectedFile = ""
+    var libraryName = document.getElementById("libraries").value
     var customLibrarie = document.getElementById("User Upload")
     if (libraryName == "custom"){
         customLibrarie.classList.remove("inactive")
-        let fr = new FileReader()
-        addCustomLibraryData(fr.result, settings.symbolColumn)
-        await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
-    
-        fr.readAsText(this.files[0])
-        statusUppdateSymbols()
+        indexLibraryColumnChanges()
     }
     else{
         customLibrarie.classList.add("inactive")
@@ -109,20 +130,11 @@ async function indexChangeLibrary(libraryName){
     indexLibraryChanges()
 }
 
-/*
-document.getElementById('customFile').addEventListener('change', async function () {
-    let fr = new FileReader()
-    addCustomData(fr.result, settings.symbolColumn)
-    await new Promise(r => setTimeout(r, 500)) //server must have time to respond before status can be uppdated
-
-    fr.readAsText(this.files[0])
-    statusUppdateSymbols()
-})*/
-
 function dowloadSettings(){
     element = document.getElementById("settingsDowload")
     _generateDownload(settingsToStr(), settings.outputName[0]+" Settings", element)
 }
+
 
 function indexLibraryChanges(){
     const enableSynonyms = document.getElementById("enableSynonyms").checked
@@ -139,8 +151,23 @@ function indexLibraryColumnChanges(){
     const rankingIndex = document.getElementById("rankingIndex").value
 
     settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
-    let fr = new FileReader()
-    addCustomLibraryData(fr.result, settings.symbolColumn)
+    indexUppdateCustomLibrary()
+}
+
+function indexUppdateCustomLibrary(){
+    if (document.getElementById("libraries").value == "custom"){
+        var fileInput = document.getElementById('customFile')
+        var file = fileInput.files[0]
+        if (file){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // Display file content
+                addCustomLibraryData(reader.result, settings.symbolColumn)
+            }
+            reader.readAsText(file)
+            
+        }
+    }
 }
 
 function indexSettingsChanges(){
@@ -210,6 +237,7 @@ function statusUppdateSymbols(){
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
     setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
     setStatus("fileContent", "")
+
     document.getElementById("outputTable").classList.add("statusFadeOut")
 }
 
