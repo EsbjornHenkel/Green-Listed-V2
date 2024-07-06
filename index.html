@@ -14,9 +14,14 @@
         </div>
     </header>
 
-<main>
+    <main>
+    <div id="overlay" class="fazeOut">
+        <div class="loading-box">
+            Screening in progress...
+        </div>
+    </div>
     <div class="plate">
-        <h2 class="plateTitle">1. Reference library</h2>
+        <h2 class="plateTitle">1. Select library</h2>
         <div class="plateContent">
 
             <div class="smallPlate">
@@ -60,7 +65,7 @@
     </div>
 
     <div class="plate">
-        <h2 class="plateTitle">2. Search symbols</h2>
+        <h2 class="plateTitle">2. Input symbols</h2>
         <div class="plateContent">
 
             <div class="smallPlate">
@@ -74,6 +79,7 @@
                         <input type="checkbox" id="partialMatches" onchange="indexLibraryChanges()">
                         <label class="justifyCenter">Allow for partial matches</label>
                     </form>
+                    
                     <textarea id="searchSymbols" onchange="indexLibraryChanges()">
 
                     </textarea>
@@ -93,7 +99,7 @@
     </div>
     
     <div class="plate">
-        <h2 class="plateTitle">3. Post processing</h2>
+        <h2 class="plateTitle">3. Set parameters</h2>
         <div class="plateContent">
 
             <div class="smallPlate">
@@ -143,27 +149,20 @@
     </div>
 
     <div class="plate">
-        <h2 class="plateTitle">4. Run </h2>
+        <h2 class="plateTitle">4. Run screening</h2>
 
         <div class="plateContent">
-            <div class="smallPlate">
-                <h3 class="smallTitle"> Output Settings </h3>
-                <div class="plateContent">
-                    <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
-                    <div class="smallPlate"> 
-                        <button id="startButton" onclick="indexStartScreening()">Start Search</button>
-                        <div id="statusSearch"></div>
-                    </div>
-                </div>
+            <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
+            <div class="smallPlate"> 
+                <button id="startButton">Run screening</button>
+                <div id="statusSearch"></div>
             </div>
-
-            
-          
         </div>
+
     </div>
 
     <footer class="plate">
-        <h2 class="plateTitle">5. Output </h2>
+        <h2 class="plateTitle">5. Show output </h2>
         <div class="plateContent">
                 <table id="outputTable">
                     <tr>

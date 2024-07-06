@@ -49,7 +49,7 @@ async function getLibraryNames() {
 
 // Start the screening. 
 // Settings contains all param, see default settings in settingsDefault.json
-async function runScreening(settings){
+function runScreening(settings){
     return libraryStartScreen(settings)
 }
 

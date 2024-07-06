@@ -8,6 +8,7 @@ var searchOutput = {
 //  }
 
 async function init(){
+
     data = await getDefaultSettings()
     document.getElementById("trimBefore").min = 0
     document.getElementById("trimBefore").value = data.trimBefore
@@ -44,17 +45,28 @@ async function init(){
     _editExampleText()
 }
 
+function toggleLigtBox(){
+    const box = document.getElementById('overlay')
+    if (box.classList.contains("fazeIn")){
+        box.classList.remove("fazeIn")
+        box.classList.add("fazeOut") 
+    }
+    else{
+        box.classList.remove("fazeOut")
+        box.classList.add("fazeIn")
+    }
+}
 
-async function indexStartScreening(){
+document.getElementById("startButton").addEventListener('click', async function() {
+
+    toggleLigtBox()
     button = document.getElementById("startButton")
 
+    var statusInterval = setInterval(statusSearchUppdate, 10);
+    await new Promise(r => setTimeout(r, 300))
 
-    var statusInterval = setInterval(statusSearchUppdate, 100);
-    setStatus("statusSearch", "Runnung screening")
+    newSearchOutput = await runScreening(settings)
 
-    var newSearchOutput = await runScreening(settings)
-    
-    searchOutput = newSearchOutput
     searchOutput.notFound = _generateNotFound()
     _generateDownload(searchOutput.textOutputFull, settings["outputName"], document.getElementById("fullDownload"))
 
@@ -62,13 +74,15 @@ async function indexStartScreening(){
 
 
     setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
-
-    setStatus("statusSearch", "Screening Complete")
+    toggleLigtBox()
     statusSearchUppdate()
     clearInterval(statusInterval)
+
+
+
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
-}
+})
 
 function _generateNotFound(){
     var usedSynonyms = getUsedSynonyms(settings.searchSymbols)

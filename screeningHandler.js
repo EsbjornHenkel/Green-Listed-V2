@@ -3,7 +3,7 @@
 // Library screening
 //
 
-async function logicScreening(library, settings, usedSynonyms) {
+function logicScreening(library, settings, usedSynonyms) {
     const swappedSynonyms = Object.fromEntries(Object.entries(usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
     var symbols = Object.keys(library.libraryMap)
     var filteredLibraryMap = {}
