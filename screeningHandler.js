@@ -37,10 +37,10 @@ function logicScreening(library, settings, usedSynonyms) {
 function removeMatchingKeys(libraryMap, settings, swappedSynonyms) {
     return Object.keys(libraryMap).reduce((acc, key) => {
       if (_match(key, settings, swappedSynonyms)) {
-        acc[key] = libraryMap[key];
+        acc[key] = libraryMap[key]
       }
-      return acc;
-    }, {});
+      return acc
+    }, {})
   }
 
 

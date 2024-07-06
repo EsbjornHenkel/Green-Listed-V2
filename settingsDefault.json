@@ -8,8 +8,8 @@
     "rankingTop": 0,
 
     "outputName": "",
-    "defaultLibrary": "Brunello 21",
-    "searchSymbols": ["KIAA0129", "TP53I5", "Abca1", "4832428G11Rik"],       
+    "defaultLibrary": "Experimental cheese",
+    "searchSymbols": ["KIAA0129", "Abca1", "CCBL1"],       
     "gRNAIndex": null,
     "symbolIndex": null,
     "rankingIndex": null,

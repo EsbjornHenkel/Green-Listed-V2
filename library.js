@@ -43,8 +43,8 @@ function libraryCustomData(fileData, symbolColumn){
 
 function libraryUpdate(librarySettings, fileData, synonymData){
     library.synonymMap = _getSynonymMap(synonymData)
-    var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn)
-    library["libraryMap"] = libraryMap
+    var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn, library.synonymMap)
+    library.libraryMap = libraryMap
 }
 
 function _getSynonymMap(synonymData){
@@ -68,7 +68,7 @@ function _getSynonymMap(synonymData){
       return synonymMap
 }
 
-function _getLibraryMap(fileData, symbolColumn){
+function _getLibraryMap(fileData, symbolColumn, synonymMap){
     rows = fileData.trim().split("\n").map((row) => row.split("\t"))
     rows.shift()
     libraryMap = {}
@@ -79,8 +79,9 @@ function _getLibraryMap(fileData, symbolColumn){
         } else {
             libraryMap[symbol] = {
                 "rows": [row],
-                "previusSymbol": ""
+                "symbolSynonyms": synonymMap[symbol] ? Array.from(synonymMap[symbol]) : []
             }
+            libraryMap[symbol].symbolSynonyms.push(symbol)
         }
     })
     return libraryMap
@@ -135,28 +136,24 @@ function libraryUniqueSymbols(){
 function getSearchstatus(){
     return library["statusSearch"]
 }
-function libraryStatusSynonyms(searchSymbols){
-    
-    const array2  = Object.keys(library.libraryMap)
-    const array1 = searchSymbols.filter(symbol => !array2.includes(symbol))
-    const synonymsDict = library.synonymMap
 
-    const resultDict = {}
-    array1.forEach(symbol => {
-        resultDict[symbol] = ""
-        if (synonymsDict[symbol]) {
-          synonymsDict[symbol].forEach(synonym => {
-            if (array2.includes(synonym)) {
-              if (!resultDict[symbol]) {
-                resultDict[symbol] = []
-              }
-              resultDict[symbol] = synonym;
-            }
-          })
+function libraryStatusSynonyms(searchSymbols){
+    const symbolsNotFound = searchSymbols.filter(symbol => !library.libraryMap.hasOwnProperty(symbol))
+    const synonymMap = {}
+    symbolsNotFound.forEach(symbol => {
+        synonymMap[symbol] = ""
+        if (library.synonymMap[symbol]) {
+            library.synonymMap[symbol].forEach(synonym => {
+                Object.keys(library.libraryMap).forEach(fileSymbol => {
+                    if (library.libraryMap[fileSymbol].symbolSynonyms.includes(synonym) ) {
+                        synonymMap[symbol] = fileSymbol
+                    }
+                })
+
+            })
         }
       })
-
-    return resultDict
+    return synonymMap
 }
 
 /*

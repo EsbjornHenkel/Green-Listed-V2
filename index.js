@@ -65,21 +65,23 @@ document.getElementById("startButton").addEventListener('click', async function(
     await new Promise(r => setTimeout(r, 100))
 
     var newSearchOutput = await runScreening(settings)
+
     searchOutput = newSearchOutput
     searchOutput.notFound = _generateNotFound()
-
+    
     _generateDownload(searchOutput.textOutputFull, settings["outputName"]+" Output", document.getElementById("fullDownload"))
 
     _generateDownload(searchOutput.notFound, settings["outputName"]+ " not found", document.getElementById("notFoundDownload"))
 
 
     //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
+    
     toggleLigtBox()
     statusSearchUppdate()
     clearInterval(statusInterval)
 
 
-
+    
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
 })
