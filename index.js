@@ -8,7 +8,6 @@ var searchOutput = {
 //  }
 
 async function init(){
-
     data = await getDefaultSettings()
     document.getElementById("trimBefore").min = 0
     document.getElementById("trimBefore").value = data.trimBefore
@@ -71,7 +70,7 @@ document.getElementById("startButton").addEventListener('click', async function(
 
     _generateDownload(searchOutput.textOutputFull, settings["outputName"]+" Output", document.getElementById("fullDownload"))
 
-    _generateDownload(searchOutput.notFound, settings["outputName"]+ "not found", document.getElementById("notFoundDownload"))
+    _generateDownload(searchOutput.notFound, settings["outputName"]+ " not found", document.getElementById("notFoundDownload"))
 
 
     //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
@@ -128,7 +127,6 @@ function showSettings(){
 }
 
 async function indexChangeLibrary(){
-    selectedFile = ""
     var libraryName = document.getElementById("libraries").value
     var customLibrarie = document.getElementById("User Upload")
     if (libraryName == "custom"){
@@ -138,6 +136,7 @@ async function indexChangeLibrary(){
     else{
         customLibrarie.classList.add("inactive")
         setStatus("symbolsFound", "fetching library from server")
+        await new Promise(r => setTimeout(r, 10))
         const librarySettings = await selectLibrary(libraryName)
         settings.libraryName = libraryName
         settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
@@ -167,9 +166,10 @@ function indexLibraryColumnChanges(){
 
     settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
     indexUppdateCustomLibrary()
+    
 }
 
-function indexUppdateCustomLibrary(){
+async function indexUppdateCustomLibrary(){
     if (document.getElementById("libraries").value == "custom"){
         var fileInput = document.getElementById('customFile')
         var file = fileInput.files[0]
@@ -180,9 +180,15 @@ function indexUppdateCustomLibrary(){
                 addCustomLibraryData(reader.result, settings.symbolColumn)
             }
             reader.readAsText(file)
-            
+            await new Promise(r => setTimeout(r, 10))
+
+        }
+        else{
+            addCustomLibraryData("", -1)
         }
     }
+    console.log(library.libraryMap)
+    statusUppdateSymbols()
 }
 
 function indexSettingsChanges(){
