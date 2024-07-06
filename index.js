@@ -1,5 +1,8 @@
 var examplesequence = "EXAMPLESEQUENCE"
-searchOutput = {}
+var searchOutput = {
+    "textOutputFull": "",
+    "textOutputNotFound": ""
+}
 //window.onbeforeunload = function() {
 //    return ""
 //  }
@@ -45,18 +48,23 @@ async function init(){
 async function indexStartScreening(){
     button = document.getElementById("startButton")
     button.classList.add("pulse")
+    setStatus()
 
     var statusInterval = setInterval(statusSearchUppdate, 100);
-    
+    setStatus("statusSearch", "Runnung screening")
+
     var newSearchOutput = await runScreening(settings)
     searchOutput = newSearchOutput
     _generateDownload(searchOutput.textOutputFull, settings["outputName"][0], document.getElementById("fullDownload"))
 
     _generateDownload(searchOutput.notFound, settings["outputName"][0], document.getElementById("notFoundDownload"))
-    document.getElementById("fileContent").innerHTML = searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>')
+
+    setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
     button.classList.remove("pulse")
     statusSearchUppdate()
     clearInterval(statusInterval)
+    document.getElementById("outputTable").classList.remove("statusFadeOut")
+    document.getElementById("outputTable").classList.add("statusFadeIn")
 }
 
 
@@ -68,24 +76,15 @@ function _generateDownload(text, name, element) {
 }
 
 function showFullOutput(){
-    if (searchOutput.full == ""){
-        document.getElementById("fileContent").innerHTML = "No output"
-        return
-    }
-    console.log(searchOutput)
-    document.getElementById("fileContent").innerHTML = searchOutput.textOutputFull.replace(/\n/g, "<br>")
+    setStatus("fileContent", searchOutput.textOutputFull.replace(/\n/g, "<br>"))
 }
 
 function showNotFound(){
-    if (searchOutput.notFound == ""){
-        document.getElementById("fileContent").innerHTML = "No output"
-        return
-    }
-    document.getElementById("fileContent").innerHTML = searchOutput.notFound.replace(/\n/g, "<br>")
+    setStatus("fileContent", searchOutput.notFound.replace(/\n/g, "<br>"))
 }
 
 function showSettings(){
-    document.getElementById("fileContent").innerHTML = settingsToStr().replace(/\n/g, "<br>")
+    setStatus("fileContent", settingsToStr().replace(/\n/g, "<br>"))
 }
 
 async function indexChangeLibrary(libraryName){
@@ -102,6 +101,7 @@ async function indexChangeLibrary(libraryName){
     }
     else{
         customLibrarie.classList.add("inactive")
+        setStatus("symbolsFound", "fetching library from server")
         const librarySettings = await selectLibrary(libraryName)
         settings.libraryName = libraryName
         settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
@@ -155,7 +155,7 @@ function indexSettingsChanges(){
     const outputName = document.getElementById("outputFileName").value
 
     settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankgingOrder, outputName)
-
+    statusUppdateSettings()
     _editExampleText()
 }
 
@@ -209,6 +209,13 @@ function statusUppdateSymbols(){
     setStatus("symbolsFound", getLibraryUniqueSymbols())
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
     setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
+    setStatus("fileContent", "")
+    document.getElementById("outputTable").classList.add("statusFadeOut")
+}
+
+function statusUppdateSettings(){
+    document.getElementById("outputTable").classList.add("statusFadeOut")
+    setStatus("fileContent", "")
 }
 
 function setColor(elemId, color){
@@ -237,7 +244,7 @@ function setStatus(elemId, text, isNotInnerHtml){
     if ((element.value == text) && !isNotInnerHtml){
         return
     }
-    element.classList.add("fadeOut"); // Add class to fade out the old text
+    element.classList.add("statusFadeOut"); // Add class to fade out the old text
 
     element.addEventListener("animationend", function() {    // Listen for the "transitionend" event
         if (isNotInnerHtml){
@@ -247,8 +254,8 @@ function setStatus(elemId, text, isNotInnerHtml){
             element.value = text;
         }
         
-        element.classList.remove("fadeOut"); // Remove class to fade in the new text
-        element.classList.add("fadeIn"); // Add class to fade in the new text
+        element.classList.remove("statusFadeOut"); // Remove class to fade in the new text
+        element.classList.add("statusFadeIn"); // Add class to fade in the new text
     }, { once: true }); // Ensure the event listener is called only once
 
     if (text.includes("Failed") || text.includes("Error")) {

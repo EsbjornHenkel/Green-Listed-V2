@@ -200,6 +200,7 @@ td:not(:first-child) {
 
 .inactive{
     display: none;
+    animation: slideIn 1s linear;
 }
 
 .swapButton{
@@ -251,12 +252,13 @@ td:not(:first-child) {
     border: none;
 }
 
-.fadeIn {
+.statusFadeIn {
     animation: statusUpdateIn 0.2s;
 }
     
-.fadeOut {
+.statusFadeOut {
     animation: statusUpdateOut 0.2s;
+    opacity: 0;
 }
 
 
@@ -285,7 +287,6 @@ td:not(:first-child) {
 #searchSymbolsPlate > :nth-child(2) {
     flex: 0 0 40%;
 }
-
 
 @keyframes statusUpdateOut {
     0% {

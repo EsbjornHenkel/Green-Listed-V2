@@ -34,6 +34,7 @@ async function selectLibrary(libraryName){
     }
 }
 
+
 // returns settings json, see settingsDefault.json for an example
 async function getDefaultSettings() {
         const settings = await fetchJsonFile(SETTINGS_URL)
