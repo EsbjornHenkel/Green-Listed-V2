@@ -63,17 +63,18 @@ document.getElementById("startButton").addEventListener('click', async function(
     button = document.getElementById("startButton")
 
     var statusInterval = setInterval(statusSearchUppdate, 10);
-    await new Promise(r => setTimeout(r, 300))
+    await new Promise(r => setTimeout(r, 100))
 
     var newSearchOutput = await runScreening(settings)
     searchOutput = newSearchOutput
     searchOutput.notFound = _generateNotFound()
-    _generateDownload(searchOutput.textOutputFull, settings["outputName"], document.getElementById("fullDownload"))
 
-    _generateDownload(searchOutput.notFound, settings["outputName"], document.getElementById("notFoundDownload"))
+    _generateDownload(searchOutput.textOutputFull, settings["outputName"]+" Output", document.getElementById("fullDownload"))
+
+    _generateDownload(searchOutput.notFound, settings["outputName"]+ "not found", document.getElementById("notFoundDownload"))
 
 
-    setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
+    //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
     toggleLigtBox()
     statusSearchUppdate()
     clearInterval(statusInterval)
@@ -146,7 +147,7 @@ async function indexChangeLibrary(){
 
 function dowloadSettings(){
     element = document.getElementById("settingsDowload")
-    _generateDownload(settingsToStr(), settings.outputName[0]+" Settings", element)
+    _generateDownload(settingsToStr(), settings.outputName+" Settings", element)
 }
 
 
