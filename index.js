@@ -65,8 +65,8 @@ document.getElementById("startButton").addEventListener('click', async function(
     var statusInterval = setInterval(statusSearchUppdate, 10);
     await new Promise(r => setTimeout(r, 300))
 
-    newSearchOutput = await runScreening(settings)
-
+    var newSearchOutput = await runScreening(settings)
+    searchOutput = newSearchOutput
     searchOutput.notFound = _generateNotFound()
     _generateDownload(searchOutput.textOutputFull, settings["outputName"], document.getElementById("fullDownload"))
 
