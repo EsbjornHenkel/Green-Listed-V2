@@ -12,17 +12,17 @@ function logicScreening(library, settings, usedSynonyms) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
         if (_match(symbol, settings, swappedSynonyms)){
-            filteredLibraryMap[symbol] = library.libraryMap[symbol] //makes coppy not pointer
+            filteredLibraryMap[symbol] = library.libraryMap[symbol]
         }
     }
 
     if ((settings.rankingColumn !=  0) || (settings.rankingColumn == null)){
         filteredLibraryMap = sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
+        
     }
     if (settings.rankingTop > 0){
         filteredLibraryMap = getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
-
     filteredLibraryMap = postProcessing(filteredLibraryMap, settings)
 
     const textOutputFull = _generateFullTxtOutput(settings, filteredLibraryMap, swappedSynonyms)
@@ -63,33 +63,30 @@ function _matchNonpartial(symbol, searchSymbols){
 }
 
 function sortOnScore(libraryMap, rankingOrder, rankingColumn){
-    var sorted = {}
+
     // Loop through each key in the groupedData
     for (const symbol in libraryMap) {
         // Sort the array based on scores in descending order
-        var sortedScores = {}
         if (rankingOrder == "ascending"){
-            sortedScores = libraryMap[symbol].sort((a, b) => a[rankingColumn-1] - b[rankingColumn-1])
+            libraryMap[symbol].rows.sort((a, b) => a[rankingColumn-1] - b[rankingColumn-1])
         }
         else{
-            sortedScores = libraryMap[symbol].sort((a, b) => b[rankingColumn-1] - a[rankingColumn-1])
+            libraryMap[symbol].rows.sort((a, b) => b[rankingColumn-1] - a[rankingColumn-1])
         }
-        // Get the top n scores
-        sorted[symbol] = sortedScores
     }
-    return sorted
+    return libraryMap
 }
 
 function getTopRankingElements(libraryMap, n) {
-    for (let key in libraryMap) {
-        libraryMap[key] = libraryMap[key].slice(0, n);
+    for (let symbol in libraryMap) {
+        libraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n);
       }
     return libraryMap
 }
 
 function postProcessing(libraryMap, settings){
     for (const symbol in libraryMap) {
-        libraryMap[symbol].forEach(RNAstr =>{
+        libraryMap[symbol].rows.forEach(RNAstr =>{
             RNAstr[settings.gRNAColumn-1] = _applyAxiliarySettings(RNAstr[settings.RNAColumn-1]) 
         })
     }
@@ -115,13 +112,13 @@ function _applyAxiliarySettings(gRNASequence){
 
 function _generateFullTxtOutput(settings, libraryMap, swapedSynonyms){
     out = "SymbolSearched SymbolUsed  gRNA    Compliment  Score \n"
-    for (var [symbol, arr] of Object.entries(libraryMap)) {
+    for (var [symbol, dict] of Object.entries(libraryMap)) {
         var SymbolSearched = ""
         if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
             SymbolSearched = `${swapedSynonyms[symbol]}→`
             symbol = `${symbol} `
         }
-        arr.forEach(element => {
+        dict.rows.forEach(element => {
             out = out + `${SymbolSearched}  ${symbol}   ${element[settings.gRNAColumn-1]}    ${_complimentSequence(element[settings.gRNAColumn-1])}    ${element[settings.rankingColumn-1]}\n`
         })
       }

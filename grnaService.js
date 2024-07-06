@@ -20,13 +20,11 @@ async function selectLibrary(libraryName){
         const libData = await fetchTextFile(libSettings.fileName)
 
         // read synonyms
-        const synonyms = await fetchJsonFile(libSettings.synonymFileName)
-
+        const synonymData = await fetchTextFile(libSettings.synonymFileName)
         // pre-process to create search structure
-        libraryUpdate(libSettings, libData, synonyms)
+        libraryUpdate(libSettings, libData,  synonymData)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
-
         return libSettings
         
     } catch (error) {

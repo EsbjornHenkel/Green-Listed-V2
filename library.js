@@ -9,7 +9,7 @@
 var library = {
     "libraryMap": {},
     "headers": "",
-    "synonyms": null,
+    "synonymMap": null,
     "statusSearch": "",
 }
 
@@ -35,30 +35,52 @@ function libraryStartScreen(settings){
 }
 
 function libraryCustomData(fileData, symbolColumn){
-    //library.synonyms = synonyms
-    libraryMap = fileData.trim().split("\n").map((row) => row.split("\t"))
-    library.headers = libraryMap.shift()
-    var libraryMap = _getRowList(libraryMap, symbolColumn)
+    //library.synonymMap = _getSynonymMap(synonymData)
+    var libraryMap = _getLibraryMap(fileData, symbolColumn)
     library["libraryMap"] = libraryMap
 }
 
 
-function libraryUpdate(librarySettings, fileData, synonyms){
-    library.synonyms = synonyms
-    libraryMap = fileData.trim().split("\n").map((row) => row.split("\t"))
-    library.headers = libraryMap.shift()
-    var libraryMap = _getRowList(libraryMap, librarySettings.symbolColumn)
+function libraryUpdate(librarySettings, fileData, synonymData){
+    library.synonymMap = _getSynonymMap(synonymData)
+    var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn)
     library["libraryMap"] = libraryMap
 }
 
-function _getRowList(rows, symbolColumn){
-    const libraryMap = {};
+function _getSynonymMap(synonymData){
+    rows = synonymData.trim().split("\n").map((row) => row.split("\t"))
+    rows.shift()
+    var synonymMap = {}
     rows.forEach(row => {
-            symbol = row[symbolColumn-1]
+        const symbol1 = row[0]
+        const symbol2 = row[1]
+
+        if (!synonymMap[symbol1]) {
+            synonymMap[symbol1] = new Set()
+        }
+        synonymMap[symbol1].add(symbol2)
+
+        if (!synonymMap[symbol2]) {
+            synonymMap[symbol2] = new Set()
+        }
+        synonymMap[symbol2].add(symbol1)
+      })
+      return synonymMap
+}
+
+function _getLibraryMap(fileData, symbolColumn){
+    rows = fileData.trim().split("\n").map((row) => row.split("\t"))
+    rows.shift()
+    libraryMap = {}
+    rows.forEach(row => {
+        symbol = row[symbolColumn-1]
         if (libraryMap[symbol]) {
-            libraryMap[symbol].push(row)
+            libraryMap[symbol].rows.push(row)
         } else {
-            libraryMap[symbol] = [row]
+            libraryMap[symbol] = {
+                "rows": [row],
+                "previusSymbol": ""
+            }
         }
     })
     return libraryMap
@@ -113,7 +135,31 @@ function libraryUniqueSymbols(){
 function getSearchstatus(){
     return library["statusSearch"]
 }
+function libraryStatusSynonyms(searchSymbols){
+    
+    const array2  = Object.keys(library.libraryMap)
+    const array1 = searchSymbols.filter(symbol => !array2.includes(symbol))
+    const synonymsDict = library.synonymMap
 
+    const resultDict = {}
+    array1.forEach(symbol => {
+        resultDict[symbol] = ""
+        if (synonymsDict[symbol]) {
+          synonymsDict[symbol].forEach(synonym => {
+            if (array2.includes(synonym)) {
+              if (!resultDict[symbol]) {
+                resultDict[symbol] = []
+              }
+              resultDict[symbol] = synonym;
+            }
+          })
+        }
+      })
+
+    return resultDict
+}
+
+/*
 function libraryStatusSynonyms(searchSymbols){
     var synonymMaping = {}
     const symbolsNotFound = searchSymbols.filter(symbol => !library.libraryMap.hasOwnProperty(symbol))
@@ -133,7 +179,7 @@ function libraryStatusSynonyms(searchSymbols){
     })
 
     return synonymMaping
-}
+}*/
 
 function libraryStatusScreening(){
     return library.statusSearch
