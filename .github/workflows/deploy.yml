@@ -21,7 +21,7 @@ jobs:
 
     - name: Copy files via SSH
       run: |
-        rsync -avz --delete --exclude='.*' -e "ssh -o StrictHostKeyChecking=no" ./ piadm@84.55.80.204:/temp/
+        rsync -avz --delete --exclude='.*' -e "ssh -o StrictHostKeyChecking=no" ./ piadm@84.55.80.204:/home/piadm/temp/
       env:
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
 
