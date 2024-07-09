@@ -19,9 +19,9 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Copy files via SSH
+    - name: Copy files via SSH # piadm@84.55.80.204:/home/piadm/grnaproject/gitfiles
       run: |
-        rsync -avz --delete --exclude='.*' -e "ssh -o StrictHostKeyChecking=no" ./ piadm@84.55.80.204:/home/piadm/temp/
+        rsync -avz --delete --exclude='.*' -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_SERVER }}
       env:
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
 
