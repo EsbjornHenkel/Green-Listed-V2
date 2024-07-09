@@ -159,7 +159,7 @@ async function indexChangeLibrary(){
             const librarySettings = await selectLibrary(libraryName)
             useSynonyms.disabled = ""
             settings.libraryName = libraryName
-            libraryInfo.innerHTML = librarySettings.libraryInfo
+            libraryInfo.innerHTML = `If you use this library, please cite: <br> ${librarySettings.libraryInfo} <br> "<a href="${librarySettings.libraryLink}">${librarySettings.libraryLink}</a>`
 
             settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
         }
