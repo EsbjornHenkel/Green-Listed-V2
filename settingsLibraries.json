@@ -6,7 +6,7 @@
         "RNAColumn": 7,
         "RankColumn": 11,
 
-        "synonymFileName": "defaultSynonyms.json"
+        "synonymFileName": "mouse synonym.txt"
     },
     {
         "name": "Brunello 21",
@@ -15,6 +15,15 @@
         "RNAColumn": 8,
         "RankColumn": 12,
         
-        "synonymFileName": "defaultSynonyms.json"
+        "synonymFileName": "human synonym.txt"
+    },
+    {
+        "name": "Experimental cheese",
+        "fileName": "testData.txt",
+        "symbolColumn": 2,
+        "RNAColumn": 7,
+        "RankColumn": 11,
+        
+        "synonymFileName": "human synonym.txt"
     }
 ]
