@@ -26,6 +26,10 @@ function libraryStartScreenTEST(settings){
 }
 
 function libraryStartScreen(settings){
+    if (Object.keys(library.libraryMap).length == 0){
+        library.statusSearch = "Error no library selected"
+        throw new Error("No library selected")
+    }
     library.statusSearch = "Starting search"
     var st = performance.now()
     var searchOutput = logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
@@ -52,8 +56,8 @@ function _getSynonymMap(synonymData){
     rows.shift()
     var synonymMap = {}
     rows.forEach(row => {
-        const symbol1 = row[0]
-        const symbol2 = row[1]
+        const symbol1 = row[0].toUpperCase()
+        const symbol2 = row[1].toUpperCase()
 
         if (!synonymMap[symbol1]) {
             synonymMap[symbol1] = new Set()
@@ -73,7 +77,7 @@ function _getLibraryMap(fileData, symbolColumn, synonymMap){
     rows.shift()
     libraryMap = {}
     rows.forEach(row => {
-        symbol = row[symbolColumn-1]
+        symbol = row[symbolColumn-1].toUpperCase()
         if (libraryMap[symbol]) {
             libraryMap[symbol].rows.push(row)
         } else {

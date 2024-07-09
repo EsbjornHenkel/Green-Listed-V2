@@ -8,7 +8,13 @@ var searchOutput = {
 //  }
 
 async function init(){
-    data = await getDefaultSettings()
+    try{
+        data = await getDefaultSettings()
+    }
+    catch(error){
+        //console.error(`Failed to get default settings:\n ${error.message}`)
+        throw new Error(`Failed to get default settings:\n ${error.message}`)
+    }
     document.getElementById("trimBefore").min = 0
     document.getElementById("trimBefore").value = data.trimBefore
 
@@ -63,17 +69,17 @@ document.getElementById("startButton").addEventListener('click', async function(
 
     var statusInterval = setInterval(statusSearchUppdate, 10);
     await new Promise(r => setTimeout(r, 100))
-
-    var newSearchOutput = await runScreening(settings)
-
-    searchOutput = newSearchOutput
-    searchOutput.notFound = _generateNotFound()
+    try{
+        searchOutput = await runScreening(settings)
+        searchOutput.notFound = _generateNotFound()
+        
+        _generateDownload(searchOutput.textOutputFull, settings["outputName"]+" Output", document.getElementById("fullDownload"))
     
-    _generateDownload(searchOutput.textOutputFull, settings["outputName"]+" Output", document.getElementById("fullDownload"))
-
-    _generateDownload(searchOutput.notFound, settings["outputName"]+ " not found", document.getElementById("notFoundDownload"))
-
-
+        _generateDownload(searchOutput.notFound, settings["outputName"]+ " not found", document.getElementById("notFoundDownload"))
+    }
+    catch (error) {
+        console.error(`Screening failed:\n`, error);
+    }
     //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
     
     toggleLigtBox()
@@ -110,9 +116,14 @@ function _generateNotFound(){
 }
 
 function _generateDownload(text, name, element) {
-    var file = new Blob([text], {type: "text/plain"});
-    element.href = URL.createObjectURL(file);
-    element.download = name;
+    text = text.replace("    ", "\t")
+    var blob = new Blob([text], { type: 'text/tab-separated-values' })
+    element.href = URL.createObjectURL(blob)
+    element.download = name+".tsv"
+
+    //var file = new Blob([text], {type: "text/plain"});
+    //element.href = URL.createObjectURL(file);
+    //element.download = name;
     //a.click()
 }
 
@@ -129,19 +140,34 @@ function showSettings(){
 }
 
 async function indexChangeLibrary(){
-    var libraryName = document.getElementById("libraries").value
-    var customLibrarie = document.getElementById("User Upload")
+    const useSynonyms = document.getElementById("enableSynonyms")
+    const libraryInfo = document.getElementById("libraryInfo")
+    const libraryName = document.getElementById("libraries").value
+    const customLibrarie = document.getElementById("User Upload")
     if (libraryName == "custom"){
+        useSynonyms.disabled = "disabled"
+        useSynonyms.checked = false
         customLibrarie.classList.remove("inactive")
+        libraryInfo.innerHTML = ""
         indexLibraryColumnChanges()
     }
     else{
         customLibrarie.classList.add("inactive")
         setStatus("symbolsFound", "fetching library from server")
         await new Promise(r => setTimeout(r, 10))
-        const librarySettings = await selectLibrary(libraryName)
-        settings.libraryName = libraryName
-        settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
+        try{
+            const librarySettings = await selectLibrary(libraryName)
+            useSynonyms.disabled = ""
+            settings.libraryName = libraryName
+            libraryInfo.innerHTML = librarySettings.libraryInfo
+
+            settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
+        }
+        catch(error){
+            setStatus("symbolsFound", "Error failed to fetch library")
+            throw error
+        }
+
     }
     indexLibraryChanges()
 }
@@ -154,7 +180,8 @@ function dowloadSettings(){
 
 function indexLibraryChanges(){
     const enableSynonyms = document.getElementById("enableSynonyms").checked
-    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()})
+    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toUpperCase())
+    console.log(searchSymbols)
     const partialMatches = document.getElementById("partialMatches").checked
 
     settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
@@ -238,17 +265,16 @@ async function _createSynonymDropworns(){
     if (Object.keys(usedSynonyms).length == 0){
         symbolsNotFound.textContent = "All symbols found in file"
     }
+    var text = ""
     Object.keys(usedSynonyms).forEach(symbol => {
-        const symbolContainer = document.createElement("p")
         if (settings.enableSynonyms && (usedSynonyms[symbol].length != 0)){
-            symbolContainer.innerHTML = `${symbol}<b style="font-size:1.25rem"> → </b>${usedSynonyms[symbol]}`
-            symbolsNotFound.insertBefore(symbolContainer, symbolsNotFound.firstChild)
+            text = `${symbol}→${usedSynonyms[symbol]} ${text}<br>`
         }
         else{
-            symbolContainer.textContent = `${symbol}`
-            symbolsNotFound.appendChild(symbolContainer)
+            text = text +`${symbol}<br>`
         }
     })
+    symbolsNotFound.innerHTML = text
     title.classList.remove("pulse")
 }
 

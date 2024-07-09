@@ -111,7 +111,7 @@ function _applyAxiliarySettings(gRNASequence){
 
 
 function _generateFullTxtOutput(settings, libraryMap, swapedSynonyms){
-    out = "SymbolSearched SymbolUsed  gRNA    Compliment  Score \n"
+    out = "Target Gene Symbol (searched)\tTarget Gene Symbol (used)\tsgRNA Target Sequence\t sgRNA Target Sequence Compliment\tScore \n"
     for (var [symbol, dict] of Object.entries(libraryMap)) {
         var SymbolSearched = ""
         if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
@@ -119,7 +119,7 @@ function _generateFullTxtOutput(settings, libraryMap, swapedSynonyms){
             symbol = `${symbol} `
         }
         dict.rows.forEach(element => {
-            out = out + `${SymbolSearched}  ${symbol}   ${element[settings.gRNAColumn-1]}    ${_complimentSequence(element[settings.gRNAColumn-1])}    ${element[settings.rankingColumn-1]}\n`
+            out = out + `${SymbolSearched}\t${symbol}\t${element[settings.gRNAColumn-1]}\t${_complimentSequence(element[settings.gRNAColumn-1])}\t${element[settings.rankingColumn-1]}\n`
         })
       }
     return out.replace(/(?:\r\n|\r|\n)/g, '\n')

@@ -11,7 +11,7 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 // Selects/activates a library
 // does pre-processing
 async function selectLibrary(libraryName){
-    try {
+    //try {
         //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
         
         // Read library data - can be 80000 rows...
@@ -27,16 +27,22 @@ async function selectLibrary(libraryName){
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
         return libSettings
         
-    } catch (error) {
-        console.error(`grnaService.selectLibrary(${libraryName}) failed:`, error);
-    }
+    //} catch (error) {
+        console.error(`grnaService.selectLibrary failed:\n:${error}`)
+    //}
 }
 
 
 // returns settings json, see settingsDefault.json for an example
 async function getDefaultSettings() {
-        const settings = await fetchJsonFile(SETTINGS_URL)
-        return settings
+        try{
+            const settings = await fetchJsonFile(SETTINGS_URL)
+            return settings
+        }
+        catch(error){
+            throw new Error(`GRNAService.getDefaultSettings(${SETTINGS_URL}) invalid callback:\n ${error.message}`)
+        }
+        
 }
 
 async function getLibraryNames() {
@@ -48,7 +54,12 @@ async function getLibraryNames() {
 // Start the screening. 
 // Settings contains all param, see default settings in settingsDefault.json
 function runScreening(settings){
-    return libraryStartScreen(settings)
+    try{
+        return libraryStartScreen(settings)
+    }
+    catch(error){
+        throw error
+    }
 }
 
 function addCustomLibraryData(data, symbolColumn){

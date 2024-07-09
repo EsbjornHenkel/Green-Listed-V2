@@ -186,7 +186,6 @@ td:not(:first-child) {
 
 .scrollablePlate{
     max-height: 118px;
-    height: 118px;
     overflow-y: auto;
 }
 

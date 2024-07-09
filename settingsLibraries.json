@@ -6,6 +6,8 @@
         "RNAColumn": 7,
         "RankColumn": 11,
 
+        "libraryInfo": "Citation needed",
+
         "synonymFileName": "mouse synonym.txt"
     },
     {
@@ -14,6 +16,8 @@
         "symbolColumn": 3,
         "RNAColumn": 8,
         "RankColumn": 12,
+
+        "libraryInfo": "Citation needed",
         
         "synonymFileName": "human synonym.txt"
     },
@@ -23,6 +27,8 @@
         "symbolColumn": 2,
         "RNAColumn": 7,
         "RankColumn": 11,
+
+        "libraryInfo": "Citation needed",
         
         "synonymFileName": "human synonym.txt"
     }
