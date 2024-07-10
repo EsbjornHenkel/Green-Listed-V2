@@ -10,19 +10,19 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 
 // Selects/activates a library
 // does pre-processing
-async function selectLibrary(libraryName){
+async function SER_selectLibrary(libraryName){
     //try {
         //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
         
         // Read library data - can be 80000 rows...
-        const libraries = await fetchJsonFile(LIBRARIES_URL)
+        const libraries = await FH_fetchJsonFile(LIBRARIES_URL)
         const libSettings = libraries.find(library => library.name == libraryName)
-        const libData = await fetchTextFile(libSettings.fileName)
+        const libData = await FH_fetchTextFile(libSettings.fileName)
 
         // read synonyms
-        const synonymData = await fetchTextFile(libSettings.synonymFileName)
+        const synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
         // pre-process to create search structure
-        libraryUpdate(libSettings, libData,  synonymData)
+        LIB_libraryUpdate(libSettings, libData,  synonymData)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
         return libSettings
@@ -34,9 +34,9 @@ async function selectLibrary(libraryName){
 
 
 // returns settings json, see settingsDefault.json for an example
-async function getDefaultSettings() {
+async function SET_getDefaultSettings() {
         try{
-            const settings = await fetchJsonFile(SETTINGS_URL)
+            const settings = await FH_fetchJsonFile(SETTINGS_URL)
             return settings
         }
         catch(error){
@@ -45,41 +45,41 @@ async function getDefaultSettings() {
         
 }
 
-async function getLibraryNames() {
-    const libraries = await fetchJsonFile(LIBRARIES_URL)
+async function SER_getLibraryNames() {
+    const libraries = await FH_fetchJsonFile(LIBRARIES_URL)
     const libraryNames = libraries.map(library => library.name)
     return libraryNames
 }
 
 // Start the screening. 
 // Settings contains all param, see default settings in settingsDefault.json
-function runScreening(settings){
+function SER_runScreening(settings){
     try{
-        return libraryStartScreen(settings)
+        return LIB_libraryStartScreen(settings)
     }
     catch(error){
         throw error
     }
 }
 
-function addCustomLibraryData(data, symbolColumn){
-    return libraryCustomData(data, symbolColumn)
+function SER_addCustomLibraryData(data, symbolColumn){
+    return LIB_libraryCustomData(data, symbolColumn)
 }
 
 // ---------------------------- Status functions ------------------------------------------------
 
 
 // Return a string describing the library status - for example "Unique symbols found: 19674"
-function getLibraryUniqueSymbols(){
-    return libraryUniqueSymbols()
+function SER_getLibraryUniqueSymbols(){
+    return LIB_libraryUniqueSymbols()
 }
 
 // Return a map with symbols not found (keys) and an synonym used (value - often Null)
-function getUsedSynonyms(searchSymbols){
-    return libraryStatusSynonyms(searchSymbols)
+function SER_getUsedSynonyms(searchSymbols){
+    return LIB_libraryStatusSynonyms(searchSymbols)
 }
 
 // Return string with status of screening run- for example "Done. Time to complete: 0.2s"
-function getScreeningStatus(){
-    return libraryStatusScreening()
+function SER_getScreeningStatus(){
+    return LIB_libraryStatusScreening()
 }

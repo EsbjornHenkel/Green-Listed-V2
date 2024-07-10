@@ -26,7 +26,7 @@
 
             <div class="smallPlate">
                 <h3 class="smallTitle">
-                    <select id="libraries" onchange="indexChangeLibrary()" required>
+                    <select id="libraries" onchange="selectNewLibrary()" required>
 
                         <option value="custom">User Upload</option>
                     </select>
@@ -35,7 +35,7 @@
                     <form id="User Upload" class="inactive">
                         <p class="flexRow">
                             Select a .txt file to use as Library
-                            <input type="file" accept=".txt" id="customFile" onchange="indexLibraryChanges()">
+                            <input type="file" accept=".txt" id="customFile" onchange="indexSymbolChanges()">
                         </p>
                         
                         <table>
@@ -58,7 +58,7 @@
                         
                     </form>
                     
-                    <p id="libraryInfo"></p>
+                    <p id="libraryInfoContainer"></p>
                     <div id="symbolsFound"></div>
                 </div>
 
@@ -74,15 +74,15 @@
                 <h3 class="smallTitle">Symbols</h3>
                 <div class="plateContent">
                     <form class="justifyCenter">
-                        <input type="checkbox" id="enableSynonyms" onchange="indexLibraryChanges()">
+                        <input type="checkbox" id="enableSynonyms" onchange="indexSymbolChanges()">
                         <label class="justifyCenter">Use synonyms</label>
                     </form>
                     <form class="justifyCenter">
-                        <input type="checkbox" id="partialMatches" onchange="indexLibraryChanges()">
+                        <input type="checkbox" id="partialMatches" onchange="indexSymbolChanges()">
                         <label class="justifyCenter">Allow for partial matches</label>
                     </form>
                     
-                    <textarea id="searchSymbols" onchange="indexLibraryChanges()">
+                    <textarea id="searchSymbols" onchange="indexSymbolChanges()">
 
                     </textarea>
                     <p id="statusSearchSymbolsRows"></p>
@@ -155,7 +155,7 @@
         <div class="plateContent">
             <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
             <div class="smallPlate"> 
-                <button id="startButton">Run screening</button>
+                <button id="startButton" onclick="indexRunScreening()">Run screening</button>
                 <div id="statusSearch"></div>
             </div>
         </div>

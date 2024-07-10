@@ -18,34 +18,34 @@ function libraryStartScreenTEST(settings){
     var ost = performance.now()
     for (let i = 0; i < 10; i++) {
         var st = performance.now()
-        logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
+        logicScreening(library, settings, LIB_libraryStatusSynonyms(settings.searchSymbols))
         console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
     }
     console.log(`final: ${Math.round((performance.now()-ost)/1000 * 1000) / 1000/10}`)
     return searchOutput
 }
 
-function libraryStartScreen(settings){
+function LIB_libraryStartScreen(settings){
     if (Object.keys(library.libraryMap).length == 0){
         library.statusSearch = "Error no library selected"
         throw new Error("No library selected")
     }
     library.statusSearch = "Starting search"
     var st = performance.now()
-    var searchOutput = logicScreening(library, settings, libraryStatusSynonyms(settings.searchSymbols))
+    var searchOutput = logicScreening(library, settings, LIB_libraryStatusSynonyms(settings.searchSymbols))
     library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s`
     console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
     return searchOutput
 }
 
-function libraryCustomData(fileData, symbolColumn){
+function LIB_libraryCustomData(fileData, symbolColumn){
     //library.synonymMap = _getSynonymMap(synonymData)
     var libraryMap = _getLibraryMap(fileData, symbolColumn)
     library["libraryMap"] = libraryMap
 }
 
 
-function libraryUpdate(librarySettings, fileData, synonymData){
+function LIB_libraryUpdate(librarySettings, fileData, synonymData){
     library.synonymMap = _getSynonymMap(synonymData)
     var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn, library.synonymMap)
     library.libraryMap = libraryMap
@@ -56,8 +56,8 @@ function _getSynonymMap(synonymData){
     rows.shift()
     var synonymMap = {}
     rows.forEach(row => {
-        const symbol1 = row[0].toUpperCase()
-        const symbol2 = row[1].toUpperCase()
+        const symbol1 = row[0].toLowerCase()
+        const symbol2 = row[1].toLowerCase()
 
         if (!synonymMap[symbol1]) {
             synonymMap[symbol1] = new Set()
@@ -77,7 +77,7 @@ function _getLibraryMap(fileData, symbolColumn, synonymMap){
     rows.shift()
     libraryMap = {}
     rows.forEach(row => {
-        symbol = row[symbolColumn-1].toUpperCase()
+        symbol = row[symbolColumn-1].toLowerCase()
         if (libraryMap[symbol]) {
             libraryMap[symbol].rows.push(row)
         } else {
@@ -130,7 +130,7 @@ function libraryStatusRankIndex(rankingIndex){
     return "X"
 }
 
-function libraryUniqueSymbols(){
+function LIB_libraryUniqueSymbols(){
     var len = Object.keys(library.libraryMap).length
     if (len == 0)
         return "Error no symbols found"
@@ -141,7 +141,7 @@ function getSearchstatus(){
     return library["statusSearch"]
 }
 
-function libraryStatusSynonyms(searchSymbols){
+function LIB_libraryStatusSynonyms(searchSymbols){
     const symbolsNotFound = searchSymbols.filter(symbol => !library.libraryMap.hasOwnProperty(symbol))
     const synonymMap = {}
     symbolsNotFound.forEach(symbol => {
@@ -182,6 +182,6 @@ function libraryStatusSynonyms(searchSymbols){
     return synonymMaping
 }*/
 
-function libraryStatusScreening(){
+function LIB_libraryStatusScreening(){
     return library.statusSearch
 }

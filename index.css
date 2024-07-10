@@ -308,7 +308,7 @@ td:not(:first-child) {
     align-items: center;
 }
 
-#libraryInfo{
+.libraryInfo{
     font-family: 'Times New Roman', Times, serif;
 }
 

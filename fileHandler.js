@@ -1,7 +1,7 @@
 
 
 
-async function fetchJsonFile(url) {
+async function FH_fetchJsonFile(url) {
     try {
         const response = await fetch(url)
         if (!response.ok) {
@@ -18,7 +18,7 @@ async function fetchJsonFile(url) {
     }
 }
 
-async function fetchTextFile(url) {
+async function FH_fetchTextFile(url) {
     try {
         const response = await fetch(url)
 

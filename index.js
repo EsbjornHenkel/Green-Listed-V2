@@ -9,7 +9,7 @@ var searchOutput = {
 
 async function init(){
     try{
-        data = await getDefaultSettings()
+        data = await SET_getDefaultSettings()
     }
     catch(error){
         //console.error(`Failed to get default settings:\n ${error.message}`)
@@ -31,7 +31,7 @@ async function init(){
     document.getElementById("partialMatches").checked = data.partialMatches
     document.getElementById("enableSynonyms").checked = data.enableSynonyms
     
-    libraryNames = await getLibraryNames()
+    libraryNames = await SER_getLibraryNames()
     dropdown = document.getElementById("libraries")
     libraryNames.forEach(name => {
         var option = document.createElement('option')
@@ -45,12 +45,12 @@ async function init(){
 
     const rankingOrder = document.getElementById("rankingOrder").value
     settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms)
-    indexChangeLibrary(dropdown.value)
+    selectNewLibrary()
     
     _editExampleText()
 }
 
-function toggleLigtBox(){
+function _toggleLigtBox(){
     const box = document.getElementById('overlay')
     if (box.classList.contains("fazeIn")){
         box.classList.remove("fazeIn")
@@ -62,15 +62,15 @@ function toggleLigtBox(){
     }
 }
 
-document.getElementById("startButton").addEventListener('click', async function() {
+async function indexRunScreening(){
+    _toggleLigtBox()
 
-    toggleLigtBox()
     button = document.getElementById("startButton")
 
-    var statusInterval = setInterval(statusSearchUppdate, 10);
+    var statusInterval = setInterval(_statusSearchUppdate, 10);
     await new Promise(r => setTimeout(r, 100))
     try{
-        searchOutput = await runScreening(settings)
+        searchOutput = await SER_runScreening(settings)
         searchOutput.notFound = _generateNotFound()
         
         _generateDownload(searchOutput.textOutputFull, settings["outputName"]+" Output", document.getElementById("fullDownload"))
@@ -82,18 +82,18 @@ document.getElementById("startButton").addEventListener('click', async function(
     }
     //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
     
-    toggleLigtBox()
-    statusSearchUppdate()
+    _toggleLigtBox()
+    _statusSearchUppdate()
     clearInterval(statusInterval)
 
 
     
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
-})
+}
 
 function _generateNotFound(){
-    var usedSynonyms = getUsedSynonyms(settings.searchSymbols)
+    var usedSynonyms = SER_getUsedSynonyms(settings.searchSymbols)
     if (Object.keys(usedSynonyms).length == 0){
         var out = "All symbols found in file"
         return out
@@ -139,16 +139,21 @@ function showSettings(){
     setStatus("fileContent", settingsToStr().replace(/\n/g, "<br>"))
 }
 
-async function indexChangeLibrary(){
+function dowloadSettings(){
+    element = document.getElementById("settingsDowload")
+    _generateDownload(settingsToStr(), settings.outputName+" Settings", element)
+}
+
+async function selectNewLibrary(){
     const useSynonyms = document.getElementById("enableSynonyms")
-    const libraryInfo = document.getElementById("libraryInfo")
+    const libraryInfoContainer = document.getElementById("libraryInfoContainer")
     const libraryName = document.getElementById("libraries").value
     const customLibrarie = document.getElementById("User Upload")
     if (libraryName == "custom"){
         useSynonyms.disabled = "disabled"
         useSynonyms.checked = false
         customLibrarie.classList.remove("inactive")
-        libraryInfo.innerHTML = ""
+        libraryInfoContainer.innerHTML = ""
         indexLibraryColumnChanges()
     }
     else{
@@ -156,10 +161,12 @@ async function indexChangeLibrary(){
         setStatus("symbolsFound", "fetching library from server")
         await new Promise(r => setTimeout(r, 10))
         try{
-            const librarySettings = await selectLibrary(libraryName)
+            const librarySettings = await SER_selectLibrary(libraryName)
             useSynonyms.disabled = ""
             settings.libraryName = libraryName
-            libraryInfo.innerHTML = `If you use this library, please cite: <br> ${librarySettings.libraryInfo} <br> "<a href="${librarySettings.libraryLink}">${librarySettings.libraryLink}</a>`
+            await displayNewLibrary(libraryInfoContainer, librarySettings.libraryInfo, librarySettings.libraryLink)
+            
+            
 
             settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
         }
@@ -169,18 +176,23 @@ async function indexChangeLibrary(){
         }
 
     }
-    indexLibraryChanges()
+    indexSymbolChanges()
 }
 
-function dowloadSettings(){
-    element = document.getElementById("settingsDowload")
-    _generateDownload(settingsToStr(), settings.outputName+" Settings", element)
+async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink){
+    var text = ""
+    if (libraryInfo){
+        text = text + `If you use this library, please cite: <p class="libraryInfo">${libraryInfo}</p>`
+    }
+    if (libraryLink){
+        text = text + `<a href="${libraryLink}"> Article</a>`
+    }
+    libraryInfoContainer.innerHTML = text
 }
 
-
-function indexLibraryChanges(){
+function indexSymbolChanges(){
     const enableSynonyms = document.getElementById("enableSynonyms").checked
-    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toUpperCase())
+    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toLowerCase())
     console.log(searchSymbols)
     const partialMatches = document.getElementById("partialMatches").checked
 
@@ -206,14 +218,14 @@ async function indexUppdateCustomLibrary(){
             var reader = new FileReader();
             reader.onload = function(e) {
                 // Display file content
-                addCustomLibraryData(reader.result, settings.symbolColumn)
+                SER_addCustomLibraryData(reader.result, settings.symbolColumn)
             }
             reader.readAsText(file)
             await new Promise(r => setTimeout(r, 10))
 
         }
         else{
-            addCustomLibraryData("", -1)
+            SER_addCustomLibraryData("", -1)
         }
     }
     console.log(library.libraryMap)
@@ -257,7 +269,7 @@ function _editExampleText(){
 }
 
 async function _createSynonymDropworns(){
-    var usedSynonyms = getUsedSynonyms(settings.searchSymbols)
+    var usedSynonyms = SER_getUsedSynonyms(settings.searchSymbols)
     const title = document.getElementById("symbolsNotFound")
 
     const symbolsNotFound = document.getElementById("displaySynonyms")
@@ -282,7 +294,7 @@ async function _createSynonymDropworns(){
 
 function statusUppdateSymbols(){
     _createSynonymDropworns()
-    setStatus("symbolsFound", getLibraryUniqueSymbols())
+    setStatus("symbolsFound", SER_getLibraryUniqueSymbols())
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
     setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
     setStatus("fileContent", "")
@@ -301,7 +313,7 @@ function setColor(elemId, color){
 
 }
 
-function statusSearchUppdate(){
+function _statusSearchUppdate(){
     setStatus("statusSearch", getSearchstatus())
 }
 
