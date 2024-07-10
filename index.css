@@ -61,9 +61,7 @@ main{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    padding-top: 10px;
-    padding-left: 30px;
-    padding-right: 50px;
+    padding: 20px;
 }
 
 main > *{
@@ -216,10 +214,6 @@ td:not(:first-child) {
     font-size: 0.8rem;
 }
 
-.oneSynonyme {
-    -moz-appearance: none;
-    -webkit-appearance: none;
-}
 
 .tooltiptext {
     visibility: hidden;
@@ -308,7 +302,7 @@ td:not(:first-child) {
     align-items: center;
 }
 
-.libraryInfo{
+#libraryInfo{
     font-family: 'Times New Roman', Times, serif;
 }
 

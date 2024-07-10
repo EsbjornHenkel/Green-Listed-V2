@@ -93,7 +93,7 @@ async function indexRunScreening(){
 }
 
 function _generateNotFound(){
-    var usedSynonyms = SER_getUsedSynonyms(settings.searchSymbols)
+    var usedSynonyms = SER_getSynonymMap(settings.searchSymbols)
     if (Object.keys(usedSynonyms).length == 0){
         var out = "All symbols found in file"
         return out
@@ -193,7 +193,6 @@ async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink)
 function indexSymbolChanges(){
     const enableSynonyms = document.getElementById("enableSynonyms").checked
     const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toLowerCase())
-    console.log(searchSymbols)
     const partialMatches = document.getElementById("partialMatches").checked
 
     settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
@@ -269,25 +268,36 @@ function _editExampleText(){
 }
 
 async function _createSynonymDropworns(){
-    var usedSynonyms = SER_getUsedSynonyms(settings.searchSymbols)
-    const title = document.getElementById("symbolsNotFound")
+    const synonymMap = SER_getSynonymMap(settings.searchSymbols)
 
-    const symbolsNotFound = document.getElementById("displaySynonyms")
-    symbolsNotFound.innerHTML = ""
-    if (Object.keys(usedSynonyms).length == 0){
-        symbolsNotFound.textContent = "All symbols found in file"
+    const notFound = document.getElementById("displayNotFound")
+    const synonymsUsed = document.getElementById("displaySynonyms")
+
+    synonymsUsed.textContent = ""
+    notFound.textContent = ""
+    if (Object.keys(synonymMap).length == 0){
+        notFound.textContent = "All symbols found in file"
     }
-    var text = ""
-    Object.keys(usedSynonyms).forEach(symbol => {
-        if (settings.enableSynonyms && (usedSynonyms[symbol].length != 0)){
-            text = `${symbol}→${usedSynonyms[symbol]} ${text}<br>`
+    var notUsedText = ""
+    var synonymsUsedText = ""
+    var numSynonyms = 0
+    var numNotFound = 0
+    Object.keys(synonymMap).forEach(symbol => {
+        if (settings.enableSynonyms && (synonymMap[symbol].length != 0)){
+            synonymsUsedText = synonymsUsedText + `${symbol}→${synonymMap[symbol]}<br>`
+            numSynonyms++
         }
         else{
-            text = text +`${symbol}<br>`
+            notUsedText = notUsedText +`${symbol}<br>`
+            numNotFound++
         }
     })
-    symbolsNotFound.innerHTML = text
-    title.classList.remove("pulse")
+    synonymsUsed.innerHTML = synonymsUsedText
+    notFound.innerHTML = notUsedText
+
+    settings.enableSynonyms ? setStatus("statusNumSynonyms", `(Used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
+    settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Symbos searched: ${settings.searchSymbols.length}`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound}/${settings.searchSymbols.length}`)
+    
 }
 
 /* ------------------ STATUS ----------------- */
@@ -296,7 +306,7 @@ function statusUppdateSymbols(){
     _createSynonymDropworns()
     setStatus("symbolsFound", SER_getLibraryUniqueSymbols())
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
-    setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
+    //setStatus("statusSearchSymbolsRows", "Symbols found: " + String())
     setStatus("fileContent", "")
 
     document.getElementById("outputTable").classList.add("statusFadeOut")

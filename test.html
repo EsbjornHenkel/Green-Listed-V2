@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Box Example</title>
-    <link rel="stylesheet" href="test.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-rows: auto 1fr; /* First row auto height, second row take remaining space */
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 20px;
+      height: 300px; /* Example height, adjust as needed */
+      justify-content: space-around;
+    }
+    
+    .item {
+      background-color: #ddd;
+      border: 1px solid #999;
+    }
+
+    .item-full {
+      grid-column: 1 / span 3; /* Span full width across 3 columns */
+    }
+  </style>
+  <title>CSS Grid Example</title>
 </head>
 <body>
-    <button id="loadButton">Show Loading</button>
-    
-    <div id="overlay">
-        <div class="loading-box">
-            Loading...
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('loadButton').addEventListener('click', function() {
-    document.getElementById('overlay').style.display = 'flex'
-        })
-    </script>
+  <div class="grid-container">
+    <div class="item">Slot 1</div>
+    <div class="item">Slot 2</div>
+    <div class="item">Slot 3</div>
+    <div class="item item-full">Slot 4</div>
+  </div>
 </body>
 </html>

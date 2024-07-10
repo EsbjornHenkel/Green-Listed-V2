@@ -75,7 +75,7 @@ function SER_getLibraryUniqueSymbols(){
 }
 
 // Return a map with symbols not found (keys) and an synonym used (value - often Null)
-function SER_getUsedSynonyms(searchSymbols){
+function SER_getSynonymMap(searchSymbols){
     return LIB_libraryStatusSynonyms(searchSymbols)
 }
 

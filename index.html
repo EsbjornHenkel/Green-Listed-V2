@@ -75,7 +75,7 @@
                 <div class="plateContent">
                     <form class="justifyCenter">
                         <input type="checkbox" id="enableSynonyms" onchange="indexSymbolChanges()">
-                        <label class="justifyCenter">Use synonyms</label>
+                        <label class="justifyCenter">Use synonyms</label><span id="statusNumSynonyms"></span>
                     </form>
                     <form class="justifyCenter">
                         <input type="checkbox" id="partialMatches" onchange="indexSymbolChanges()">
@@ -89,11 +89,11 @@
                 </div>
             </div>
 
-
             <div class="smallPlate">
-                <h3 class="smallTitle" id="symbolsNotFound">Found synonyms</h3>
-                <div class="plateContent scrollablePlate" id="displaySynonyms">
-  
+                <h3 class="smallTitle">Symbols not Found</h3>
+                <div class="plateContent">
+                    <p class="scrollablePlate" id="displaySynonyms"></p>
+                    <p class="scrollablePlate" id="displayNotFound"></p>
                 </div>
             </div>
         </div>
