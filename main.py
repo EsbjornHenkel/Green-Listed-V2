@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import json 
 
-#use python -m http.server TES T    8000
+#use python -m http.server TES T     8000
 
 app = Flask(__name__)
 
