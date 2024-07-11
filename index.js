@@ -120,11 +120,6 @@ function _generateDownload(text, name, element) {
     var blob = new Blob([text], { type: 'text/tab-separated-values' })
     element.href = URL.createObjectURL(blob)
     element.download = name+".tsv"
-
-    //var file = new Blob([text], {type: "text/plain"});
-    //element.href = URL.createObjectURL(file);
-    //element.download = name;
-    //a.click()
 }
 
 function showFullOutput(){
@@ -158,7 +153,7 @@ async function selectNewLibrary(){
     }
     else{
         customLibrarie.classList.add("inactive")
-        setStatus("symbolsFound", "fetching library from server")
+        setStatus("symbolsFound", "Fetching library from server...")
         await new Promise(r => setTimeout(r, 10))
         try{
             const librarySettings = await SER_selectLibrary(libraryName)
@@ -295,7 +290,7 @@ async function _createSynonymDropworns(){
     synonymsUsed.innerHTML = synonymsUsedText
     notFound.innerHTML = notUsedText
 
-    settings.enableSynonyms ? setStatus("statusNumSynonyms", `(Used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
+    settings.enableSynonyms ? setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
     settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Symbos searched: ${settings.searchSymbols.length}`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound}/${settings.searchSymbols.length}`)
     
 }

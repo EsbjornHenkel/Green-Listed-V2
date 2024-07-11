@@ -76,7 +76,7 @@ function SER_getLibraryUniqueSymbols(){
 
 // Return a map with symbols not found (keys) and an synonym used (value - often Null)
 function SER_getSynonymMap(searchSymbols){
-    return LIB_libraryStatusSynonyms(searchSymbols)
+    return LIB_libraryStatusSynonymsDisplay(searchSymbols)
 }
 
 // Return string with status of screening run- for example "Done. Time to complete: 0.2s"

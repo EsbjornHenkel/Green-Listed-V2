@@ -116,8 +116,9 @@ function _generateFullTxtOutput(settings, libraryMap, swapedSynonyms){
         var SymbolSearched = ""
         if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
             SymbolSearched = `${swapedSynonyms[symbol]}→`
-            symbol = `${symbol} `
+            symbol = `${symbol}`
         }
+        symbol = libraryMap[symbol].originalSymbol
         dict.rows.forEach(element => {
             out = out + `${SymbolSearched}\t${symbol}\t${element[settings.gRNAColumn-1]}\t${_complimentSequence(element[settings.gRNAColumn-1])}\t${element[settings.rankingColumn-1]}\n`
         })

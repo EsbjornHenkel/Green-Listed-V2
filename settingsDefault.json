@@ -4,7 +4,8 @@
     "adaptorBefore": "",
     "adaptorAfter": "",
 
-    "partialMatches": true,     
+    "partialMatches": false,  
+    "enableSynonyms": true,
     "rankingTop": 0,
 
     "outputName": "",
@@ -12,8 +13,6 @@
     "searchSymbols": ["KIAA0129", "Abca1", "CCBL1"],       
     "gRNAIndex": null,
     "symbolIndex": null,
-    "rankingIndex": null,
-
-    "enableSynonyms": true
+    "rankingIndex": null
 }
 
