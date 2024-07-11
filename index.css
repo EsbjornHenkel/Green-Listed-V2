@@ -306,6 +306,10 @@ td:not(:first-child) {
     font-family: 'Times New Roman', Times, serif;
 }
 
+#outputTable{
+    display: none;
+}
+
 .fazeIn{
     /*animation: fazeInA 0.3s ease-in-out;*/
     height: 100%;

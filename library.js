@@ -72,7 +72,7 @@ function _getSynonymMap(synonymData){
 
 function _getLibraryMap(fileData, symbolColumn, synonymMap){
     rows = fileData.trim().split("\n").map((row) => row.split("\t"))
-    rows.shift()
+    library.headers = rows.shift()
     libraryMap = {}
     rows.forEach(row => {
         const symbol = row[symbolColumn-1].trim()

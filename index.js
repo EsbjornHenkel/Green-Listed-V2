@@ -1,3 +1,5 @@
+
+
 var examplesequence = "EXAMPLESEQUENCE"
 var searchOutput = {
     "textOutputFull": "",
@@ -12,7 +14,6 @@ async function init(){
         data = await SET_getDefaultSettings()
     }
     catch(error){
-        //console.error(`Failed to get default settings:\n ${error.message}`)
         throw new Error(`Failed to get default settings:\n ${error.message}`)
     }
     document.getElementById("trimBefore").min = 0
@@ -87,7 +88,7 @@ async function indexRunScreening(){
     clearInterval(statusInterval)
 
 
-    
+    document.getElementById("outputTable").style.display = "table"
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
 }

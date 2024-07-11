@@ -17,15 +17,15 @@ function logicScreening(library, settings, usedSynonyms) {
     }
 
     if ((settings.rankingColumn !=  0) || (settings.rankingColumn == null)){
-        filteredLibraryMap = sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
+        filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
         
     }
     if (settings.rankingTop > 0){
-        filteredLibraryMap = getTopRankingElements(filteredLibraryMap, settings.rankingTop)
+        filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
-    filteredLibraryMap = postProcessing(filteredLibraryMap, settings)
+    filteredLibraryMap = _postProcessing(filteredLibraryMap, settings)
 
-    const textOutputFull = _generateFullTxtOutput(settings, filteredLibraryMap, swappedSynonyms)
+    const textOutputFull = _generateFullTxtOutput(settings, filteredLibraryMap, library.headers, swappedSynonyms)
     const textOutputNotFound = _generateDownloadSymboldNotFound(settings, usedSynonyms)
     var searchOutput = {
         "textOutputFull": textOutputFull,
@@ -34,17 +34,9 @@ function logicScreening(library, settings, usedSynonyms) {
     return searchOutput
 }
 
-function removeMatchingKeys(libraryMap, settings, swappedSynonyms) {
-    return Object.keys(libraryMap).reduce((acc, key) => {
-      if (_match(key, settings, swappedSynonyms)) {
-        acc[key] = libraryMap[key]
-      }
-      return acc
-    }, {})
-  }
-
-
 function _match(symbol, settings, swapedSynonyms){
+    //returns true is symbol is in library else false
+    //can hande synonyms and partial matches
     if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
         symbol = swapedSynonyms[symbol]
     }
@@ -62,11 +54,8 @@ function _matchNonpartial(symbol, searchSymbols){
     return searchSymbols.includes(symbol.trim())
 }
 
-function sortOnScore(libraryMap, rankingOrder, rankingColumn){
-
-    // Loop through each key in the groupedData
+function _sortOnScore(libraryMap, rankingOrder, rankingColumn){
     for (const symbol in libraryMap) {
-        // Sort the array based on scores in descending order
         if (rankingOrder == "ascending"){
             libraryMap[symbol].rows.sort((a, b) => a[rankingColumn-1] - b[rankingColumn-1])
         }
@@ -77,24 +66,24 @@ function sortOnScore(libraryMap, rankingOrder, rankingColumn){
     return libraryMap
 }
 
-function getTopRankingElements(libraryMap, n) {
+function _getTopRankingElements(libraryMap, n) {
     for (let symbol in libraryMap) {
         libraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n);
       }
     return libraryMap
 }
 
-function postProcessing(libraryMap, settings){
+function _postProcessing(libraryMap, settings){
     for (const symbol in libraryMap) {
         libraryMap[symbol].rows.forEach(RNAstr =>{
-            RNAstr[settings.gRNAColumn-1] = _applyAxiliarySettings(RNAstr[settings.RNAColumn-1]) 
+            RNAstr[settings.gRNAColumn-1] = _applyPostProcessing(RNAstr[settings.RNAColumn-1]) 
         })
     }
     return libraryMap
 }
 
 
-function _applyAxiliarySettings(gRNASequence){
+function _applyPostProcessing(gRNASequence){
     if (settings.adaptorAfter.lenth == 0){
         adaptorAfter = ""
     }
@@ -110,26 +99,28 @@ function _applyAxiliarySettings(gRNASequence){
 }
 
 
-function _generateFullTxtOutput(settings, libraryMap, swapedSynonyms){
-    out = "Target Gene Symbol (searched)\tTarget Gene Symbol (used)\tsgRNA Target Sequence\t sgRNA Target Sequence Compliment\tScore \n"
+function _generateFullTxtOutput(settings, libraryMap, headers, swapedSynonyms){
+    //var out = "Target Gene Symbol (searched)\tTarget Gene Symbol (used)\tsgRNA Target Sequence\t sgRNA Target Sequence Compliment\tScore \n"
+    headers.splice(settings.RNAColumn, 0, "Target Sequence Compliment")
+    var out = headers.join("\t")
     for (var [symbol, dict] of Object.entries(libraryMap)) {
         var SymbolSearched = ""
         if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
             SymbolSearched = `${swapedSynonyms[symbol]}→`
-            symbol = `${symbol}`
         }
-        symbol = libraryMap[symbol].originalSymbol
-        dict.rows.forEach(element => {
-            out = out + `${SymbolSearched}\t${symbol}\t${element[settings.gRNAColumn-1]}\t${_complimentSequence(element[settings.gRNAColumn-1])}\t${element[settings.rankingColumn-1]}\n`
+        dict.rows.forEach(row => {
+            row.splice(settings.RNAColumn, 0, _complimentSequence(row[settings.RNAColumn-1]))
+            out = out + `${row.join("\t")}`
         })
       }
     return out.replace(/(?:\r\n|\r|\n)/g, '\n')
 }
 
 function _generateDownloadSymboldNotFound(settings, usedSynonyms){
-    out = "Symbol\n"
+    out = "Symbol searched\t Symonym used\n"
     for (var symbol of Object.keys(usedSynonyms)) {
         if (settings.enableSynonyms && (usedSynonyms[symbol] != "")){
+            out = `${symbol}\t${usedSynonyms[symbol]}` + out + "\n" 
             continue
         }
         out = out + `${symbol}\n`
