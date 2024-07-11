@@ -31,7 +31,7 @@ function LIB_libraryStartScreen(settings){
     library.statusSearch = "Starting search"
     var st = performance.now()
     var searchOutput = logicScreening(library, settings, _librarySynonyms(settings.searchSymbols))
-    library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s<br> symbols found: ${settings.searchSymbols.length}`
+    library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s<br> Symbols found: ${settings.searchSymbols.length}`
     console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
     return searchOutput
 }

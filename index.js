@@ -39,7 +39,6 @@ async function init(){
         option.text = name
         option.value = name
         dropdown.appendChild(option)
-        
     })
     dropdown.value = data.defaultLibrary
 
@@ -67,7 +66,8 @@ async function indexRunScreening(){
     _toggleLigtBox()
 
     button = document.getElementById("startButton")
-
+    var statusText = document.getElementById("statusSearch")
+    statusText.classList.add("pulse")
     var statusInterval = setInterval(_statusSearchUppdate, 10);
     await new Promise(r => setTimeout(r, 100))
     try{
@@ -87,7 +87,7 @@ async function indexRunScreening(){
     _statusSearchUppdate()
     clearInterval(statusInterval)
 
-
+    statusText.classList.remove("pulse")
     document.getElementById("outputTable").style.display = "table"
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
@@ -186,10 +186,12 @@ async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink)
     libraryInfoContainer.innerHTML = text
 }
 
+
 function indexSymbolChanges(){
-    const enableSynonyms = document.getElementById("enableSynonyms").checked
-    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toLowerCase())
     const partialMatches = document.getElementById("partialMatches").checked
+    const enableSynonyms = partialMatches ? false : document.getElementById("enableSynonyms").checked
+    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toLowerCase())
+    
 
     settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
     statusUppdateSymbols()
@@ -265,7 +267,7 @@ function _editExampleText(){
 
 async function _createSynonymDropworns(){
     const synonymMap = SER_getSynonymMap(settings.searchSymbols)
-
+    
     const notFound = document.getElementById("displayNotFound")
     const synonymsUsed = document.getElementById("displaySynonyms")
 
@@ -280,19 +282,19 @@ async function _createSynonymDropworns(){
     var numNotFound = 0
     Object.keys(synonymMap).forEach(symbol => {
         if (settings.enableSynonyms && (synonymMap[symbol].length != 0)){
-            synonymsUsedText = synonymsUsedText + `${symbol}→${synonymMap[symbol]}<br>`
+            synonymsUsedText = synonymsUsedText + `${symbol}→ synonym ${synonymMap[symbol]}\n`
             numSynonyms++
         }
         else{
-            notUsedText = notUsedText +`${symbol}<br>`
+            notUsedText = notUsedText +`${symbol}\n`
             numNotFound++
         }
     })
-    synonymsUsed.innerHTML = synonymsUsedText
-    notFound.innerHTML = notUsedText
+    synonymsUsed.value = synonymsUsedText
+    notFound.value = notUsedText
 
     settings.enableSynonyms ? setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
-    settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Symbos searched: ${settings.searchSymbols.length}`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound}/${settings.searchSymbols.length}`)
+    settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Symbols searched: ${settings.searchSymbols.length}`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound} of ${settings.searchSymbols.length}`)
     
 }
 
@@ -302,9 +304,10 @@ function statusUppdateSymbols(){
     _createSynonymDropworns()
     setStatus("symbolsFound", SER_getLibraryUniqueSymbols())
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
-    //setStatus("statusSearchSymbolsRows", "Symbols found: " + String())
+    setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
     setStatus("fileContent", "")
 
+    document.getElementById("enableSynonyms").checked = settings.enableSynonyms
     document.getElementById("outputTable").classList.add("statusFadeOut")
 }
 

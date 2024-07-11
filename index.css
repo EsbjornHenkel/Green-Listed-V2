@@ -310,6 +310,10 @@ td:not(:first-child) {
     display: none;
 }
 
+#libraryInfoContainer{
+    font-family: 'Times New Roman', Times, serif;
+}
+
 .fazeIn{
     /*animation: fazeInA 0.3s ease-in-out;*/
     height: 100%;

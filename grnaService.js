@@ -11,14 +11,18 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 // Selects/activates a library
 // does pre-processing
 async function SER_selectLibrary(libraryName){
-    //try {
+    try {
         //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
         
         // Read library data - can be 80000 rows...
         const libraries = await FH_fetchJsonFile(LIBRARIES_URL)
         const libSettings = libraries.find(library => library.name == libraryName)
+        
+        if (!libSettings){
+            throw new Error(`Cant get librarySettings from name: ${libraryName}`)
+        }
+        console.log(libSettings)
         const libData = await FH_fetchTextFile(libSettings.fileName)
-
         // read synonyms
         const synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
         // pre-process to create search structure
@@ -27,9 +31,9 @@ async function SER_selectLibrary(libraryName){
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
         return libSettings
         
-    //} catch (error) {
-        console.error(`grnaService.selectLibrary failed:\n:${error}`)
-    //}
+    } catch (error) {
+        throw new Error(`grnaService.selectLibrary failed:\n:${error}`)
+    }
 }
 
 

@@ -9,8 +9,8 @@
     "rankingTop": 0,
 
     "outputName": "",
-    "defaultLibrary": "Experimental cheese",
-    "searchSymbols": ["KIAA0129", "Abca1", "CCBL1"],       
+    "defaultLibrary": "Brunello 21",
+    "searchSymbols": ["KIAA0129", "Abca1", "CCBL1", "a", "k", "asd"],       
     "gRNAIndex": null,
     "symbolIndex": null,
     "rankingIndex": null
