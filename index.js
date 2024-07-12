@@ -290,8 +290,8 @@ async function _createSynonymDropworns(){
             numNotFound++
         }
     })
-    synonymsUsed.value = synonymsUsedText
-    notFound.value = notUsedText
+    synonymsUsed.value = synonymsUsedText + notUsedText
+    //notFound.value = 
 
     settings.enableSynonyms ? setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
     settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Symbols searched: ${settings.searchSymbols.length}`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound} of ${settings.searchSymbols.length}`)
