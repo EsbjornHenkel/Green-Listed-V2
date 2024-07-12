@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="test.js" defer></script>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
@@ -31,5 +33,15 @@
     <div class="item">Slot 3</div>
     <div class="item item-full">Slot 4</div>
   </div>
+
+  <h1>JavaScript Class Interaction</h1>
+    <button id="helloButton">Say Hello</button>
+
+    <script>
+        document.getElementById('helloButton').addEventListener('click', function() {
+            const testInstance = new Test();
+            testInstance.hello();
+        });
+    </script>
 </body>
 </html>
