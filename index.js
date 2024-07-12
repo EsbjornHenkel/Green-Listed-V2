@@ -155,15 +155,13 @@ async function selectNewLibrary(){
     else{
         customLibrarie.classList.add("inactive")
         setStatus("symbolsFound", "Fetching library from server...")
-        await new Promise(r => setTimeout(r, 10))
+        await new Promise(r => setTimeout(r, 10)) //wait for status animation to end
         try{
             const librarySettings = await SER_selectLibrary(libraryName)
             useSynonyms.disabled = ""
             settings.libraryName = libraryName
             await displayNewLibrary(libraryInfoContainer, librarySettings.libraryInfo, librarySettings.libraryLink)
             
-            
-
             settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
         }
         catch(error){
@@ -189,7 +187,9 @@ async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink)
 
 function indexSymbolChanges(){
     const partialMatches = document.getElementById("partialMatches").checked
-    const enableSynonyms = partialMatches ? false : document.getElementById("enableSynonyms").checked
+    const enableSynonymsBox = document.getElementById("enableSynonyms")
+    const enableSynonyms = partialMatches ? false : enableSynonymsBox.checked
+    enableSynonymsBox.disabled = partialMatches ? "disabled" : ""
     const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toLowerCase())
     
 
