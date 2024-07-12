@@ -268,11 +268,11 @@ function _editExampleText(){
 async function _createSynonymDropworns(){
     const synonymMap = SER_getSynonymMap(settings.searchSymbols)
     
-    const notFound = document.getElementById("displayNotFound")
+    //const notFound = document.getElementById("displayNotFound")
     const synonymsUsed = document.getElementById("displaySynonyms")
 
     synonymsUsed.textContent = ""
-    notFound.textContent = ""
+    //notFound.textContent = ""
     if (Object.keys(synonymMap).length == 0){
         notFound.textContent = "All symbols found in file"
     }
