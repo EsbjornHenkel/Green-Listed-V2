@@ -274,7 +274,8 @@ async function _createSynonymDropworns(){
     synonymsUsed.textContent = ""
     //notFound.textContent = ""
     if (Object.keys(synonymMap).length == 0){
-        notFound.textContent = "All symbols found in file"
+        notUsedText = "All symbols found in file"
+        console.log("_createSynonymDropworns(): No synonyms found")
     }
     var notUsedText = ""
     var synonymsUsedText = ""

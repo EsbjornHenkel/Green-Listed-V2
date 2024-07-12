@@ -41,18 +41,19 @@ header{
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px; 
 
     color: var(--mainColor);
     background: var(--plateBackroundColor);
 
     font-size: var(--header-scale);
-    height: 200px;
+    /* height: 180px; */
     /*border-bottom: 1px solid var(--mainColor);*/
 }
 
 header img{
-    width: 175px;
-    height: 175px;
+    width: 146px;
+    height: 146px;
 }
 
 nav{
@@ -131,6 +132,14 @@ td{
 
 td:not(:first-child) {
     text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 .justifyCenter{
@@ -311,7 +320,8 @@ td:not(:first-child) {
     align-items: center;
 }
 
-#libraryInfo{
+.libraryInfo,
+.libraryInfo * {
     font-family: 'Times New Roman', Times, serif;
 }
 
@@ -319,7 +329,7 @@ td:not(:first-child) {
     display: none;
 }
 
-#libraryInfoContainer{
+#libraryInfoContainerOLD{
     font-family: 'Times New Roman', Times, serif;
 }
 
