@@ -11,13 +11,11 @@
     --line-height: 1.618;
     
     /* Varibles */
-
     --outlineColor: lightGray;
     --smallBorderRadius: 5px;
-
+    
     --plateBackroundColor: white;
-    --mainColor: #78B03D;
-    --mainCollorDark: #6c9e37;
+    --mainColor: rgb(120, 167, 77);/*rgb(119, 175, 60);*/
     --plateRadius: 10px;
     --titleColor: white;
 

@@ -97,7 +97,7 @@
             </div>
 
             <div class="smallPlate">
-                <h3 class="smallTitle">Symbols not Found</h3>
+                <h3 class="smallTitle">Symbols not found</h3>
                 <div class="plateContent">
                     <textarea readonly class="scrollablePlate" id="displaySynonyms"> </textarea>
                     <!--
@@ -140,14 +140,14 @@
                     <table>
                         <tr>
                             <td>Trim </td>
-                            <td>3'<input type="number" id="trimBefore" min="0" value="0" onchange="indexSettingsChanges()"></td>
                             <td>5'<input type="number" id="trimAfter" min="0" value="0" onchange="indexSettingsChanges()"></td>
+                            <td>3'<input type="number" id="trimBefore" min="0" value="0" onchange="indexSettingsChanges()"></td>
                             
                         </tr>
                         <tr>
-                            <td>Adaptor Sequences</td>
-                            <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
+                            <td>Adapter Sequences</td>
                             <td>5'<input type="text" id="adaptorAfter" onchange="indexSettingsChanges()"></td>
+                            <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
                         </tr>
                     </table>
                     <p id="ExampleSequance">
@@ -159,12 +159,12 @@
     </div>
 
     <div class="plate">
-        <h2 class="plateTitle">4. Run screening</h2>
+        <h2 class="plateTitle">4. Run</h2>
 
         <div class="plateContent">
             <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
             <div class="smallPlate"> 
-                <button id="startButton" onclick="indexRunScreening()">Run screening</button>
+                <button id="startButton" onclick="indexRunScreening()">Run</button>
                 <div class="plateContent" id="statusSearch"></div>
             </div>
         </div>

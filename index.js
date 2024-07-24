@@ -292,10 +292,9 @@ async function _createSynonymDropworns(){
         }
     })
     synonymsUsed.value = synonymsUsedText + notUsedText
-    //notFound.value = 
 
     settings.enableSynonyms ? setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
-    settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Symbols searched: ${settings.searchSymbols.length}`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound} of ${settings.searchSymbols.length}`)
+    settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Preview not avalible`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length-numNotFound} of ${settings.searchSymbols.length}`)
     
 }
 
@@ -305,7 +304,6 @@ function statusUppdateSymbols(){
     _createSynonymDropworns()
     setStatus("symbolsFound", SER_getLibraryUniqueSymbols())
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
-    setStatus("statusSearchSymbolsRows", "Rows found: " + String(settings.searchSymbols.length))
     setStatus("fileContent", "")
 
     document.getElementById("enableSynonyms").checked = settings.enableSynonyms
