@@ -56,18 +56,20 @@ function _getSynonymMap(synonymData){
     rows.forEach(row => {
         const symbol1 = row[0].toLowerCase().trim()
         const symbol2 = row[1].toLowerCase().trim()
+        if (symbol1 != "" && symbol2 != ""){
 
-        if (!synonymMap[symbol1]) {
-            synonymMap[symbol1] = new Set()
+            if (!synonymMap[symbol1]) {
+                synonymMap[symbol1] = new Set()
+            }
+            synonymMap[symbol1].add(symbol2)
+    
+            if (!synonymMap[symbol2]) {
+                synonymMap[symbol2] = new Set()
+            }
+            synonymMap[symbol2].add(symbol1)
         }
-        synonymMap[symbol1].add(symbol2)
-
-        if (!synonymMap[symbol2]) {
-            synonymMap[symbol2] = new Set()
-        }
-        synonymMap[symbol2].add(symbol1)
       })
-      return synonymMap
+    return synonymMap
 }
 
 function _getLibraryMap(fileData, symbolColumn, synonymMap){

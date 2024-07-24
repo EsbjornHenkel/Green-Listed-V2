@@ -179,7 +179,7 @@ async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink)
         text = text + `If you use this library, please cite: <p class="libraryInfo">${libraryInfo}</p>`
     }
     if (libraryLink){
-        text = text + `<a href="${libraryLink}">Info</a>`
+        text = text + `<a target="_blank" href="${libraryLink}">Info</a>`
     }
     libraryInfoContainer.innerHTML = text
 }

@@ -328,10 +328,6 @@ a:hover {
     display: none;
 }
 
-#libraryInfoContainerOLD{
-    font-family: 'Times New Roman', Times, serif;
-}
-
 .fazeIn{
     /*animation: fazeInA 0.3s ease-in-out;*/
     height: 100%;
