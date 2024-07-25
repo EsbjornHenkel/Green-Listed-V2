@@ -37,8 +37,7 @@ function LIB_libraryStartScreen(settings){
 }
 
 function LIB_libraryCustomData(fileData, symbolColumn){
-    //library.synonymMap = _getSynonymMap(synonymData)
-    var libraryMap = _getLibraryMap(fileData, symbolColumn)
+    var libraryMap = _getLibraryMap(fileData, symbolColumn, {})
     library["libraryMap"] = libraryMap
 }
 
@@ -46,7 +45,7 @@ function LIB_libraryCustomData(fileData, symbolColumn){
 function LIB_libraryUpdate(librarySettings, fileData, synonymData){
     library.synonymMap = _getSynonymMap(synonymData)
     var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn, library.synonymMap)
-    library.libraryMap = libraryMap
+    library["libraryMap"] = libraryMap
 }
 
 function _getSynonymMap(synonymData){
