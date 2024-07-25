@@ -225,7 +225,6 @@ async function indexUppdateCustomLibrary(){
             SER_addCustomLibraryData("", -1)
         }
     }
-    console.log(library.libraryMap)
     statusUppdateSymbols()
 }
 

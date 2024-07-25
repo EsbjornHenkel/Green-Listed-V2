@@ -1,7 +1,7 @@
 [
     {
         "name": "Brie 22",
-        "fileName": "STable 22 Brie.txt",
+        "fileName": "libraries/STable 22 Brie.txt",
         "symbolColumn": 2,
         "RNAColumn": 7,
         "RankColumn": 11,
@@ -12,7 +12,7 @@
     },
     {
         "name": "Brunello 21",
-        "fileName": "STable 21 Brunello.txt",
+        "fileName": "libraries/STable 21 Brunello.txt",
         "symbolColumn": 3,
         "RNAColumn": 8,
         "RankColumn": 12,
@@ -20,5 +20,45 @@
         "libraryInfo": "<i>Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9.</i><br> Doench JG, Fusi N, Sullender M, Hegde M, Vaimberg EW, Donovan KF, Smith I, Tothova Z, Wilen C, Orchard R, Virgin HW, Listgarten J, Root DE.<br> Nat Biotechnol. 2016 Feb;34(2):184-191. doi: 10.1038/nbt.3437. PMID: 26780180 <br><a target='_blank' href='https://www.addgene.org/pooled-library/broadgpp-human-knockout-brunello/'>https://www.addgene.org/pooled-library/broadgpp-human-knockout-brunello/</a>",
         
         "synonymFileName": "human synonym.txt"
+    },
+    {
+        "name": "GeCKO v2 (human) A+B",
+        "fileName": "libraries/GeCKO v2 (human) A+B library.txt",
+        "symbolColumn": 1,
+        "RNAColumn": 3,
+        "RankColumn": null,
+
+        "libraryInfo": "Citation needed",
+        "synonymFileName": "human synonym.txt"
+    },
+    {
+        "name": "GeCKO v2 (mouse) A+B",
+        "fileName": "libraries/GeCKO v2 (mouse) A+B library.txt",
+        "symbolColumn": 1,
+        "RNAColumn": 3,
+        "RankColumn": null,
+
+        "libraryInfo": "Citation needed",
+        "synonymFileName": "mouse synonym.txt"
+    },
+    {
+        "name": "Gattinara (human)",
+        "fileName": "libraries/Gattinara (human) library.txt",
+        "symbolColumn": 2,
+        "RNAColumn": 0,
+        "RankColumn": null,
+
+        "libraryInfo": "Citation needed",
+        "synonymFileName": "human synonym.txt"
+    },
+    {
+        "name": "Gouda (mouse) library",
+        "fileName": "libraries/Gouda (mouse) library.txt",
+        "symbolColumn": 2,
+        "RNAColumn": 1,
+        "RankColumn": null,
+
+        "libraryInfo": "Citation needed",
+        "synonymFileName": "mouse synonym.txt"
     }
 ]

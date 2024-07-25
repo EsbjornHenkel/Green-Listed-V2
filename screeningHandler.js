@@ -101,14 +101,14 @@ function _applyPostProcessing(gRNASequence){
 
 
 function _generateFullTxtOutput(settings, libraryMap, headers, swapedSynonyms){
-    //var out = "Target Gene Symbol (searched)\tTarget Gene Symbol (used)\tsgRNA Target Sequence\t sgRNA Target Sequence Compliment\tScore \n"
     headers.splice(settings.RNAColumn, 0, "Target Sequence Compliment")
     var out = headers.join("\t")
     for (var [symbol, dict] of Object.entries(libraryMap)) {
+        /*
         var SymbolSearched = ""
         if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
             SymbolSearched = `${swapedSynonyms[symbol]}→`
-        }
+        }*/
         dict.rows.forEach(row => {
             row.splice(settings.RNAColumn, 0, _complimentSequence(row[settings.RNAColumn-1]))
             out = out + `${row.join("\t")}`

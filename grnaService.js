@@ -17,7 +17,6 @@ async function SER_selectLibrary(libraryName){
         // Read library data - can be 80000 rows...
         const libraries = await FH_fetchJsonFile(LIBRARIES_URL)
         const libSettings = libraries.find(library => library.name == libraryName)
-        
         if (!libSettings){
             throw new Error(`Cant get librarySettings from name: ${libraryName}`)
         }
