@@ -28,6 +28,7 @@ function logicScreening(library, settings, usedSynonyms) {
     const textOutputFull = _generateFullTxtOutput(settings, filteredLibraryMap, library.headers, swappedSynonyms)
     const textOutputNotFound = _generateDownloadSymboldNotFound(settings, usedSynonyms)
     var searchOutput = {
+        "numSymbolsFound": Object.keys(filteredLibraryMap).length,
         "textOutputFull": textOutputFull,
         "textOutputNotFound": textOutputNotFound
     }

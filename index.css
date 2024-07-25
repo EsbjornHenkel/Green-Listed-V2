@@ -1,5 +1,4 @@
 
-
 :root {
     /* Set sans-serif fonts */
       --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
@@ -35,38 +34,29 @@
     /* font-size: 1.5rem; */  /** Change scale of ALL text **/
 }
 
-header{
+body{
+    padding-right: 10%;
+    padding-left: 10%;
+}
+
+header {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px; 
-
-    color: var(--mainColor);
-    background: var(--plateBackroundColor);
-
-    font-size: var(--header-scale);
-    /* height: 180px; */
-    /*border-bottom: 1px solid var(--mainColor);*/
-}
-
-header img{
-    width: 146px;
-    height: 146px;
-    padding-right: 20px;
 }
 
 nav{
-    padding-top: 1rem;
-    font-size: calc(var(--header-scale) * 0.8);
+    padding-left: 2rem;
 }
 
 nav > *{
-    padding: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 main{
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     padding: 20px;
 }
@@ -76,7 +66,7 @@ main > *{
 }
 
 main > *:last-child{
-    grid-column: span 4;
+    grid-column: span 3;
 }
 select{
     border-radius: var(--inputRadius);
@@ -202,46 +192,17 @@ a:hover {
     overflow-y: auto;
 }
 
-.plateContentRow{
-    padding: 5px;
-    display: flex;
-    justify-content: space-evenly;
-    gap: 10px;
-}
-
-.flexRow > * {
-    width: 100%;
-}
 
 .inactive{
     display: none;
     animation: slideIn 1s linear;
 }
 
-.swapButton{
-    padding: 0.5rem;
-    width: 1.2rem;
-    height: 25px;
-    line-height: 0;
-}
 
 .synonymSelect{
     font-size: 0.8rem;
 }
 
-
-.tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-   
-    position: absolute;
-    z-index: 1;
-  }
 
 .pulse{
     animation: pulse 4s ease-in-out infinite;
@@ -254,8 +215,6 @@ a:hover {
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
-
-
 
 #ExampleSequance{
     align-self: center;
@@ -298,6 +257,8 @@ a:hover {
 
 #startButton{
     width: 100%;
+    font-weight: bold;
+
 }
 #searchSymbolsPlate > :nth-child(1) {
     flex: 0 0 50%;
@@ -319,8 +280,14 @@ a:hover {
     align-items: center;
 }
 
-.libraryInfo,
-.libraryInfo * {
+.libraryInfo{
+    padding: 0.5rem;
+    background-color: var(--outlineColor);
+    border-radius: var(--plateRadius);
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.libraryInfo *{
     font-family: 'Times New Roman', Times, serif;
 }
 

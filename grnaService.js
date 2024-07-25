@@ -21,7 +21,6 @@ async function SER_selectLibrary(libraryName){
         if (!libSettings){
             throw new Error(`Cant get librarySettings from name: ${libraryName}`)
         }
-        console.log(libSettings)
         const libData = await FH_fetchTextFile(libSettings.fileName)
         // read synonyms
         const synonymData = await FH_fetchTextFile(libSettings.synonymFileName)

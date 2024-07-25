@@ -95,11 +95,13 @@ async function indexRunScreening(){
 
 function _generateNotFound(){
     var usedSynonyms = SER_getSynonymMap(settings.searchSymbols)
+    const date = new Date()
+    var out  = `library: ${settings.libraryName}, ${date.toLocaleString()}\n`
     if (Object.keys(usedSynonyms).length == 0){
-        var out = "All symbols found in file"
+        out = out + "All symbols found in file"
         return out
     }
-    var out = "Symbols not found\t"
+    var out = out + "Symbols not found\t"
     if (settings.enableSynonyms){
         out = out + "Used synonym"
     }
@@ -176,7 +178,7 @@ async function selectNewLibrary(){
 async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink){
     var text = ""
     if (libraryInfo){
-        text = text + `If you use this library, please cite: <p class="libraryInfo">${libraryInfo}</p>`
+        text = text + `<p class="libraryInfo">${libraryInfo}</p>`
     }
     if (libraryLink){
         text = text + `<a target="_blank" href="${libraryLink}">Info</a>`
@@ -187,9 +189,7 @@ async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink)
 
 function indexSymbolChanges(){
     const partialMatches = document.getElementById("partialMatches").checked
-    const enableSynonymsBox = document.getElementById("enableSynonyms")
-    const enableSynonyms = partialMatches ? false : enableSynonymsBox.checked
-    enableSynonymsBox.disabled = partialMatches ? "disabled" : ""
+    const enableSynonyms = document.getElementById("enableSynonyms").checked
     const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => {return item.trim()}).map(symbol => symbol.toLowerCase())
     
 
@@ -275,7 +275,6 @@ async function _createSynonymDropworns(){
     //notFound.textContent = ""
     if (Object.keys(synonymMap).length == 0){
         notUsedText = "All symbols found in file"
-        console.log("_createSynonymDropworns(): No synonyms found")
     }
     var notUsedText = ""
     var synonymsUsedText = ""

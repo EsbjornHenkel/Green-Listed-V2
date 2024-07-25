@@ -1,47 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="test.js" defer ></script>
-  
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    .grid-container {
-      display: grid;
-      grid-template-rows: auto 1fr; /* First row auto height, second row take remaining space */
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: 20px;
-      height: 300px; /* Example height, adjust as needed */
-      justify-content: space-around;
-    }
-    
-    .item {
-      background-color: #ddd;
-      border: 1px solid #999;
-    }
-
-    .item-full {
-      grid-column: 1 / span 3; /* Span full width across 3 columns */
-    }
-  </style>
-  <title>CSS Grid Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Buttons with Deselect Option</title>
+    <script>
+        // Function to handle the deselect functionality
+        function handleRadioClick(event) {
+            // Check if the radio button was already checked
+            if (event.target.checked) {
+                // Store the currently checked radio button
+                var checkedRadio = event.target;
+                
+                // Add a temporary event listener to clear the selection
+                checkedRadio.addEventListener('click', function clearSelection() {
+                    checkedRadio.checked = false;
+                    // Remove the event listener after clearing the selection
+                    checkedRadio.removeEventListener('click', clearSelection);
+                });
+            }
+        }
+    </script>
 </head>
 <body>
-  <div class="grid-container">
-    <div class="item">Slot 1</div>
-    <div class="item">Slot 2</div>
-    <div class="item">Slot 3</div>
-    <div class="item item-full">Slot 4</div>
-  </div>
-
-  <h1>JavaScript Class Interaction</h1>
-    <button id="helloButton">Say Hello</button>
-
-    <script>
-        document.getElementById('helloButton').addEventListener('click', function() {
-            const testInstance = new Test();
-            testInstance.hello();
-        });
-    </script>
+    <h1>Radio Buttons with Deselect Option</h1>
+    <form>
+        <label>
+            <input type="radio" name="option" value="1" onclick="handleRadioClick(event)"> Option 1
+        </label><br>
+        <label>
+            <input type="radio" name="option" value="2" onclick="handleRadioClick(event)"> Option 2
+        </label><br>
+        <label>
+            <input type="radio" name="option" value="3" onclick="handleRadioClick(event)"> Option 3
+        </label><br>
+    </form>
 </body>
 </html>
