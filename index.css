@@ -80,7 +80,7 @@ select{
 button{
     border-radius: var(--inputRadius);
     font-size: calc(var(--header-scale) * 0.8);
-    padding: 0.7rem 0.9rem;
+    padding: 0.3rem 0.9rem;
     transition: 0.4s;
     background: var(--buttonColor);
     align-self: center;
@@ -121,7 +121,7 @@ td{
     padding: 5px;
 }
 
-td:not(:first-child) {
+tdOLD:not(:first-child) {
     text-align: center;
 }
 
