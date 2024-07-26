@@ -84,6 +84,8 @@ button{
     transition: 0.4s;
     background: var(--buttonColor);
     align-self: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
 }
 
 button:hover{
@@ -123,6 +125,10 @@ td:not(:first-child) {
     text-align: center;
 }
 
+tr {
+    width: 100%; 
+}
+
 a {
     text-decoration: none;
 }
@@ -160,7 +166,6 @@ a:hover {
 }
 
 .smallPlate{
-
     display: flex;
     flex-direction: column;
 
@@ -168,7 +173,7 @@ a:hover {
     background: var(--plateBackroundColor);
 
     border-radius: var(--smallBorderRadius);
-    border: 1px solid var(--outlineColor);
+    /*border: 1px solid var(--outlineColor); */
 }
 
 .smallTitle{
@@ -282,8 +287,8 @@ a:hover {
 
 .libraryInfo{
     padding: 0.5rem;
-    background-color: var(--outlineColor);
-    border-radius: var(--plateRadius);
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: var(--inputRadius);
     font-family: 'Times New Roman', Times, serif;
 }
 

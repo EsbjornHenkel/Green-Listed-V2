@@ -103,7 +103,7 @@
         </div>
     </div>
     <div class="plate">
-        <h2 class="plateTitle">3. Set parameters</h2>
+        <h2 class="plateTitle">3. Set parameters & Run</h2>
         <div class="plateContent">
 
             <div class="smallPlate">
@@ -112,6 +112,7 @@
                     <tr>
                         <td>Ranking order</td>
                         <td>
+                            &nbsp;&nbsp;&nbsp;
                             <select id="rankingOrder" onchange="indexSettingsChanges()">
                                 <option value="descending">Descending</option>
                                 <option value="ascending">Ascending</option>
@@ -121,7 +122,7 @@
                     </tr>
                     <tr>
                         <td>Limit to top</td>
-                        <td><input type="number" id="numberToRank" onchange="indexSettingsChanges()"></td>
+                        <td>&nbsp;&nbsp;&nbsp; <input type="number" id="numberToRank" onchange="indexSettingsChanges()"></td>
                         <td></td>
                     </tr>
                 </table>
@@ -139,7 +140,7 @@
                             
                         </tr>
                         <tr>
-                            <td>Adapter Sequences</td>
+                            <td>Adapter sequences</td>
                             <td>5'<input type="text" id="adaptorAfter" onchange="indexSettingsChanges()"></td>
                             <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
                         </tr>
@@ -147,9 +148,34 @@
                     <p id="ExampleSequance"></p>
                 </div>
             </div>
-            <input type="text" id="outputFileName" placeholder="Output file name" onchange="indexSettingsChanges()">
-            <button id="startButton" onclick="indexRunScreening()">Run</button>
-            <div class="plateContent" id="statusSearch"></div>
+
+
+            <div class="smallPlate">
+                <h3 class="smallTitle">Run</h3>
+
+                <table class="plateContent">
+                    <tr>
+                        <td>Output file name</td>
+                        <td colspan="2">
+                            <input type="text" id="outputFileName" placeholder="enter file name" onchange="indexSettingsChanges()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <button id="startButton" onclick="indexRunScreening()">Run</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div id="statusSearch"></div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
 
         </div>
     </div>  
@@ -168,7 +194,7 @@
     </div>-->
 
     <footer class="plate">
-        <h2 class="plateTitle">5. Show output </h2>
+        <h2 class="plateTitle">4. Show output </h2>
         <div class="plateContent">
                 <table id="outputTable">
                     <tr>
