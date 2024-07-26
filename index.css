@@ -121,8 +121,8 @@ td{
     padding: 5px;
 }
 
-tdOLD:not(:first-child) {
-    text-align: center;
+td:first-child{
+    width: 100px;
 }
 
 tr {
@@ -130,6 +130,7 @@ tr {
 }
 
 a {
+    color: #5050e7;
     text-decoration: none;
 }
 

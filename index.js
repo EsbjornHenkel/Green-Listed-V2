@@ -147,11 +147,15 @@ async function selectNewLibrary(){
     const libraryInfoContainer = document.getElementById("libraryInfoContainer")
     const libraryName = document.getElementById("libraries").value
     const customLibrarie = document.getElementById("User Upload")
+
     if (libraryName == "custom"){
-        useSynonyms.disabled = "disabled"
-        useSynonyms.checked = false
+
+        console.log(document.getElementById("enableDirectMatches"))
+        document.getElementById("enableDirectMatches").checked = true
+        
         customLibrarie.classList.remove("inactive")
         libraryInfoContainer.innerHTML = ""
+        useSynonyms.disabled = "disabled"
         indexLibraryColumnChanges()
     }
     else{
@@ -304,7 +308,6 @@ function statusUppdateSymbols(){
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
     setStatus("fileContent", "")
 
-    document.getElementById("enableSynonyms").checked = settings.enableSynonyms
     document.getElementById("outputTable").classList.add("statusFadeOut")
 }
 
