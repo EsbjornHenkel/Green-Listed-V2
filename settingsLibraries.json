@@ -6,8 +6,7 @@
         "RNAColumn": 7,
         "RankColumn": 11,
         
-        "libraryInfo": "<a target='_blank' href='https://www.addgene.org/pooled-library/broadgpp-mouse-knockout-brie/'>https://www.addgene.org/pooled-library/broadgpp-mouse-knockout-brie/</a>",
-        
+        "citationFileName": "libraries/STable 22 Brie.html",
         "synonymFileName": "mouse synonym.txt"
     },
     {
@@ -17,8 +16,7 @@
         "RNAColumn": 8,
         "RankColumn": 12,
 
-        "libraryInfo": "<i>Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9.</i><br> Doench JG, Fusi N, Sullender M, Hegde M, Vaimberg EW, Donovan KF, Smith I, Tothova Z, Wilen C, Orchard R, Virgin HW, Listgarten J, Root DE.<br> Nat Biotechnol. 2016 Feb;34(2):184-191. doi: 10.1038/nbt.3437. PMID: 26780180 <br><a target='_blank' href='https://www.addgene.org/pooled-library/broadgpp-human-knockout-brunello/'>https://www.addgene.org/pooled-library/broadgpp-human-knockout-brunello/</a>",
-        
+        "citationFileName": "libraries/STable 21 Brunello.html",
         "synonymFileName": "human synonym.txt"
     },
     {

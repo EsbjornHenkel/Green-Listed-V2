@@ -144,18 +144,17 @@ function dowloadSettings(){
 
 async function selectNewLibrary(){
     const useSynonyms = document.getElementById("enableSynonyms")
-    const libraryInfoContainer = document.getElementById("libraryInfoContainer")
+    
     const libraryName = document.getElementById("libraries").value
     const customLibrarie = document.getElementById("User Upload")
 
     if (libraryName == "custom"){
-
+        useSynonyms.disabled = "disabled"
         console.log(document.getElementById("enableDirectMatches"))
         document.getElementById("enableDirectMatches").checked = true
         
         customLibrarie.classList.remove("inactive")
-        libraryInfoContainer.innerHTML = ""
-        useSynonyms.disabled = "disabled"
+        await _displayNewLibrary("")
         indexLibraryColumnChanges()
     }
     else{
@@ -166,7 +165,7 @@ async function selectNewLibrary(){
             const librarySettings = await SER_selectLibrary(libraryName)
             useSynonyms.disabled = ""
             settings.libraryName = libraryName
-            await displayNewLibrary(libraryInfoContainer, librarySettings.libraryInfo, librarySettings.libraryLink)
+            await _displayNewLibrary(SER_getLibraryCitation())
             
             settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
         }
@@ -179,15 +178,10 @@ async function selectNewLibrary(){
     indexSymbolChanges()
 }
 
-async function displayNewLibrary(libraryInfoContainer, libraryInfo, libraryLink){
-    var text = ""
-    if (libraryInfo){
-        text = text + `<p class="libraryInfo">${libraryInfo}</p>`
-    }
-    if (libraryLink){
-        text = text + `<a target="_blank" href="${libraryLink}">Info</a>`
-    }
-    libraryInfoContainer.innerHTML = text
+async function _displayNewLibrary(libraryCitation){
+    const libraryInfoContainer = document.getElementById("libraryInfoContainer")
+    console.log(libraryCitation)
+    libraryInfoContainer.innerHTML = libraryCitation.body.innerHTML
 }
 
 

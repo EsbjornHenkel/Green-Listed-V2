@@ -9,6 +9,7 @@ var library = {
     "headers": "",
     "synonymMap": null,
     "statusSearch": "",
+    "citationInfo": ""
 }
 
 function libraryStartScreenTEST(settings){
@@ -42,7 +43,8 @@ function LIB_libraryCustomData(fileData, symbolColumn){
 }
 
 
-function LIB_libraryUpdate(librarySettings, fileData, synonymData){
+function LIB_libraryUpdate(librarySettings, fileData, synonymData, citationInfo){
+    library.citationInfo = citationInfo
     library.synonymMap = _getSynonymMap(synonymData)
     var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn, library.synonymMap)
     library["libraryMap"] = libraryMap
@@ -109,6 +111,10 @@ function _librarySynonyms(searchSymbols, forDisplay){
         }
       })
     return synonymMap
+}
+
+function LIB_libraryCitation(){
+    return library.citationInfo
 }
 
 function LIB_libraryStatusSynonymsDisplay(searchSymbols){

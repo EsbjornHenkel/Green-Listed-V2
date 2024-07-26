@@ -10,7 +10,9 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 
 // Selects/activates a library
 // does pre-processing
+//returns a library structure se settingsLibraries.json
 async function SER_selectLibrary(libraryName){
+    
     try {
         //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
         
@@ -24,10 +26,17 @@ async function SER_selectLibrary(libraryName){
         // read synonyms
         const synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
         // pre-process to create search structure
-        LIB_libraryUpdate(libSettings, libData,  synonymData)
+        var libraryCitation = ""
+        try{
+            libraryCitation = await FH_fetchHTMLFile(libSettings.citationFileName)
+        }
+        catch{
+            libraryCitation = "No citation file found"
+        }
+        LIB_libraryUpdate(libSettings, libData,  synonymData, libraryCitation)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
-        return libSettings
+        return libSettings 
         
     } catch (error) {
         throw new Error(`grnaService.selectLibrary failed:\n:${error}`)
@@ -70,6 +79,9 @@ function SER_addCustomLibraryData(data, symbolColumn){
 
 // ---------------------------- Status functions ------------------------------------------------
 
+function SER_getLibraryCitation(){
+    return LIB_libraryCitation()
+}
 
 // Return a string describing the library status - for example "Unique symbols found: 19674"
 function SER_getLibraryUniqueSymbols(){

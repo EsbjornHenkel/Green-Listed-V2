@@ -37,3 +37,20 @@ async function FH_fetchTextFile(url) {
         throw new Error(`fileHandler.fetchTextFile(${url}) Error fetching text file (${url}):\n ${error}`)
     }
 }
+
+async function FH_fetchHTMLFile(url) {
+    try {
+        const response = await fetch(url)
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok (${response.status} ${response.statusText})`);
+        }
+        const txt = await response.text()
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(txt, 'text/html');
+        
+        return doc
+    } catch (error) {
+        throw new Error(`fileHandler.fetchTextFile(${url}) Error fetching text file (${url}):\n ${error}`)
+    }
+}
