@@ -1,5 +1,7 @@
 
-
+// 
+// Handles all file access (via urls)
+//
 
 async function FH_fetchJsonFile(url) {
     try {
@@ -45,6 +47,11 @@ async function FH_fetchHTMLFile(url) {
         if (!response.ok) {
             throw new Error(`Network response was not ok (${response.status} ${response.statusText})`);
         }
+        const contentType = response.headers.get('content-type')
+        if (!contentType || !contentType.includes('text/html')) {
+            throw new Error(`fileHandler.fetchHTMLFile(${url}) Expected text/html content type, but received: ${contentType}`)
+        }
+
         const txt = await response.text()
         const parser = new DOMParser();
         const doc = parser.parseFromString(txt, 'text/html');

@@ -19,7 +19,7 @@
     --titleColor: white;
 
     --inputColor: white;
-    --buttonColor: rgb(215, 215, 215);
+    --buttonColor: rgb(235, 235, 235);
     --inputRadius: 5px;
 
     --redColor: #ffdddd;
@@ -273,6 +273,11 @@ a:hover {
     font-weight: bold;
 
 }
+
+#startButtonText {
+    color: var(--greenColor);
+}
+
 
 #searchSymbolsPlate> :nth-child(1) {
     flex: 0 0 50%;

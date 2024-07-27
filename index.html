@@ -162,7 +162,6 @@
 
                 <div class="smallPlate">
                     <h3 class="smallTitle">Run</h3>
-
                     <table class="plateContent">
                         <tr>
                             <td>Output file name</td>
@@ -171,9 +170,10 @@
                                     onchange="indexSettingsChanges()">
                             </td>
                         </tr>
+                        <tr><td> </td></tr>
                         <tr>
                             <td>
-                                <button id="startButton" onclick="indexRunScreening()">&nbsp;Run ▶ </button>
+                                <button id="startButton" onclick="indexRunScreening()">&nbsp;Run <span id="startButtonText">▶</span></button>
                             </td>
                             <td></td>
                         </tr>
@@ -185,7 +185,6 @@
                     </table>
 
                 </div>
-
 
             </div>
         </div>

@@ -1,6 +1,6 @@
 
 //
-// GRNA logic for searches etc
+// GRNA logic for handling a session
 // Used by the UI
 //
 
@@ -9,8 +9,8 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 
 
 // Selects/activates a library
-// does pre-processing
-//returns a library structure se settingsLibraries.json
+// does pre-processing of the library to optimaze search
+// returns a library structure see settingsLibraries.json
 async function SER_selectLibrary(libraryName) {
 
     try {
