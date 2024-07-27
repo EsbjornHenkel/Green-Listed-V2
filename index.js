@@ -179,7 +179,7 @@ async function selectNewLibrary() {
 }
 
 async function _displayNewLibrary(libraryCitation) {
-    const libraryInfoContainer = document.getElementById("libraryInfoContainer")
+    const libraryInfoContainer = document.getElementById("libraryInfo")
     console.log(libraryCitation)
     try {
         console.log(libraryCitation)

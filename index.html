@@ -1,191 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" media="all" href="index.css">
     <title>Green Listed</title>
 </head>
+
 <body onload="init()">
     <header>
         <div>
             <img src="header_img.png" alt="Green Listed">
             <nav>
                 <a href="" target="_blank">Demo</a>
-                <a target="_blank" href="https://www.youtube.com/watch?v=9A6WQAYCOvs&list=PLtETtjUFMYF1onsu-BpLIM6h34R6N5NP3" >Videos</a>
+                <a target="_blank"
+                    href="https://www.youtube.com/watch?v=9A6WQAYCOvs&list=PLtETtjUFMYF1onsu-BpLIM6h34R6N5NP3">Videos</a>
                 <a href="" target="_blank">How to use</a>
                 <a href="" target="_blank">How to cite</a>
             </nav>
         </div>
     </header>
     <main>
-    <div id="overlay" class="fazeOut">
-        <div class="loading-box">
-            Screening in progress...
-        </div>
-    </div>
-    <div class="plate">
-        <h2 class="plateTitle">1. Select library</h2>
-        <div class="plateContent">
-
-            <div class="smallPlate">
-                <h3 class="smallTitle">
-                    <select id="libraries" onchange="selectNewLibrary()" required>
-
-                        <option value="custom">User Upload</option>
-                    </select>
-                </h3>
-                <div class="plateContent">
-                    <form id="User Upload" class="inactive">
-                        <p class="flexRow">
-                            Select a .txt file to use as Library
-                            <input type="file" accept=".txt" id="customFile" onchange="indexSymbolChanges()">
-                        </p>
-                        
-                        <table>
-                            <tr id="GeneSymbolIndexRow">
-                                <td>Symbol Column</td>
-                                <td><input type="number" id="GeneSymbolIndex" onchange="indexLibraryColumnChanges()"></td>
-                                <td id="statusFileSymbolIndex"></td>
-                            </tr>
-                            <tr id="gRNAIndexRow">
-                                <td>gRNA Column</td>
-                                <td><input type="number" id="gRNAIndex" onchange="indexLibraryColumnChanges()"></td>
-                                <td id="statusFilegRNAIndex"></td>
-                            </tr>
-                            <tr id="rankingIndexRow">
-                                <td>Rank Column (optional)</td>
-                                <td><input type="number" id="rankingIndex" onchange="indexLibraryColumnChanges()"></td>
-                                <td id="statusRankingIndex"></td>
-                            </tr>
-                        </table>
-                        
-                    </form>
-                    
-                    <p id="libraryInfoContainer"></p>
-                    <div id="symbolsFound"></div>
-                </div>
-
+        <div id="overlay" class="fazeOut">
+            <div class="loading-box">
+                Screening in progress...
             </div>
         </div>
-    </div>
+        <div class="plate">
+            <h2 class="plateTitle">1. Select library</h2>
+            <div class="plateContent">
 
-    <div class="plate">
-        <h2 class="plateTitle">2. Input symbols</h2>
-        <div class="plateContent">
+                <div class="smallPlate">
+                    <h3 class="smallTitle">
+                        <select id="libraries" onchange="selectNewLibrary()" required>
 
-            <div class="smallPlate">
-                <h3 class="smallTitle">Symbols</h3>
-                <div class="plateContent">
-                    <form>
-                        <label class="justifyCenter">
-                            <input name="a" type="radio" id="enableDirectMatches" onchange="indexSymbolChanges()">
-                            Only direct matches <span></span>
-                        </label>
-                        <label class="justifyCenter">
-                            <input name="a" type="radio" id="enableSynonyms" onchange="indexSymbolChanges()">
-                            Use synonyms <span id="statusNumSynonyms"></span>
-                        </label>
-                        
-                        <label class="justifyCenter">
-                            <input name="a" type="radio" id="partialMatches" onchange="indexSymbolChanges()">
-                            Allow for partial matches
-                        </label>
-                    </form>
-                    <textarea id="searchSymbols" onchange="indexSymbolChanges()">
+                            <option value="custom">User Upload</option>
+                        </select>
+                    </h3>
+                    <div class="plateContent">
+                        <form id="User Upload" class="inactive">
+                            <p class="flexRow">
+                                Select a .txt file to use as Library
+                                <input type="file" accept=".txt" id="customFile" onchange="indexSymbolChanges()">
+                            </p>
+
+                            <table>
+                                <tr id="GeneSymbolIndexRow">
+                                    <td>Symbol Column</td>
+                                    <td><input type="number" id="GeneSymbolIndex"
+                                            onchange="indexLibraryColumnChanges()"></td>
+                                    <td id="statusFileSymbolIndex"></td>
+                                </tr>
+                                <tr id="gRNAIndexRow">
+                                    <td>gRNA Column</td>
+                                    <td><input type="number" id="gRNAIndex" onchange="indexLibraryColumnChanges()"></td>
+                                    <td id="statusFilegRNAIndex"></td>
+                                </tr>
+                                <tr id="rankingIndexRow">
+                                    <td>Rank Column (optional)</td>
+                                    <td><input type="number" id="rankingIndex" onchange="indexLibraryColumnChanges()">
+                                    </td>
+                                    <td id="statusRankingIndex"></td>
+                                </tr>
+                            </table>
+
+                        </form>
+
+                        <p id="libraryInfo"></p>
+                        <div id="symbolsFound"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="plate">
+            <h2 class="plateTitle">2. Input symbols</h2>
+            <div class="plateContent">
+
+                <div class="smallPlate">
+                    <h3 class="smallTitle">Symbols</h3>
+                    <div class="plateContent">
+                        <form>
+                            <label class="justifyCenter">
+                                <input name="a" type="radio" id="enableDirectMatches" onchange="indexSymbolChanges()">
+                                Only direct matches <span></span>
+                            </label>
+                            <label class="justifyCenter">
+                                <input name="a" type="radio" id="enableSynonyms" onchange="indexSymbolChanges()">
+                                Use synonyms <span id="statusNumSynonyms"></span>
+                            </label>
+
+                            <label class="justifyCenter">
+                                <input name="a" type="radio" id="partialMatches" onchange="indexSymbolChanges()">
+                                Allow for partial matches
+                            </label>
+                        </form>
+                        <textarea id="searchSymbols" onchange="indexSymbolChanges()">
 
                     </textarea>
-                    <p id="statusSearchSymbolsRows"></p>
+                        <p id="statusSearchSymbolsRows"></p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="smallPlate">
-                <h3 class="smallTitle">Symbols not found</h3>
-                <div class="plateContent">
-                    <textarea readonly class="scrollablePlate" id="displaySynonyms"> </textarea>
+                <div class="smallPlate">
+                    <h3 class="smallTitle">Symbols not found</h3>
+                    <div class="plateContent">
+                        <textarea readonly class="scrollablePlate" id="displaySynonyms"> </textarea>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="plate">
-        <h2 class="plateTitle">3. Set parameters & Run</h2>
-        <div class="plateContent">
+        <div class="plate">
+            <h2 class="plateTitle">3. Set parameters & Run</h2>
+            <div class="plateContent">
 
-            <div class="smallPlate">
-                <h3 class="smallTitle">Ranking</h3>
-                <table class="plateContent">
-                    <tr>
-                        <td>Ranking order</td>
-                        <td>
-                            <select id="rankingOrder" onchange="indexSettingsChanges()">
-                                <option value="descending">Descending</option>
-                                <option value="ascending">Ascending</option>
-                            </select>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Limit to top</td>
-                        <td><input type="number" id="numberToRank" onchange="indexSettingsChanges()"></td>
-                        <td></td>
-                    </tr>
-                </table>
-            </div>
-
-
-            <div class="smallPlate">
-                <h3 class="smallTitle">Sequence modifications</h3>
-                <div class="plateContent">
-                    <table>
+                <div class="smallPlate">
+                    <h3 class="smallTitle">Ranking</h3>
+                    <table class="plateContent">
                         <tr>
-                            <td>Trim </td>
-                            <td>5'<input type="number" id="trimAfter" min="0" value="0" onchange="indexSettingsChanges()"></td>
-                            <td>3'<input type="number" id="trimBefore" min="0" value="0" onchange="indexSettingsChanges()"></td>
-                            
+                            <td>Ranking order</td>
+                            <td>
+                                <select id="rankingOrder" onchange="indexSettingsChanges()">
+                                    <option value="descending">Descending</option>
+                                    <option value="ascending">Ascending</option>
+                                </select>
+                            </td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td>Adapter sequences</td>
-                            <td>5'<input type="text" id="adaptorAfter" onchange="indexSettingsChanges()"></td>
-                            <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
+                            <td>Limit to top</td>
+                            <td><input type="number" id="numberToRank" onchange="indexSettingsChanges()"></td>
+                            <td></td>
                         </tr>
                     </table>
-                    <p id="ExampleSequance"></p>
                 </div>
+
+
+                <div class="smallPlate">
+                    <h3 class="smallTitle">Sequence modifications</h3>
+                    <div class="plateContent">
+                        <table>
+                            <tr>
+                                <td>Trim </td>
+                                <td>5'<input type="number" id="trimAfter" min="0" value="0"
+                                        onchange="indexSettingsChanges()"></td>
+                                <td>3'<input type="number" id="trimBefore" min="0" value="0"
+                                        onchange="indexSettingsChanges()"></td>
+
+                            </tr>
+                            <tr>
+                                <td>Adapter sequences</td>
+                                <td>5'<input type="text" id="adaptorAfter" onchange="indexSettingsChanges()"></td>
+                                <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
+                            </tr>
+                        </table>
+                        <p id="ExampleSequance"></p>
+                    </div>
+                </div>
+
+
+                <div class="smallPlate">
+                    <h3 class="smallTitle">Run</h3>
+
+                    <table class="plateContent">
+                        <tr>
+                            <td>Output file name</td>
+                            <td>
+                                <input type="text" id="outputFileName" placeholder="enter file name"
+                                    onchange="indexSettingsChanges()">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="startButton" onclick="indexRunScreening()">&nbsp;Run ▶ </button>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="statusSearch"></div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+
             </div>
-
-
-            <div class="smallPlate">
-                <h3 class="smallTitle">Run</h3>
-
-                <table class="plateContent">
-                    <tr>
-                        <td>Output file name</td>
-                        <td>
-                            <input type="text" id="outputFileName" placeholder="enter file name" onchange="indexSettingsChanges()">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button id="startButton" onclick="indexRunScreening()">&nbsp;Run ▶ </button>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <div id="statusSearch"></div>
-                        </td>
-                    </tr>
-                </table>
-
-            </div>
-
-
         </div>
-    </div>  
 
 
-    <footer class="plate">
-        <h2 class="plateTitle">4. Show output </h2>
-        <div class="plateContent">
+        <footer class="plate">
+            <h2 class="plateTitle">4. Show output </h2>
+            <div class="plateContent">
                 <table id="outputTable">
                     <tr>
                         <td>Output</td>
@@ -203,19 +211,19 @@
                         <td><button onclick="showSettings()">Show</button></td>
                     </tr>
                 </table>
-    
-    
-            <div class="plateContent">
-                <div id="fileContent"> 
-    
+
+
+                <div class="plateContent">
+                    <div id="fileContent">
+
+                    </div>
                 </div>
             </div>
-        </div>
 
 
-    </footer>
+        </footer>
 
-</main>
+    </main>
     <script>
 
     </script>
@@ -225,7 +233,8 @@
     <script type="text/javascript" src="screeningHandler.js"></script>
     <script type="text/javascript" src="index.js"></script>
     <script type="text/javascript" src="fileHandler.js"></script>
-    
+
 
 </body>
+
 </html>

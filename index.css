@@ -290,14 +290,14 @@ a:hover {
     align-items: center;
 }
 
-.libraryInfo {
+#libraryInfo {
     padding: 0.5rem;
     background-color: rgba(0, 0, 0, 0.03);
     border-radius: var(--inputRadius);
     font-family: 'Times New Roman', Times, serif;
 }
 
-.libraryInfo * {
+#libraryInfo * {
     font-family: 'Times New Roman', Times, serif;
 }
 
