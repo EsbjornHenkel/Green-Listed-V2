@@ -19,7 +19,7 @@
     --titleColor: white;
 
     --inputColor: white;
-    --buttonColor: rgb(175, 175, 175);
+    --buttonColor: rgb(215, 215, 215);
     --inputRadius: 5px;
 
     --redColor: #ffdddd;
@@ -86,12 +86,12 @@ button {
     transition: 0.4s;
     background: var(--buttonColor);
     align-self: center;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(122, 122, 122, 0.1);
+    box-shadow: 1px 2px 3px rgba(88, 88, 88, 0.2);
 }
 
 button:hover {
-    filter: brightness(1.2);
+    filter: brightness(0.8);
     cursor: pointer;
 }
 
