@@ -11,15 +11,15 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 // Selects/activates a library
 // does pre-processing
 //returns a library structure se settingsLibraries.json
-async function SER_selectLibrary(libraryName){
-    
+async function SER_selectLibrary(libraryName) {
+
     try {
         //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
-        
+
         // Read library data - can be 80000 rows...
         const libraries = await FH_fetchJsonFile(LIBRARIES_URL)
         const libSettings = libraries.find(library => library.name == libraryName)
-        if (!libSettings){
+        if (!libSettings) {
             throw new Error(`Cant get librarySettings from name: ${libraryName}`)
         }
         const libData = await FH_fetchTextFile(libSettings.fileName)
@@ -27,17 +27,19 @@ async function SER_selectLibrary(libraryName){
         const synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
         // pre-process to create search structure
         var libraryCitation = ""
-        try{
+        try {
+            console.log(libSettings)
+            console.log(libSettings.citationFileName)
             libraryCitation = await FH_fetchHTMLFile(libSettings.citationFileName)
         }
-        catch{
+        catch {
             libraryCitation = "No citation file found"
         }
-        LIB_libraryUpdate(libSettings, libData,  synonymData, libraryCitation)
+        LIB_libraryUpdate(libSettings, libData, synonymData, libraryCitation)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
-        return libSettings 
-        
+        return libSettings
+
     } catch (error) {
         throw new Error(`grnaService.selectLibrary failed:\n:${error}`)
     }
@@ -46,14 +48,14 @@ async function SER_selectLibrary(libraryName){
 
 // returns settings json, see settingsDefault.json for an example
 async function SET_getDefaultSettings() {
-        try{
-            const settings = await FH_fetchJsonFile(SETTINGS_URL)
-            return settings
-        }
-        catch(error){
-            throw new Error(`GRNAService.getDefaultSettings(${SETTINGS_URL}) invalid callback:\n ${error.message}`)
-        }
-        
+    try {
+        const settings = await FH_fetchJsonFile(SETTINGS_URL)
+        return settings
+    }
+    catch (error) {
+        throw new Error(`GRNAService.getDefaultSettings(${SETTINGS_URL}) invalid callback:\n ${error.message}`)
+    }
+
 }
 
 async function SER_getLibraryNames() {
@@ -64,36 +66,36 @@ async function SER_getLibraryNames() {
 
 // Start the screening. 
 // Settings contains all param, see default settings in settingsDefault.json
-function SER_runScreening(settings){
-    try{
+function SER_runScreening(settings) {
+    try {
         return LIB_libraryStartScreen(settings)
     }
-    catch(error){
+    catch (error) {
         throw error
     }
 }
 
-function SER_addCustomLibraryData(data, symbolColumn){
+function SER_addCustomLibraryData(data, symbolColumn) {
     return LIB_libraryCustomData(data, symbolColumn)
 }
 
 // ---------------------------- Status functions ------------------------------------------------
 
-function SER_getLibraryCitation(){
+function SER_getLibraryCitation() {
     return LIB_libraryCitation()
 }
 
 // Return a string describing the library status - for example "Unique symbols found: 19674"
-function SER_getLibraryUniqueSymbols(){
+function SER_getLibraryUniqueSymbols() {
     return LIB_libraryUniqueSymbols()
 }
 
 // Return a map with symbols not found (keys) and an synonym used (value - often Null)
-function SER_getSynonymMap(searchSymbols){
+function SER_getSynonymMap(searchSymbols) {
     return LIB_libraryStatusSynonymsDisplay(searchSymbols)
 }
 
 // Return string with status of screening run- for example "Done. Time to complete: 0.2s"
-function SER_getScreeningStatus(){
+function SER_getScreeningStatus() {
     return LIB_libraryStatusScreening()
 }
