@@ -28,9 +28,8 @@ async function SER_selectLibrary(libraryName) {
         // pre-process to create search structure
         var libraryCitation = ""
         try {
-            console.log(libSettings)
-            console.log(libSettings.citationFileName)
             libraryCitation = await FH_fetchHTMLFile(libSettings.citationFileName)
+            libraryCitation = libraryCitation.body.innerHTML
         }
         catch {
             libraryCitation = "No citation file found"

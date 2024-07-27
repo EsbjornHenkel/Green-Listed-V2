@@ -180,14 +180,7 @@ async function selectNewLibrary() {
 
 async function _displayNewLibrary(libraryCitation) {
     const libraryInfoContainer = document.getElementById("libraryInfo")
-    console.log(libraryCitation)
-    try {
-        console.log(libraryCitation)
-        libraryInfoContainer.innerHTML = libraryCitation.body.innerHTML
-    }
-    catch {
-        libraryInfoContainer.innerHTML = "Citation file does not contain valid information"
-    }
+    libraryInfoContainer.innerHTML = libraryCitation
 }
 
 
