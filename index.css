@@ -312,6 +312,7 @@ a:hover {
 #libraryInfo ul {
     list-style-position: inside;
     padding-left: 0;
+    list-style-type: square;
 }
 
 #libraryInfoOLD ul li {  /* identation for text */
