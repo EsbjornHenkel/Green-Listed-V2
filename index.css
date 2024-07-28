@@ -31,8 +31,7 @@
     padding: 0px;
     border: 0px;
     margin: 0px;
-    /* font-size: 1.5rem; */
-    /** Change scale of ALL text **/
+    /* font-size: 1.5rem; */  /* Changes scale of ALL text */ 
 }
 
 body {
@@ -135,10 +134,6 @@ tr {
 a {
     color: #5050e7;
     text-decoration: none;
-}
-
-ul {
-    list-style-position: inside;
 }
 
 a:hover {
@@ -309,6 +304,21 @@ a:hover {
 #libraryInfo * {
     font-family: 'Times New Roman', Times, serif;
 }
+
+#libraryInfo p{
+    margin-bottom: 0.4rem; 
+}
+
+#libraryInfo ul {
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+#libraryInfoOLD ul li {  /* identation for text */
+    text-indent: -0.5rem; 
+    padding-left: 0.5rem; 
+}
+
 
 #outputTable {
     display: none;
