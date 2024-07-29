@@ -1,6 +1,6 @@
 
 
-var examplesequence = "EXAMPLESEQUENCE"
+var examplesequence = "SEQUENCE"
 var searchOutput = {
     "textOutputFull": "",
     "textOutputNotFound": ""
@@ -262,34 +262,40 @@ function _editExampleText() {
 }
 
 async function _createSynonymDropworns() {
+    if (settings.partialMatches) {
+        setStatus("statusSearchSymbolsRows", ``)
+        const synonymsUsed = document.getElementById("displaySynonyms")
+        synonymsUsed.value = "Not available"
+        return
+    }
     const synonymMap = SER_getSynonymMap(settings.searchSymbols)
 
     //const notFound = document.getElementById("displayNotFound")
     const synonymsUsed = document.getElementById("displaySynonyms")
 
-    synonymsUsed.textContent = ""
-    //notFound.textContent = ""
     if (Object.keys(synonymMap).length == 0) {
         notUsedText = "All symbols found in file"
     }
     var notUsedText = ""
     var synonymsUsedText = ""
+    var displayText = ""
     var numSynonyms = 0
     var numNotFound = 0
     Object.keys(synonymMap).forEach(symbol => {
         if (settings.enableSynonyms && (synonymMap[symbol].length != 0)) {
-            synonymsUsedText = synonymsUsedText + `${symbol}→ synonym ${synonymMap[symbol]}\n`
+
+            displayText = `${symbol}→ synonym ${synonymMap[symbol]}\n${displayText}`
             numSynonyms++
         }
         else {
-            notUsedText = notUsedText + `${symbol}\n`
+            displayText = `${displayText} ${symbol}\n`
             numNotFound++
         }
     })
-    synonymsUsed.value = synonymsUsedText + notUsedText
+    synonymsUsed.value = displayText
 
     settings.enableSynonyms ? setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
-    settings.partialMatches ? setStatus("statusSearchSymbolsRows", `Preview not avalible`) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length - numNotFound} of ${settings.searchSymbols.length}`)
+    settings.partialMatches ? setStatus("statusSearchSymbolsRows", ``) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length - numNotFound} of ${settings.searchSymbols.length}`)
 
 }
 
