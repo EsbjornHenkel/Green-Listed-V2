@@ -143,16 +143,16 @@
                         <table>
                             <tr>
                                 <td>Trim </td>
-                                <td>5'<input type="number" id="trimAfter" min="0" value="0"
+                                <td>5'<input type="number" id="trimBefore" min="0" value="0"
                                         onchange="indexSettingsChanges()"></td>
-                                <td>3'<input type="number" id="trimBefore" min="0" value="0"
+                                <td>3'<input type="number" id="trimAfter" min="0" value="0"
                                         onchange="indexSettingsChanges()"></td>
 
                             </tr>
                             <tr>
                                 <td>Adapter sequences</td>
-                                <td>5'<input type="text" id="adaptorAfter" onchange="indexSettingsChanges()"></td>
-                                <td>3'<input type="text" id="adaptorBefore" onchange="indexSettingsChanges()"></td>
+                                <td>5'<input type="text" id="adapterBefore" onchange="indexSettingsChanges()"></td>
+                                <td>3'<input type="text" id="adapterAfter" onchange="indexSettingsChanges()"></td>
                             </tr>
                         </table>
                         <p id="ExampleSequance"></p>
@@ -170,10 +170,13 @@
                                     onchange="indexSettingsChanges()">
                             </td>
                         </tr>
-                        <tr><td> </td></tr>
+                        <tr>
+                            <td> </td>
+                        </tr>
                         <tr>
                             <td>
-                                <button id="startButton" onclick="indexRunScreening()">&nbsp;Run <span id="startButtonText">▶</span></button>
+                                <button id="startButton" onclick="indexRunScreening()">&nbsp;Run <span
+                                        id="startButtonText">▶</span></button>
                             </td>
                             <td></td>
                         </tr>

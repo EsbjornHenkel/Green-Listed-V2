@@ -7,7 +7,6 @@ function logicScreening(library, settings, usedSynonyms) {
     const swappedSynonyms = Object.fromEntries(Object.entries(usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
     var symbols = Object.keys(library.libraryMap)
     var filteredLibraryMap = {}
-
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
@@ -15,7 +14,6 @@ function logicScreening(library, settings, usedSynonyms) {
             filteredLibraryMap[symbol] = library.libraryMap[symbol]
         }
     }
-    console.log(filteredLibraryMap)
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
         filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
 
@@ -76,15 +74,17 @@ function _getTopRankingElements(libraryMap, n) {
 
 function _postProcessing(libraryMap, settings) {
     for (const symbol in libraryMap) {
-        libraryMap[symbol].rows.forEach(RNAstr => {
-            RNAstr[settings.gRNAColumn - 1] = _applyPostProcessing(RNAstr[settings.RNAColumn - 1])
-        })
+        for (let i = 0; i < libraryMap[symbol].rows.length; i++) {
+            libraryMap[symbol].rows[i][settings.RNAColumn - 1] = _applyPostProcessing(libraryMap[symbol].rows[i][settings.RNAColumn - 1], settings)
+        }
     }
+    console.log(libraryMap)
     return libraryMap
 }
 
 
-function _applyPostProcessing(gRNASequence) {
+function _applyPostProcessing(gRNASequence, settings) {
+    console.log(gRNASequence)
     if (settings.adaptorAfter.lenth == 0) {
         adaptorAfter = ""
     }
@@ -96,6 +96,8 @@ function _applyPostProcessing(gRNASequence) {
         gRNASequence = gRNASequence.slice(0, -settings.trimAfter)
     }
     gRNASequence = settings.adaptorBefore + gRNASequence + settings.adaptorAfter
+    console.log(gRNASequence)
+
     return gRNASequence
 }
 

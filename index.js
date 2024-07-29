@@ -22,8 +22,8 @@ async function init() {
     document.getElementById("trimAfter").min = 0
     document.getElementById("trimAfter").value = data.trimAfter
 
-    document.getElementById("adaptorBefore").defaultValue = data.adaptorBefore;
-    document.getElementById("adaptorAfter").defaultValue = data.adaptorAfter;
+    document.getElementById("adapterBefore").defaultValue = data.adaptorBefore;
+    document.getElementById("adapterAfter").defaultValue = data.adaptorAfter;
 
     document.getElementById("numberToRank").value = data.rankingTop
     document.getElementById("searchSymbols").textContent = data.searchSymbols.join("\n")
@@ -228,8 +228,8 @@ async function indexUppdateCustomLibrary() {
 function indexSettingsChanges() {
     const trimBefore = document.getElementById("trimBefore").value
     const trimAfter = document.getElementById("trimAfter").value
-    const adaptorBefore = document.getElementById("adaptorBefore").value.trim()
-    const adaptorAfter = document.getElementById("adaptorAfter").value.trim()
+    const adaptorBefore = document.getElementById("adapterBefore").value.trim()
+    const adaptorAfter = document.getElementById("adapterAfter").value.trim()
 
     const rankingTop = document.getElementById("numberToRank").value
     const rankgingOrder = document.getElementById("rankingOrder").value
