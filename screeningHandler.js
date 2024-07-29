@@ -11,16 +11,16 @@ function logicScreening(library, settings, usedSynonyms) {
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
-        if (_match(symbol, settings, swappedSynonyms)){
+        if (_match(symbol, settings, swappedSynonyms)) {
             filteredLibraryMap[symbol] = library.libraryMap[symbol]
         }
     }
-
-    if ((settings.rankingColumn !=  0) || (settings.rankingColumn == null)){
+    console.log(filteredLibraryMap)
+    if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
         filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
-        
+
     }
-    if (settings.rankingTop > 0){
+    if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
     filteredLibraryMap = _postProcessing(filteredLibraryMap, settings)
@@ -35,33 +35,33 @@ function logicScreening(library, settings, usedSynonyms) {
     return searchOutput
 }
 
-function _match(symbol, settings, swapedSynonyms){
+function _match(symbol, settings, swapedSynonyms) {
     //returns true is symbol is in library else false
     //can hande synonyms and partial matches
-    if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
+    if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)) {
         symbol = swapedSynonyms[symbol]
     }
-    if (settings.partialMatches){
+    if (settings.partialMatches) {
         return _matchPartial(symbol, settings.searchSymbols)
     }
     return _matchNonpartial(symbol, settings.searchSymbols)
 }
 
-function _matchPartial(symbol, searchSymbols){
+function _matchPartial(symbol, searchSymbols) {
     return searchSymbols.some(searchSymbol => symbol.includes(searchSymbol))
 }
 
-function _matchNonpartial(symbol, searchSymbols){
+function _matchNonpartial(symbol, searchSymbols) {
     return searchSymbols.includes(symbol.trim())
 }
 
-function _sortOnScore(libraryMap, rankingOrder, rankingColumn){
+function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
     for (const symbol in libraryMap) {
-        if (rankingOrder == "ascending"){
-            libraryMap[symbol].rows.sort((a, b) => a[rankingColumn-1] - b[rankingColumn-1])
+        if (rankingOrder == "ascending") {
+            libraryMap[symbol].rows.sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
         }
-        else{
-            libraryMap[symbol].rows.sort((a, b) => b[rankingColumn-1] - a[rankingColumn-1])
+        else {
+            libraryMap[symbol].rows.sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
         }
     }
     return libraryMap
@@ -70,29 +70,29 @@ function _sortOnScore(libraryMap, rankingOrder, rankingColumn){
 function _getTopRankingElements(libraryMap, n) {
     for (let symbol in libraryMap) {
         libraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n);
-      }
+    }
     return libraryMap
 }
 
-function _postProcessing(libraryMap, settings){
+function _postProcessing(libraryMap, settings) {
     for (const symbol in libraryMap) {
-        libraryMap[symbol].rows.forEach(RNAstr =>{
-            RNAstr[settings.gRNAColumn-1] = _applyPostProcessing(RNAstr[settings.RNAColumn-1]) 
+        libraryMap[symbol].rows.forEach(RNAstr => {
+            RNAstr[settings.gRNAColumn - 1] = _applyPostProcessing(RNAstr[settings.RNAColumn - 1])
         })
     }
     return libraryMap
 }
 
 
-function _applyPostProcessing(gRNASequence){
-    if (settings.adaptorAfter.lenth == 0){
+function _applyPostProcessing(gRNASequence) {
+    if (settings.adaptorAfter.lenth == 0) {
         adaptorAfter = ""
     }
-    if (settings.adaptorBefore.lenth == 0){
+    if (settings.adaptorBefore.lenth == 0) {
         adaptorBefore = ""
     }
     gRNASequence = gRNASequence.slice(settings.trimBefore)
-    if (settings.trimAfter != 0){
+    if (settings.trimAfter != 0) {
         gRNASequence = gRNASequence.slice(0, -settings.trimAfter)
     }
     gRNASequence = settings.adaptorBefore + gRNASequence + settings.adaptorAfter
@@ -100,36 +100,33 @@ function _applyPostProcessing(gRNASequence){
 }
 
 
-function _generateFullTxtOutput(settings, libraryMap, headers, swapedSynonyms){
+function _generateFullTxtOutput(settings, libraryMap, headers, swapedSynonyms) {
     headers.splice(settings.RNAColumn, 0, "Target Sequence Compliment")
-    var out = headers.join("\t")
+    var out = headers.join("\t") + "\n"
     for (var [symbol, dict] of Object.entries(libraryMap)) {
-        var SymbolSearched = ""
-        if (enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)){
-            SymbolSearched = `${swapedSynonyms[symbol]}→`
-        }
+
         dict.rows.forEach(row => {
-            row.splice(settings.RNAColumn, 0, _complimentSequence(row[settings.RNAColumn-1]))
-            out = out + `${row.join("\t")}`
+            row.splice(settings.RNAColumn, 0, _complimentSequence(row[settings.RNAColumn - 1]))
+            out = out + `${row.join("\t")} \n`
         })
-      }
-    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+    }
+    return out
 }
 
-function _generateDownloadSymboldNotFound(settings, usedSynonyms){
-    out = "Symbol searched\t Symonym used\n"
+function _generateDownloadSymboldNotFound(settings, usedSynonyms) {
+    out = "Symbol searched\t Symonym used\r\n"
     for (var symbol of Object.keys(usedSynonyms)) {
-        if (settings.enableSynonyms && (usedSynonyms[symbol] != "")){
-            out = `${symbol}\t${usedSynonyms[symbol]}` + out + "\n" 
+        if (settings.enableSynonyms && (usedSynonyms[symbol] != "")) {
+            out = `${symbol}\t${usedSynonyms[symbol]}` + out + "\n"
             continue
         }
         out = out + `${symbol}\n`
-      }
-    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
+    }
+    return out
 }
 
-function _complimentSequence(gRNASequence){
-    var complimentMap ={
+function _complimentSequence(gRNASequence) {
+    var complimentMap = {
         "A": "T",
         "a": "t",
         "T": "A",
@@ -142,6 +139,6 @@ function _complimentSequence(gRNASequence){
     // Replace each character using the mapping table
     var complimentStr = gRNASequence.split('').map(char => {
         return complimentMap[char] !== undefined ? complimentMap[char] : char;
-      }).join('')
-      return complimentStr
+    }).join('')
+    return complimentStr
 }
