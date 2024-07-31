@@ -65,6 +65,8 @@ function _toggleLigtBox() {
 async function indexRunScreening() {
     _toggleLigtBox()
 
+    gtag('event', 'Run', {'event_category': 'Processing' }); // Google Analytics
+
     button = document.getElementById("startButton")
     var statusText = document.getElementById("statusSearch")
     statusText.classList.add("pulse")
@@ -302,6 +304,8 @@ async function _createSynonymDropworns() {
 /* ------------------ STATUS ----------------- */
 
 function statusUppdateSymbols() {
+    gtag('event', 'Symbols', {'event_category': 'Processing' }); // Google Analytics
+    
     _createSynonymDropworns()
     setStatus("symbolsFound", SER_getLibraryUniqueSymbols())
     setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
