@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" media="all" href="index.css">
     <title>Green Listed</title>
+
+    <!-- Google analytics tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JRW1JYVPWQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JRW1JYVPWQ');
+    </script>
 </head>
 
 <body onload="init()">
@@ -202,7 +211,7 @@
                         <td><button onclick="showFullOutput()">Show</button></td>
                     </tr>
                     <tr>
-                        <td>symbols not found</td>
+                        <td>Symbols not found</td>
                         <td><a href="" id="notFoundDownload">Download</a></td>
                         <td><button onclick="showNotFound()">Show</button></td>
                     </tr>

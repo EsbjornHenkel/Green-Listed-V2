@@ -96,7 +96,7 @@ async function indexRunScreening() {
 function _generateNotFound() {
     var usedSynonyms = SER_getSynonymMap(settings.searchSymbols)
     const date = new Date()
-    var out = `library: ${settings.libraryName}, ${date.toLocaleString()}\n`
+    var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
     if (Object.keys(usedSynonyms).length == 0) {
         out = out + "All symbols found in file"
         return out

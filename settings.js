@@ -52,7 +52,7 @@ function settingsSwapSymbol(oldSymbol, newSymbol){
 
 function settingsToStr(){
     const date = new Date()
-    var text =  `library: ${settings.libraryName}, ${date.toLocaleString()}\n`
+    var text =  `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
     for (const setting in settings){
         if (["synonyms", "usedSynonyms"].includes(setting)){
             continue
