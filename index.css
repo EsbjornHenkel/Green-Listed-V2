@@ -39,18 +39,19 @@ body {
     padding-right: 10%;
     padding-left: 10%;
 }
-@media only screen and (max-width: 1024px) {
-    body {
-        padding-right: 2%;
-        padding-left: 2%;
-    }
-}
 @media only screen and (max-width: 1280px) {
     body {
         padding-right: 5%;
         padding-left: 5%;
     }
 }
+@media only screen and (max-width: 1024px) {
+    body {
+        padding-right: 2%;
+        padding-left: 2%;
+    }
+}
+
 
 header {
     padding: 1.5rem;
