@@ -203,7 +203,7 @@ function changeSymbols() {
     const partialMatches = document.getElementById("partialMatches").checked
     const enableSynonyms = document.getElementById("enableSynonyms").checked
 
-    //sets everything to lower case and clears any extra spaces
+    //sets everything to lower case and clears any extra spaces 
     const searchSymbols = document.getElementById("searchSymbols").value.split("\n").filter(item => { return item.trim() }).map(symbol => symbol.trim().toLowerCase())
 
     SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
