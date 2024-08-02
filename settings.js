@@ -1,34 +1,41 @@
+// 
+// GRNA 2.0 - 2024
+//
+// Settings for the UI - essentially all the fields in the UI
+// Used in index.js - NOT the service side of the app
+//
+
 
 settings = {
-    "trimBefore": null, 
-    "trimAfter": null, 
+    "trimBefore": null,
+    "trimAfter": null,
     "adaptorBefore": null,
     "adaptorAfter": null,
 
-    "partialMatches": null,     
+    "partialMatches": null,
     "rankingTop": null,
 
     "outputName": null,
 
-    "searchSymbols": null,       
+    "searchSymbols": null,
 
     "enableSynonyms": true,
     "synonyms": null
 }
 
-function settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms){
-    settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName)
-    settingsSetIndexes(RNAIndex, symbolIndex, rankingIndex)
-    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
+function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms) {
+    SET_settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName)
+    SET_settingsSetIndexes(RNAIndex, symbolIndex, rankingIndex)
+    SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
 }
 
-function settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms){
+function SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms) {
     settings["searchSymbols"] = searchSymbols
     settings["partialMatches"] = partialMatches
     settings["enableSynonyms"] = enableSynonyms
 }
 
-function settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName){
+function SET_settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName) {
     settings["trimBefore"] = trimBefore
     settings["trimAfter"] = trimAfter
     settings["adaptorBefore"] = adaptorBefore
@@ -39,33 +46,25 @@ function settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter,
     settings["outputName"] = outputName
 }
 
-function settingsSetIndexes(RNAColumn, symbolColumn, rankingColumn){
+function SET_settingsSetIndexes(RNAColumn, symbolColumn, rankingColumn) {
     settings["RNAColumn"] = RNAColumn
     settings["symbolColumn"] = symbolColumn
     settings["rankingColumn"] = rankingColumn
 }
 
-function settingsSwapSymbol(oldSymbol, newSymbol){
+function SET_settingsSwapSymbol(oldSymbol, newSymbol) {
     const index = settings["searchSymbols"].indexOf(oldSymbol)
     settings["searchSymbols"][index] = newSymbol
 }
 
-function settingsToStr(){
+function SET_settingsToStr() {
     const date = new Date()
-    var text =  `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
-    for (const setting in settings){
-        if (["synonyms", "usedSynonyms"].includes(setting)){
+    var text = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
+    for (const setting in settings) {
+        if (["synonyms", "usedSynonyms"].includes(setting)) {
             continue
         }
         text = text + ` ${setting} = ${settings[setting]}\n`
     }
     return `${text}`
 }
-
-
-// ------------------- STATUS ---------------
-
-function settingsStatusSymbolsFound(){
-    settings
-}
-

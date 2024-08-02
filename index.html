@@ -10,9 +10,9 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JRW1JYVPWQ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('consent', 'default', {'ad_storage': 'denied', 'analytics_storage': 'denied'}); // Disable cookies
+        gtag('consent', 'default', { 'ad_storage': 'denied', 'analytics_storage': 'denied' }); // Disable cookies
         gtag('config', 'G-JRW1JYVPWQ');
     </script>
 </head>
@@ -22,11 +22,11 @@
         <span class="centerContent">
             <img src="headerEven.jpg" alt="Green Listed">
             <nav>
-                <a href="" target="_blank">Demo</a>
+                <a target="_blank" href="infoDemo.html">Demo</a>
                 <a target="_blank"
                     href="https://www.youtube.com/watch?v=9A6WQAYCOvs&list=PLtETtjUFMYF1onsu-BpLIM6h34R6N5NP3">Videos</a>
-                <a href="" target="_blank">How to use</a>
-                <a href="" target="_blank">How to cite</a>
+                <a target="_blank" href="infoHowToUse.html">How to use</a>
+                <a target="_blank" href="infoHowToCite.html">How to cite</a>
             </nav>
         </span>
     </header>
@@ -42,7 +42,7 @@
 
                 <div class="smallPlate">
                     <h3 class="smallTitle">
-                        <select id="libraries" onchange="selectNewLibrary()" required>
+                        <select id="libraries" onchange="changeLibrary()" required>
 
                             <option value="custom">User Upload</option>
                         </select>
@@ -51,24 +51,23 @@
                         <form id="User Upload" class="inactive">
                             <p class="flexRow">
                                 Select a .txt file to use as Library
-                                <input type="file" accept=".txt" id="customFile" onchange="indexSymbolChanges()">
+                                <input type="file" accept=".txt" id="customFile" onchange="updateCustomlibrary()">
                             </p>
 
                             <table>
                                 <tr id="GeneSymbolIndexRow">
                                     <td>Symbol Column</td>
-                                    <td><input type="number" id="GeneSymbolIndex"
-                                            onchange="indexLibraryColumnChanges()"></td>
+                                    <td><input type="number" id="GeneSymbolIndex" onchange="changeLibraryColumn()"></td>
                                     <td id="statusFileSymbolIndex"></td>
                                 </tr>
                                 <tr id="gRNAIndexRow">
                                     <td>gRNA Column</td>
-                                    <td><input type="number" id="gRNAIndex" onchange="indexLibraryColumnChanges()"></td>
+                                    <td><input type="number" id="gRNAIndex" onchange="changeLibraryColumn()"></td>
                                     <td id="statusFilegRNAIndex"></td>
                                 </tr>
                                 <tr id="rankingIndexRow">
                                     <td>Rank Column (optional)</td>
-                                    <td><input type="number" id="rankingIndex" onchange="indexLibraryColumnChanges()">
+                                    <td><input type="number" id="rankingIndex" onchange="changeLibraryColumn()">
                                     </td>
                                     <td id="statusRankingIndex"></td>
                                 </tr>
@@ -93,20 +92,20 @@
                     <div class="plateContent">
                         <form>
                             <label class="justifyCenter">
-                                <input name="a" type="radio" id="enableDirectMatches" onchange="indexSymbolChanges()">
+                                <input name="a" type="radio" id="enableDirectMatches" onchange="changeSymbols()">
                                 Only direct matches <span></span>
                             </label>
                             <label class="justifyCenter">
-                                <input name="a" type="radio" id="enableSynonyms" onchange="indexSymbolChanges()">
+                                <input name="a" type="radio" id="enableSynonyms" onchange="changeSymbols()">
                                 Use synonyms <span id="statusNumSynonyms"></span>
                             </label>
 
                             <label class="justifyCenter">
-                                <input name="a" type="radio" id="partialMatches" onchange="indexSymbolChanges()">
+                                <input name="a" type="radio" id="partialMatches" onchange="changeSymbols()">
                                 Allow for partial matches
                             </label>
                         </form>
-                        <textarea id="searchSymbols" onchange="indexSymbolChanges()">
+                        <textarea id="searchSymbols" onchange="changeSymbols()">
 
                     </textarea>
                         <p id="statusSearchSymbolsRows"></p>
@@ -131,7 +130,7 @@
                         <tr>
                             <td>Ranking order</td>
                             <td>
-                                <select id="rankingOrder" onchange="indexSettingsChanges()">
+                                <select id="rankingOrder" onchange="changeSettings()">
                                     <option value="descending">Descending</option>
                                     <option value="ascending">Ascending</option>
                                 </select>
@@ -140,7 +139,7 @@
                         </tr>
                         <tr>
                             <td>Limit to top</td>
-                            <td><input type="number" id="numberToRank" onchange="indexSettingsChanges()"></td>
+                            <td><input type="number" id="numberToRank" onchange="changeSettings()"></td>
                             <td></td>
                         </tr>
                     </table>
@@ -153,15 +152,15 @@
                             <tr>
                                 <td>Trim </td>
                                 <td>5'<input type="number" id="trimBefore" min="0" value="0"
-                                        onchange="indexSettingsChanges()"></td>
-                                <td>3'<input type="number" id="trimAfter" min="0" value="0"
-                                        onchange="indexSettingsChanges()"></td>
+                                        onchange="changeSettings()"></td>
+                                <td>3'<input type="number" id="trimAfter" min="0" value="0" onchange="changeSettings()">
+                                </td>
 
                             </tr>
                             <tr>
                                 <td>Adapter sequences</td>
-                                <td>5'<input type="text" id="adapterBefore" onchange="indexSettingsChanges()"></td>
-                                <td>3'<input type="text" id="adapterAfter" onchange="indexSettingsChanges()"></td>
+                                <td>5'<input type="text" id="adapterBefore" onchange="changeSettings()"></td>
+                                <td>3'<input type="text" id="adapterAfter" onchange="changeSettings()"></td>
                             </tr>
                         </table>
                         <p id="ExampleSequance"></p>
@@ -184,7 +183,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <button id="startButton" onclick="indexRunScreening()">&nbsp;Run <span
+                                <button id="startButton" onclick="runScreening()">&nbsp;Run <span
                                         id="startButtonText">▶</span></button>
                             </td>
                             <td></td>
@@ -214,12 +213,12 @@
                     <tr>
                         <td>Symbols not found</td>
                         <td><a href="" id="notFoundDownload">Download</a></td>
-                        <td><button onclick="showNotFound()">Show</button></td>
+                        <td><button onclick="showNotFoundOutput()">Show</button></td>
                     </tr>
                     <tr>
                         <td>Settings</td>
-                        <td><a href="" id="settingsDowload" onclick="dowloadSettings()">Download</a></td>
-                        <td><button onclick="showSettings()">Show</button></td>
+                        <td><a href="" id="settingsDowload" onclick="dowloadSettingsOutput()">Download</a></td>
+                        <td><button onclick="showSettingsOutput()">Show</button></td>
                     </tr>
                 </table>
 

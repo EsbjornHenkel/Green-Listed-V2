@@ -1,17 +1,23 @@
+// 
+// GRNA 2.0 - 2024
+// 
+// Javascript for the html page, contains UI logic
+// Gets data from the grnaService & displays it
+//
 
-
-var examplesequence = "SEQUENCE"
 var searchOutput = {
     "textOutputFull": "",
     "textOutputNotFound": ""
 }
+
+// Warn user if reload
 //window.onbeforeunload = function() {
 //    return ""
 //  }
 
 async function init() {
     try {
-        data = await SET_getDefaultSettings()
+        data = await SER_getDefaultSettings()
     }
     catch (error) {
         throw new Error(`Failed to get default settings:\n ${error.message}`)
@@ -42,14 +48,53 @@ async function init() {
     })
     dropdown.value = data.defaultLibrary
 
-
     const rankingOrder = document.getElementById("rankingOrder").value
-    settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms)
-    selectNewLibrary()
 
-    _editExampleText()
+    // store the settings in an object
+    SET_settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms)
+
+    // load the library
+    changeLibrary()
+
+    // update example sequence
+    _updateExampleText()
 }
 
+
+async function runScreening() {
+    _toggleLigtBox()
+
+    gtag('event', 'Run', { 'event_category': 'Processing' }); // Google Analytics
+
+    button = document.getElementById("startButton")
+    var statusText = document.getElementById("statusSearch")
+    statusText.classList.add("pulse")
+    var statusInterval = setInterval(_statusSearchUpdate, 10);
+    await new Promise(r => setTimeout(r, 100))
+    try {
+        searchOutput = await SER_runScreening(settings)
+        searchOutput.notFound = _outputNotFound()
+
+        _createDownloadLink(searchOutput.textOutputFull, settings["outputName"] + " Output", document.getElementById("fullDownload"))
+
+        _createDownloadLink(searchOutput.notFound, settings["outputName"] + " not found", document.getElementById("notFoundDownload"))
+    }
+    catch (error) {
+        console.error(`Screening failed:\n`, error);
+    }
+    //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
+
+    _toggleLigtBox()
+    _statusSearchUpdate()
+    clearInterval(statusInterval)
+
+    statusText.classList.remove("pulse")
+    document.getElementById("outputTable").style.display = "table"
+    document.getElementById("outputTable").classList.remove("statusFadeOut")
+    document.getElementById("outputTable").classList.add("statusFadeIn")
+}
+
+// show/hide lightbox - used to cover screen when running search
 function _toggleLigtBox() {
     const box = document.getElementById('overlay')
     if (box.classList.contains("fazeIn")) {
@@ -62,40 +107,7 @@ function _toggleLigtBox() {
     }
 }
 
-async function indexRunScreening() {
-    _toggleLigtBox()
-
-    gtag('event', 'Run', {'event_category': 'Processing' }); // Google Analytics
-
-    button = document.getElementById("startButton")
-    var statusText = document.getElementById("statusSearch")
-    statusText.classList.add("pulse")
-    var statusInterval = setInterval(_statusSearchUppdate, 10);
-    await new Promise(r => setTimeout(r, 100))
-    try {
-        searchOutput = await SER_runScreening(settings)
-        searchOutput.notFound = _generateNotFound()
-
-        _generateDownload(searchOutput.textOutputFull, settings["outputName"] + " Output", document.getElementById("fullDownload"))
-
-        _generateDownload(searchOutput.notFound, settings["outputName"] + " not found", document.getElementById("notFoundDownload"))
-    }
-    catch (error) {
-        console.error(`Screening failed:\n`, error);
-    }
-    //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
-
-    _toggleLigtBox()
-    _statusSearchUppdate()
-    clearInterval(statusInterval)
-
-    statusText.classList.remove("pulse")
-    document.getElementById("outputTable").style.display = "table"
-    document.getElementById("outputTable").classList.remove("statusFadeOut")
-    document.getElementById("outputTable").classList.add("statusFadeIn")
-}
-
-function _generateNotFound() {
+function _outputNotFound() {
     var usedSynonyms = SER_getSynonymMap(settings.searchSymbols)
     const date = new Date()
     var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
@@ -120,7 +132,7 @@ function _generateNotFound() {
     return out.replace(/(?:\r\n|\r|\n)/g, '\n')
 }
 
-function _generateDownload(text, name, element) {
+function _createDownloadLink(text, name, element) {
     text = text.replace("    ", "\t")
     var blob = new Blob([text], { type: 'text/tab-separated-values' })
     element.href = URL.createObjectURL(blob)
@@ -128,122 +140,134 @@ function _generateDownload(text, name, element) {
 }
 
 function showFullOutput() {
-    setStatus("fileContent", searchOutput.textOutputFull.replace(/\n/g, "<br>"))
+    _setStatus("fileContent", searchOutput.textOutputFull.replace(/\n/g, "<br>"))
 }
 
-function showNotFound() {
-    setStatus("fileContent", searchOutput.notFound.replace(/\n/g, "<br>"))
+function showNotFoundOutput() {
+    _setStatus("fileContent", searchOutput.notFound.replace(/\n/g, "<br>"))
 }
 
-function showSettings() {
-    setStatus("fileContent", settingsToStr().replace(/\n/g, "<br>"))
+function showSettingsOutput() {
+    _setStatus("fileContent", SET_settingsToStr().replace(/\n/g, "<br>"))
 }
 
-function dowloadSettings() {
+function dowloadSettingsOutput() {
     element = document.getElementById("settingsDowload")
-    _generateDownload(settingsToStr(), settings.outputName + " Settings", element)
+    _createDownloadLink(SET_settingsToStr(), settings.outputName + " Settings", element)
 }
 
-async function selectNewLibrary() {
+
+async function _displayLibraryCitation(libraryCitation) {
+    const libraryInfoContainer = document.getElementById("libraryInfo")
+    libraryInfoContainer.innerHTML = libraryCitation
+}
+
+async function changeLibrary() {
+    //called when library changes through (droopdown under 1. Select library)
+    //uppdates library to contin relevant information for the new library
     const useSynonyms = document.getElementById("enableSynonyms")
 
     const libraryName = document.getElementById("libraries").value
     const customLibrarie = document.getElementById("User Upload")
 
-    if (libraryName == "custom") {
+    if (libraryName == "custom") { //shows new input fields for custom library
         useSynonyms.disabled = "disabled"
-        console.log(document.getElementById("enableDirectMatches"))
         document.getElementById("enableDirectMatches").checked = true
 
         customLibrarie.classList.remove("inactive")
-        await _displayNewLibrary("")
-        indexLibraryColumnChanges()
+        await _displayLibraryCitation("")
+        changeLibraryColumn()
     }
-    else {
+    else { //uppdates library if it was not custom
         customLibrarie.classList.add("inactive")
-        setStatus("symbolsFound", "Fetching library from server...")
+        _setStatus("symbolsFound", "Fetching library from server...")
         await new Promise(r => setTimeout(r, 10)) //wait for status animation to end
         try {
-            const librarySettings = await SER_selectLibrary(libraryName)
+            const librarySettings = await SER_selectLibrary(libraryName) //uppdates library
             useSynonyms.disabled = ""
             settings.libraryName = libraryName
-            await _displayNewLibrary(SER_getLibraryCitation())
+            await _displayLibraryCitation(SER_getLibraryCitation())
 
-            settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
+            SET_settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
         }
         catch (error) {
-            setStatus("symbolsFound", "Error failed to fetch library")
+            _setStatus("symbolsFound", "Error failed to fetch library")
             throw error
         }
 
     }
-    indexSymbolChanges()
+    changeSymbols()
 }
 
-async function _displayNewLibrary(libraryCitation) {
-    const libraryInfoContainer = document.getElementById("libraryInfo")
-    libraryInfoContainer.innerHTML = libraryCitation
-}
-
-
-function indexSymbolChanges() {
+function changeSymbols() {
     const partialMatches = document.getElementById("partialMatches").checked
     const enableSynonyms = document.getElementById("enableSynonyms").checked
-    const searchSymbols = document.getElementById("searchSymbols").value.trim().split("\n").filter(item => { return item.trim() }).map(symbol => symbol.toLowerCase())
 
+    //sets everything to lower case and clears any extra spaces
+    const searchSymbols = document.getElementById("searchSymbols").value.split("\n").filter(item => { return item.trim() }).map(symbol => symbol.trim().toLowerCase())
 
-    settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
-    statusUppdateSymbols()
+    SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
+    _statusUpdateSymbols()
 }
 
-function indexLibraryColumnChanges() {
+function changeLibraryColumn() {
+    //User input fields only called when adding a custom library
     const symbolIndex = document.getElementById("GeneSymbolIndex").value
     const gRNAIndex = document.getElementById("gRNAIndex").value
     const rankingIndex = document.getElementById("rankingIndex").value
 
-    settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
-    indexUppdateCustomLibrary()
-
+    SET_settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
+    updateCustomlibrary()
 }
 
-async function indexUppdateCustomLibrary() {
-    if (document.getElementById("libraries").value == "custom") {
-        var fileInput = document.getElementById('customFile')
-        var file = fileInput.files[0]
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // Display file content
-                SER_addCustomLibraryData(reader.result, settings.symbolColumn)
-            }
-            reader.readAsText(file)
-            await new Promise(r => setTimeout(r, 10))
+function changeSettings() {
 
-        }
-        else {
-            SER_addCustomLibraryData("", -1)
-        }
-    }
-    statusUppdateSymbols()
-}
-
-function indexSettingsChanges() {
     const trimBefore = document.getElementById("trimBefore").value
+
     const trimAfter = document.getElementById("trimAfter").value
-    const adaptorBefore = document.getElementById("adapterBefore").value.trim()
-    const adaptorAfter = document.getElementById("adapterAfter").value.trim()
+
+    const adapterBefore = document.getElementById("adapterBefore").defaultValue
+    const adapterAfter = document.getElementById("adapterAfter").defaultValue
 
     const rankingTop = document.getElementById("numberToRank").value
-    const rankgingOrder = document.getElementById("rankingOrder").value
-
     const outputName = document.getElementById("outputFileName").value
 
-    settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankgingOrder, outputName)
-    statusUppdateSettings()
-    _editExampleText()
+    const rankingOrder = document.getElementById("rankingOrder").value
+    SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName)
+    _statusUpdateSettings()
 }
 
-function _editExampleText() {
+function updateCustomlibrary() {
+    const fileInput = document.getElementById('customFile')
+    const file = fileInput.files[0]
+
+    if (file) {
+        const reader = new FileReader()
+
+        reader.onload = function (e) {
+            const content = e.target.result
+            SER_selectCustomLibrary(content, settings)
+            _statusUpdateSymbols()
+            console.log("updateCustomlibrary() file")
+        }
+
+        reader.onerror = function (e) {
+            console.error("Error reading file:", e)
+        }
+
+        reader.readAsText(file)
+    } else {
+        SER_selectCustomLibrary("", settings)
+        console.log("updateCustomlibrary() no file")
+    }
+
+}
+
+
+
+function _updateExampleText() {
+    //Displays the text SEQUENCE modified by trim and adapter sequences
+    var examplesequence = "SEQUENCE"
     var example = examplesequence
 
     if (settings.adaptorAfter.lenth == 0) {
@@ -263,23 +287,20 @@ function _editExampleText() {
     document.getElementById("ExampleSequance").innerHTML = example
 }
 
-async function _createSynonymDropworns() {
+async function _displaySymbolsNotFound(synonymMap) {
+    //Creates and displays everything under the Symbols not found sub title under 2. Input symbols in HTMl
     if (settings.partialMatches) {
-        setStatus("statusSearchSymbolsRows", ``)
+        _setStatus("statusSearchSymbolsRows", ``)
         const synonymsUsed = document.getElementById("displaySynonyms")
         synonymsUsed.value = "Not available"
         return
     }
-    const synonymMap = SER_getSynonymMap(settings.searchSymbols)
 
-    //const notFound = document.getElementById("displayNotFound")
     const synonymsUsed = document.getElementById("displaySynonyms")
 
     if (Object.keys(synonymMap).length == 0) {
-        notUsedText = "All symbols found in file"
+        displayText = "All symbols found in file"
     }
-    var notUsedText = ""
-    var synonymsUsedText = ""
     var displayText = ""
     var numSynonyms = 0
     var numNotFound = 0
@@ -296,48 +317,50 @@ async function _createSynonymDropworns() {
     })
     synonymsUsed.value = displayText
 
-    settings.enableSynonyms ? setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : setStatus("statusNumSynonyms", ``)
-    settings.partialMatches ? setStatus("statusSearchSymbolsRows", ``) : setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length - numNotFound} of ${settings.searchSymbols.length}`)
+    settings.enableSynonyms ? _setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : _setStatus("statusNumSynonyms", ``)
+    settings.partialMatches ? _setStatus("statusSearchSymbolsRows", ``) : _setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length - numNotFound} of ${settings.searchSymbols.length}`)
 
 }
 
 /* ------------------ STATUS ----------------- */
 
-function statusUppdateSymbols() {
-    gtag('event', 'Symbols', {'event_category': 'Processing' }); // Google Analytics
-    
-    _createSynonymDropworns()
-    setStatus("symbolsFound", SER_getLibraryUniqueSymbols())
-    setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
-    setStatus("fileContent", "")
+function _statusUpdateSymbols() {
+    console.log("symbol status")
+    gtag('event', 'Symbols', { 'event_category': 'Processing' }) // Google Analytics
+
+    const synonymMap = SER_getSynonymMap(settings.searchSymbols)
+    _displaySymbolsNotFound(synonymMap)
+
+    const statusSymbols = SER_statusLibrarySymbols()
+    _setStatus("symbolsFound", statusSymbols)
+
+    _setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
+    _setStatus("fileContent", "")
 
     document.getElementById("outputTable").classList.add("statusFadeOut")
 }
 
-function statusUppdateSettings() {
+function _statusUpdateSettings() {
     document.getElementById("outputTable").classList.add("statusFadeOut")
-    setStatus("fileContent", "")
+    _setStatus("fileContent", "")
+    _updateExampleText()
 }
 
-function setColor(elemId, color) {
-    const element = document.getElementById(elemId)
-    element.style.backgroundColor = color
-
-}
-
-function _statusSearchUppdate() {
-    setStatus("statusSearch", getSearchstatus())
+function _statusSearchUpdate() {
+    _setStatus("statusSearch", LIB_statusScreening())
 }
 
 
-function setStatus(elemId, text, isNotInnerHtml) {
+function _setStatus(elemId, text, isNotInnerHtml) {
+    //console.log(`_setStatus(${elemId},${text})`)
+
     if (isNotInnerHtml == undefined) {
         isNotInnerHtml = true
     }
     const element = document.getElementById(elemId)
     if (!element) {
-        console.error(`Index.js: setStatus() Element with id '${elemId}' does not exist`);
-        return;
+        console.error(`Index.js: _setStatus() Element with id '${elemId}' does not exist`)
+        return
     }
     if ((element.textContent == text) && isNotInnerHtml) {
         return

@@ -1,11 +1,17 @@
 
+// 
+// GRNA 2.0 - 2024
 //
-// Library screening
+// Library screening logic
+// used by the library so execute a search
 //
 
-function logicScreening(library, settings, usedSynonyms) {
+function SCR_startScreening(library, settings, usedSynonyms) {
+    //starts screening
+    //This is the only function that gets called from outside in this file
     const swappedSynonyms = Object.fromEntries(Object.entries(usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
     var symbols = Object.keys(library.libraryMap)
+    //creates a coppy of library map that just contains symbols that match the library symbols acording to the _match() function
     var filteredLibraryMap = {}
     for (let i = 0; i < symbols.length; i++) {
         const symbol = symbols[i]
@@ -16,15 +22,14 @@ function logicScreening(library, settings, usedSynonyms) {
     }
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
         filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
-
     }
     if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
-    filteredLibraryMap = _postProcessing(filteredLibraryMap, settings)
+    filteredLibraryMap = _postProcessing(filteredLibraryMap, settings) //adds trim and adapter sequences
 
-    const textOutputFull = _generateFullTxtOutput(settings, filteredLibraryMap, library.headers, swappedSynonyms)
-    const textOutputNotFound = _generateDownloadSymboldNotFound(settings, usedSynonyms)
+    const textOutputFull = _createFullTxtOutput(settings, filteredLibraryMap, library.headers, swappedSynonyms)
+    const textOutputNotFound = _createSymboldNotFound(settings, usedSynonyms)
     var searchOutput = {
         "numSymbolsFound": Object.keys(filteredLibraryMap).length,
         "textOutputFull": textOutputFull,
@@ -78,13 +83,11 @@ function _postProcessing(libraryMap, settings) {
             libraryMap[symbol].rows[i][settings.RNAColumn - 1] = _applyPostProcessing(libraryMap[symbol].rows[i][settings.RNAColumn - 1], settings)
         }
     }
-    console.log(libraryMap)
     return libraryMap
 }
 
 
 function _applyPostProcessing(gRNASequence, settings) {
-    console.log(gRNASequence)
     if (settings.adaptorAfter.lenth == 0) {
         adaptorAfter = ""
     }
@@ -96,18 +99,16 @@ function _applyPostProcessing(gRNASequence, settings) {
         gRNASequence = gRNASequence.slice(0, -settings.trimAfter)
     }
     gRNASequence = settings.adaptorBefore + gRNASequence + settings.adaptorAfter
-    console.log(gRNASequence)
 
     return gRNASequence
 }
 
 
-function _generateFullTxtOutput(settings, libraryMap, headers, swapedSynonyms) {
+function _createFullTxtOutput(settings, libraryMap, headers, swapedSynonyms) {
     headers.splice(settings.RNAColumn, 0, "Target Sequence Compliment")
-    var out = headers.join("\t") + "\n"
-    for (var [symbol, dict] of Object.entries(libraryMap)) {
-
-        dict.rows.forEach(row => {
+    var out = headers.join("\t") + "\n" //the original headers are placed att the top of the output
+    for (var symbol of Object.keys(libraryMap)) {
+        libraryMap[symbol].rows.forEach(row => {
             row.splice(settings.RNAColumn, 0, _complimentSequence(row[settings.RNAColumn - 1]))
             out = out + `${row.join("\t")} \n`
         })
@@ -115,7 +116,7 @@ function _generateFullTxtOutput(settings, libraryMap, headers, swapedSynonyms) {
     return out
 }
 
-function _generateDownloadSymboldNotFound(settings, usedSynonyms) {
+function _createSymboldNotFound(settings, usedSynonyms) {
     out = "Symbol searched\t Symonym used\r\n"
     for (var symbol of Object.keys(usedSynonyms)) {
         if (settings.enableSynonyms && (usedSynonyms[symbol] != "")) {

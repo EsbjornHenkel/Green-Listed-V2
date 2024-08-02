@@ -1,8 +1,9 @@
-
+// 
+// GRNA 2.0 - 2024
 //
-// GRNA logic for handling a session
+// Logic for handling a session
+// This corresponds to a server-side service API
 // Used by the UI
-//
 
 const SETTINGS_URL = 'settingsDefault.json'
 const LIBRARIES_URL = 'settingsLibraries.json'
@@ -34,7 +35,7 @@ async function SER_selectLibrary(libraryName) {
         catch {
             libraryCitation = "No citation file found"
         }
-        LIB_libraryUpdate(libSettings, libData, synonymData, libraryCitation)
+        LIB_setLibraryData(libSettings, libData, synonymData, libraryCitation)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
         return libSettings
@@ -44,9 +45,12 @@ async function SER_selectLibrary(libraryName) {
     }
 }
 
+function SER_selectCustomLibrary(data, settings) {
+    return LIB_setLibraryCustomData(data, settings)
+}
 
 // returns settings json, see settingsDefault.json for an example
-async function SET_getDefaultSettings() {
+async function SER_getDefaultSettings() {
     try {
         const settings = await FH_fetchJsonFile(SETTINGS_URL)
         return settings
@@ -67,34 +71,31 @@ async function SER_getLibraryNames() {
 // Settings contains all param, see default settings in settingsDefault.json
 function SER_runScreening(settings) {
     try {
-        return LIB_libraryStartScreen(settings)
+        return LIB_startScreening(settings)
     }
     catch (error) {
         throw error
     }
 }
 
-function SER_addCustomLibraryData(data, symbolColumn) {
-    return LIB_libraryCustomData(data, symbolColumn)
-}
-
-// ---------------------------- Status functions ------------------------------------------------
 
 function SER_getLibraryCitation() {
     return LIB_libraryCitation()
 }
 
-// Return a string describing the library status - for example "Unique symbols found: 19674"
-function SER_getLibraryUniqueSymbols() {
-    return LIB_libraryUniqueSymbols()
-}
-
 // Return a map with symbols not found (keys) and an synonym used (value - often Null)
 function SER_getSynonymMap(searchSymbols) {
-    return LIB_libraryStatusSynonymsDisplay(searchSymbols)
+    return LIB_statusSynonyms(searchSymbols)
+}
+
+// ---------------------------- Status functions ------------------------------------------------
+
+// Return a string describing the library status - for example "Unique symbols found: 19674"
+function SER_statusLibrarySymbols() {
+    return LIB_statusLibrarySymbols()
 }
 
 // Return string with status of screening run- for example "Done. Time to complete: 0.2s"
-function SER_getScreeningStatus() {
-    return LIB_libraryStatusScreening()
+function SER_statusScreening() {
+    return LIB_statusScreening()
 }

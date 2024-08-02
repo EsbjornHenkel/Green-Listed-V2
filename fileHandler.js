@@ -1,6 +1,8 @@
-
+// 
+// GRNA 2.0 - 2024
 // 
 // Handles all file access (via urls)
+// Used by grnaService
 //
 
 async function FH_fetchJsonFile(url) {
@@ -55,7 +57,7 @@ async function FH_fetchHTMLFile(url) {
         const txt = await response.text()
         const parser = new DOMParser();
         const doc = parser.parseFromString(txt, 'text/html');
-        
+
         return doc
     } catch (error) {
         throw new Error(`fileHandler.fetchTextFile(${url}) Error fetching text file (${url}):\n ${error}`)

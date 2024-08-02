@@ -1,137 +1,177 @@
+// 
+// GRNA 2.0 - 2024
 //
 // Handles a library
+// Used by the grnaService
 //
 
 
 // State holding the currently selected library
-var library = {
+var _library = {
+    /*
+    libraryMap ={
+        symbol1(in lower case) = {
+            "rows": [all rows containing symbol1 splitt by \t],
+            "symbolSynonyms": [a array of all synonyms to symbol1 (all lower case)],
+            "originalSymbol": symbol1 with the same capitalisation as in the library
+        },
+        symbol2: ...
+    }
+     */
     "libraryMap": {},
+    "libraryStatus": "",
+    /*
+    synonym map contain all symbols that have synonyms as keys and all ther synonyms as values
+    synonymMap = {
+        symbol1: [set of all synonyms to symbol1],
+        symbol2: [set of all synonyms to symbol2]
+    }
+    */
+    "synonymMap": {},
+
+    /* string with tab-separetd column headers*/
     "headers": "",
-    "synonymMap": null,
+
+    /* status of the last screening, for example "Done. Found 2345 symbols" */
     "statusSearch": "",
+
+    /* string with html describing the library */
     "citationInfo": ""
 }
 
-function libraryStartScreenTEST(settings){
-    library.statusSearch = "Runnung screening"
-    var ost = performance.now()
-    for (let i = 0; i < 10; i++) {
-        var st = performance.now()
-        logicScreening(library, settings, _librarySynonyms(settings.searchSymbols))
-        console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
-    }
-    console.log(`final: ${Math.round((performance.now()-ost)/1000 * 1000) / 1000/10}`)
-    return searchOutput
-}
 
-function LIB_libraryStartScreen(settings){
-    if (Object.keys(library.libraryMap).length == 0){
-        library.statusSearch = "Error no library selected"
+function LIB_startScreening(settings) {
+    if (Object.keys(_library.libraryMap).length == 0) {
+        _library.statusSearch = "Error no library selected"
         throw new Error("No library selected")
     }
-    library.statusSearch = "Starting search"
+    _library.statusSearch = "Starting search"
     var st = performance.now()
-    var searchOutput = logicScreening(library, settings, _librarySynonyms(settings.searchSymbols))
-    library.statusSearch = `Done. Time to complete: ${Math.round((performance.now()-st)/1000 * 10) / 10}s<br> Symbols found: ${searchOutput.numSymbolsFound}`
-    console.log(Math.round((performance.now()-st)/1000 * 1000) / 1000)
+    var searchOutput = SCR_startScreening(_library, settings, _createMatchingSynonyms(settings.searchSymbols))
+    _library.statusSearch = `Done. Time to complete: ${Math.round((performance.now() - st) / 1000 * 10) / 10}s<br> Symbols found: ${searchOutput.numSymbolsFound}`
+    console.log(Math.round((performance.now() - st) / 1000 * 1000) / 1000)
     return searchOutput
 }
 
-function LIB_libraryCustomData(fileData, symbolColumn){
-    var libraryMap = _getLibraryMap(fileData, symbolColumn, {})
-    library["libraryMap"] = libraryMap
+function LIB_setLibraryCustomData(fileData, settings) {
+    //uppdates library Map
+    console.log("LIB_setLibraryCustomData()start scol=" + settings.symbolColumn)
+    var libraryMap = _createLibraryMap(fileData, settings.symbolColumn, settings.RNAColumn, settings.rankingColumn, {})
+    _library.libraryMap = libraryMap
+    //console.log("LIB_setLibraryCustomData()end rcol=" + settings.RNAColumn)
 }
 
 
-function LIB_libraryUpdate(librarySettings, fileData, synonymData, citationInfo){
-    library.citationInfo = citationInfo
-    library.synonymMap = _getSynonymMap(synonymData)
-    var libraryMap = _getLibraryMap(fileData, librarySettings.symbolColumn, library.synonymMap)
-    library["libraryMap"] = libraryMap
+function LIB_setLibraryData(librarySettings, fileData, synonymData, citationInfo) {
+    //uppdates synonymMap, citationInfo and libraryMap
+    _library.citationInfo = citationInfo
+    _library.synonymMap = _createSynonymMap(synonymData)
+    var libraryMap = _createLibraryMap(fileData, librarySettings.symbolColumn, librarySettings.RNAColumn, librarySettings.rankingColumn, _library.synonymMap)
+    _library.libraryMap = libraryMap
 }
 
-function _getSynonymMap(synonymData){
+function _createSynonymMap(synonymData) {
+    //se top of file for explanation of synonym map datastructure
     rows = synonymData.trim().split("\n").map((row) => row.split("\t"))
     rows.shift()
     var synonymMap = {}
     rows.forEach(row => {
         const symbol1 = row[0].toLowerCase().trim()
         const symbol2 = row[1].toLowerCase().trim()
-        if (symbol1 != "" && symbol2 != ""){
+        if (symbol1 != "" && symbol2 != "") {
 
             if (!synonymMap[symbol1]) {
                 synonymMap[symbol1] = new Set()
             }
             synonymMap[symbol1].add(symbol2)
-    
+
             if (!synonymMap[symbol2]) {
                 synonymMap[symbol2] = new Set()
             }
             synonymMap[symbol2].add(symbol1)
         }
-      })
+    })
     return synonymMap
 }
 
-function _getLibraryMap(fileData, symbolColumn, synonymMap){
-    rows = fileData.trim().split("\n").map((row) => row.split("\t"))
-    library.headers = rows.shift()
+function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, synonymMap) {
+    // se top of file for explanation of libraryMap datastructure
+    var rows = fileData.trim().split("\n").map((row) => row.split("\t"))
+    _library.headers = rows.shift()
+    const headerLen = _library.headers.length
+    if (headerLen <= 1) {
+        _library.libraryStatus = "select a file"
+        return {}
+    }
+    if ((symbolColumn > headerLen) || (RNAColumn > headerLen) || (rankingColumn > headerLen)) {
+        _library.libraryStatus = "Error: column not found"
+        return {}
+    }
+    if ((symbolColumn < 1) || (RNAColumn < 1)) {
+        _library.libraryStatus = "Enter valid columns"
+        return {}
+    }
     libraryMap = {}
     rows.forEach(row => {
-        const symbol = row[symbolColumn-1].trim()
-        const stmbolLower = row[symbolColumn-1].toLowerCase().trim()
-        if (libraryMap[stmbolLower]) {
-            libraryMap[stmbolLower].rows.push(row)
+        const symbol = row[symbolColumn - 1].trim()
+        const symbolLower = row[symbolColumn - 1].toLowerCase().trim()
+        if (libraryMap[symbolLower]) {
+            libraryMap[symbolLower].rows.push(row)
         } else {
-            libraryMap[stmbolLower] = {
+            libraryMap[symbolLower] = {
                 "rows": [row],
-                "symbolSynonyms": synonymMap[stmbolLower] ? Array.from(synonymMap[stmbolLower]) : [],
+                "symbolSynonyms": synonymMap[symbolLower] ? Array.from(synonymMap[symbolLower]) : [],
                 "originalSymbol": symbol
             }
-            libraryMap[stmbolLower].symbolSynonyms.push(stmbolLower)
+            libraryMap[symbolLower].symbolSynonyms.push(symbolLower)
         }
     })
+    _library.libraryStatus = `${Object.keys(libraryMap).length} symbols found`
     return libraryMap
 }
 
-function _librarySynonyms(searchSymbols, forDisplay){
-    const symbolsNotFound = searchSymbols.filter(symbol => !library.libraryMap.hasOwnProperty(symbol))
-    const synonymMap = {}
-    symbolsNotFound.forEach(symbol => {
-        synonymMap[symbol] = ""
-        if (library.synonymMap[symbol]) {
-            library.synonymMap[symbol].forEach(synonym => {
-                Object.keys(library.libraryMap).forEach(fileSymbol => {
-                    if (library.libraryMap[fileSymbol].symbolSynonyms.includes(synonym) ) {
-                        synonymMap[symbol] = forDisplay ? library.libraryMap[fileSymbol].originalSymbol : fileSymbol
+function _createMatchingSynonyms(searchSymbols, forDisplay) {
+    /*
+    returns object where each searched synbol is a key and the value is the first synonym to the key that existsts in the selected library
+    if the value in empty string the symbol has no mathchin synonyms
+    synonym map = {
+        symbol1: synonym1,
+        symbol2: synonym2
+        symbol3: "", (symbol3 has no matching synonyms in the selected library)
+        symobl4: ...
+    }
+    */
+    const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))
+    const matchingSymbols = {}
+    symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
+        matchingSymbols[searchSymbol] = ""
+        if (_library.synonymMap[searchSymbol]) { //symbol must have synonyms
+
+            _library.synonymMap[searchSymbol].forEach(synonym => { //loop through all synonyms
+                Object.keys(_library.libraryMap).forEach(fileSymbol => { //loop through all symbols in library
+                    if (_library.libraryMap[fileSymbol].symbolSynonyms.includes(synonym)) { //synonym exists in library 
+                        matchingSymbols[searchSymbol] = forDisplay ? _library.libraryMap[fileSymbol].originalSymbol : fileSymbol //correct capitalisation is used for display
                     }
                 })
 
             })
         }
-      })
-    return synonymMap
+    })
+    return matchingSymbols
 }
 
-function LIB_libraryCitation(){
-    return library.citationInfo
+function LIB_libraryCitation() {
+    return _library.citationInfo
 }
 
-function LIB_libraryStatusSynonymsDisplay(searchSymbols){
-    return  _librarySynonyms(searchSymbols, true)
+function LIB_statusSynonyms(searchSymbols) {
+    return _createMatchingSynonyms(searchSymbols, true)
 }
 
-function getSearchstatus(){
-    return library["statusSearch"]
+function LIB_statusScreening() {
+    return _library.statusSearch
 }
 
-function LIB_libraryUniqueSymbols(){
-    var len = Object.keys(library.libraryMap).length
-    if (len == 0)
-        return "Error no symbols found"
-    return `Unique symbols found: ${len}`
-}
-
-function LIB_libraryStatusScreening(){
-    return library.statusSearch
+function LIB_statusLibrarySymbols() {
+    return _library.libraryStatus
 }

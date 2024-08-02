@@ -39,7 +39,7 @@
         "name": "Gattinara (human)",
         "fileName": "libraries/Gattinara (human) library.txt",
         "symbolColumn": 2,
-        "RNAColumn": 0,
+        "RNAColumn": 1,
         "RankColumn": null,
         "citationFileName": "libraries/Gattinara (human) library.html",
         "synonymFileName": "human synonym.txt"
