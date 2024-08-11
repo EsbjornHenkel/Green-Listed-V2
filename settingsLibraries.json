@@ -6,7 +6,7 @@
         "RNAColumn": 7,
         "RankColumn": 11,
         "citationFileName": "libraries/STable 22 Brie.html",
-        "synonymFileName": "mouse synonym.txt"
+        "synonymFileName": "libraries/mouse synonym.txt"
     },
     {
         "name": "Brunello 21",
@@ -15,7 +15,7 @@
         "RNAColumn": 7,
         "RankColumn": 11,
         "citationFileName": "libraries/STable 21 Brunello.html",
-        "synonymFileName": "human synonym.txt"
+        "synonymFileName": "libraries/human synonym.txt"
     },
     {
         "name": "GeCKO v2 (human) A+B",
@@ -24,7 +24,7 @@
         "RNAColumn": 3,
         "RankColumn": null,
         "citationFileName": "libraries/GeCKO v2 (human) A+B library.html",
-        "synonymFileName": "human synonym.txt"
+        "synonymFileName": "libraries/human synonym.txt"
     },
     {
         "name": "GeCKO v2 (mouse) A+B",
@@ -33,7 +33,7 @@
         "RNAColumn": 3,
         "RankColumn": null,
         "citationFileName": "libraries/GeCKO v2 (mouse) A+B library.html",
-        "synonymFileName": "mouse synonym.txt"
+        "synonymFileName": "libraries/mouse synonym.txt"
     },
     {
         "name": "Gattinara (human)",
@@ -42,7 +42,7 @@
         "RNAColumn": 1,
         "RankColumn": null,
         "citationFileName": "libraries/Gattinara (human) library.html",
-        "synonymFileName": "human synonym.txt"
+        "synonymFileName": "libraries/human synonym.txt"
     },
     {
         "name": "Gouda (mouse) library",
@@ -51,6 +51,6 @@
         "RNAColumn": 1,
         "RankColumn": null,
         "citationFileName": "libraries/Gouda (mouse) library.html",
-        "synonymFileName": "mouse synonym.txt"
+        "synonymFileName": "libraries/mouse synonym.txt"
     }
 ]

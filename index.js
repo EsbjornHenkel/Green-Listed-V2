@@ -325,7 +325,6 @@ async function _displaySymbolsNotFound(synonymMap) {
 /* ------------------ STATUS ----------------- */
 
 function _statusUpdateSymbols() {
-    console.log("symbol status")
     gtag('event', 'Symbols', { 'event_category': 'Processing' }) // Google Analytics
 
     const synonymMap = SER_getSynonymMap(settings.searchSymbols)

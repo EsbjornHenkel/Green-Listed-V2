@@ -13,35 +13,60 @@ const LIBRARIES_URL = 'settingsLibraries.json'
 // does pre-processing of the library to optimaze search
 // returns a library structure see settingsLibraries.json
 async function SER_selectLibrary(libraryName) {
-
+    //all library files (library data, synonyms and citation info) are in the directory "libraries"
     try {
-        //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
+        var libraries = {}
+        try {
+            //console.log(`grnaService.selectLibrary(${libraryName}) reading....`)
 
-        // Read library data - can be 80000 rows...
-        const libraries = await FH_fetchJsonFile(LIBRARIES_URL)
+            // Read library data - can be 80000 rows...
+            libraries = await FH_fetchJsonFile(LIBRARIES_URL)
+        }
+        catch (error) {
+            throw new Error(`Could not find library settings file:\n${LIBRARIES_URL}`)
+        }
+
         const libSettings = libraries.find(library => library.name == libraryName)
         if (!libSettings) {
-            throw new Error(`Cant get librarySettings from name: ${libraryName}`)
+            throw new Error(`Could not find library with name: ${libraryName}`)
         }
-        const libData = await FH_fetchTextFile(libSettings.fileName)
-        // read synonyms
-        const synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
-        // pre-process to create search structure
+
         var libraryCitation = ""
-        try {
+        try { //get citation .HTML file
             libraryCitation = await FH_fetchHTMLFile(libSettings.citationFileName)
             libraryCitation = libraryCitation.body.innerHTML
         }
         catch {
+            console.log(`Could not find citation file with name: \n${libSettings.citationFileName}\nfor library ${libSettings.name}`)
             libraryCitation = "No citation file found"
         }
+
+        var libData = ""
+        try { //get library .txt file
+            libData = await FH_fetchTextFile(libSettings.fileName)
+        }
+        catch {
+            throw new Error(`Could not find library file named: ${libSettings.fileName}`)
+        }
+
+        var synonymData = ""
+        try { //get synonyme .txt file
+            if (libSettings.synonymFileName) {
+                synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
+            }
+        }
+        catch {
+            throw new Error(`Could not find synonym file named: ${libSettings.synonymFileName}`)
+        }
+        // read synonyms
+        // pre-process to create search structure
         LIB_setLibraryData(libSettings, libData, synonymData, libraryCitation)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
         return libSettings
 
     } catch (error) {
-        throw new Error(`grnaService.selectLibrary failed:\n:${error}`)
+        throw error
     }
 }
 
@@ -56,7 +81,7 @@ async function SER_getDefaultSettings() {
         return settings
     }
     catch (error) {
-        throw new Error(`GRNAService.getDefaultSettings(${SETTINGS_URL}) invalid callback:\n ${error.message}`)
+        throw new Error(`GRNAService.getDefaultSettings(${SETTINGS_URL}) invalid callback: \n ${error.message}`)
     }
 
 }
