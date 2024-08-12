@@ -1,6 +1,6 @@
 [
     {
-        "name": "Brie 22",
+        "name": "Brie (mouse)",
         "fileName": "libraries/STable 22 Brie.txt",
         "symbolColumn": 2,
         "RNAColumn": 7,
@@ -9,7 +9,7 @@
         "synonymFileName": "libraries/mouse synonym.txt"
     },
     {
-        "name": "Brunello 21",
+        "name": "Brunello (human)",
         "fileName": "libraries/STable 21 Brunello.txt",
         "symbolColumn": 2,
         "RNAColumn": 7,
@@ -45,7 +45,7 @@
         "synonymFileName": "libraries/human synonym.txt"
     },
     {
-        "name": "Gouda (mouse) library",
+        "name": "Gouda (mouse)",
         "fileName": "libraries/Gouda (mouse) library.txt",
         "symbolColumn": 2,
         "RNAColumn": 1,

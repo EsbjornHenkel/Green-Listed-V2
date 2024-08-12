@@ -39,7 +39,7 @@ async function init() {
     document.getElementById("enableSynonyms").checked = data.enableSynonyms
 
     libraryNames = await SER_getLibraryNames()
-    dropdown = document.getElementById("libraries")
+    var dropdown = document.getElementById("libraries")
     libraryNames.forEach(name => {
         var option = document.createElement('option')
         option.text = name
@@ -133,6 +133,7 @@ function _outputNotFound() {
 }
 
 function _createDownloadLink(text, name, element) {
+    console.log(name)
     text = text.replace("    ", "\t")
     var blob = new Blob([text], { type: 'text/tab-separated-values' })
     element.href = URL.createObjectURL(blob)
@@ -226,14 +227,17 @@ function changeSettings() {
 
     const trimAfter = document.getElementById("trimAfter").value
 
-    const adapterBefore = document.getElementById("adapterBefore").defaultValue
-    const adapterAfter = document.getElementById("adapterAfter").defaultValue
+    const adapterBefore = document.getElementById("adapterBefore").value
+    const adapterAfter = document.getElementById("adapterAfter").value
 
     const rankingTop = document.getElementById("numberToRank").value
     const outputName = document.getElementById("outputFileName").value
 
     const rankingOrder = document.getElementById("rankingOrder").value
-    SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName)
+
+    const downloadName = document.getElementById("outputFileName").value
+
+    SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName, downloadName)
     _statusUpdateSettings()
 }
 
@@ -269,12 +273,11 @@ function _updateExampleText() {
     //Displays the text SEQUENCE modified by trim and adapter sequences
     var examplesequence = "SEQUENCE"
     var example = examplesequence
-
-    if (settings.adaptorAfter.lenth == 0) {
-        adaptorAfter = ""
+    if (settings.adapterAfter.lenth == 0) {
+        adapterAfter = ""
     }
-    if (settings.adaptorBefore.lenth == 0) {
-        adaptorBefore = ""
+    if (settings.adapterAfter.lenth == 0) {
+        adapterBefore = ""
     }
     example = example.slice(settings.trimBefore)
 
@@ -283,7 +286,7 @@ function _updateExampleText() {
     }
 
 
-    example = settings.adaptorBefore + example + settings.adaptorAfter
+    example = settings.adapterBefore + example + settings.adapterAfter
     document.getElementById("ExampleSequance").innerHTML = example
 }
 

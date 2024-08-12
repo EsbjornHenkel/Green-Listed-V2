@@ -9,8 +9,8 @@
 settings = {
     "trimBefore": null,
     "trimAfter": null,
-    "adaptorBefore": null,
-    "adaptorAfter": null,
+    "adapterBefore": null,
+    "adapterAfter": null,
 
     "partialMatches": null,
     "rankingTop": null,
@@ -23,8 +23,8 @@ settings = {
     "synonyms": null
 }
 
-function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms) {
-    SET_settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName)
+function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms) {
+    SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName)
     SET_settingsSetIndexes(RNAIndex, symbolIndex, rankingIndex)
     SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
 }
@@ -35,11 +35,11 @@ function SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms) {
     settings["enableSynonyms"] = enableSynonyms
 }
 
-function SET_settingsSetSettings(trimBefore, trimAfter, adaptorBefore, adaptorAfter, rankingTop, rankingOrder, outputName) {
+function SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName) {
     settings["trimBefore"] = trimBefore
     settings["trimAfter"] = trimAfter
-    settings["adaptorBefore"] = adaptorBefore
-    settings["adaptorAfter"] = adaptorAfter
+    settings["adapterBefore"] = adapterBefore
+    settings["adapterAfter"] = adapterAfter
 
     settings["rankingTop"] = rankingTop
     settings["rankingOrder"] = rankingOrder

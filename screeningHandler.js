@@ -71,8 +71,9 @@ function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
 }
 
 function _getTopRankingElements(libraryMap, n) {
+    var filteredLibraryMap = {}
     for (let symbol in libraryMap) {
-        libraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n);
+        filteredLibraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n);
     }
     return libraryMap
 }
@@ -88,17 +89,17 @@ function _postProcessing(libraryMap, settings) {
 
 
 function _applyPostProcessing(gRNASequence, settings) {
-    if (settings.adaptorAfter.lenth == 0) {
-        adaptorAfter = ""
+    if (settings.adapterAfter.lenth == 0) {
+        adaptoerAfter = ""
     }
-    if (settings.adaptorBefore.lenth == 0) {
-        adaptorBefore = ""
+    if (settings.adapterBefore.lenth == 0) {
+        adapterBefore = ""
     }
     gRNASequence = gRNASequence.slice(settings.trimBefore)
     if (settings.trimAfter != 0) {
         gRNASequence = gRNASequence.slice(0, -settings.trimAfter)
     }
-    gRNASequence = settings.adaptorBefore + gRNASequence + settings.adaptorAfter
+    gRNASequence = settings.adapterBefore + gRNASequence + settings.adapterAfter
 
     return gRNASequence
 }

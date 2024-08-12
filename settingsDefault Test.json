@@ -1,18 +1,22 @@
 {
-    "trimBefore": 0, 
-    "trimAfter": 0, 
+    "trimBefore": 0,
+    "trimAfter": 0,
     "adaptorBefore": "",
     "adaptorAfter": "",
-
-    "partialMatches": false,  
+    "partialMatches": false,
     "enableSynonyms": true,
     "rankingTop": 0,
-
     "outputName": "",
-    "defaultLibrary": "Brunello 21",
-    "searchSymbols": ["KIAA0129", "Abca1", "CCBL1", "a", "k", "asd"],       
+    "defaultLibrary": "Brunello (human)",
+    "searchSymbols": [
+        "KIAA0129",
+        "Abca1",
+        "CCBL1",
+        "a",
+        "k",
+        "asd"
+    ],
     "gRNAIndex": null,
     "symbolIndex": null,
     "rankingIndex": null
 }
-

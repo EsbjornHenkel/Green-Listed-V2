@@ -1,18 +1,15 @@
 {
-    "trimBefore": 0, 
-    "trimAfter": 0, 
+    "trimBefore": 0,
+    "trimAfter": 0,
     "adaptorBefore": "",
     "adaptorAfter": "",
-
-    "partialMatches": false,  
+    "partialMatches": false,
     "enableSynonyms": true,
     "rankingTop": 0,
-
     "outputName": "",
-    "defaultLibrary": "Brunello 21",
-    "searchSymbols": [],       
+    "defaultLibrary": "Brunello (human)",
+    "searchSymbols": [],
     "gRNAIndex": null,
     "symbolIndex": null,
     "rankingIndex": null
 }
-
