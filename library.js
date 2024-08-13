@@ -48,7 +48,7 @@ function LIB_startScreening(settings) {
     _library.statusSearch = "Starting search"
     var st = performance.now()
     var searchOutput = SCR_startScreening(_library, settings, _createMatchingSynonyms(settings.searchSymbols))
-    _library.statusSearch = `Done. Time to complete: ${Math.round((performance.now() - st) / 1000 * 10) / 10}s<br> Symbols found: ${searchOutput.numSymbolsFound}`
+    _library.statusSearch = `Done. Time to complete: ${Math.round((performance.now() - st) / 1000 * 10) / 10}s<br> Symbols found: ${Object.keys(searchOutput.filteredLibraryMap).length}`
     console.log(Math.round((performance.now() - st) / 1000 * 1000) / 1000)
     return searchOutput
 }
@@ -96,6 +96,8 @@ function _createSynonymMap(synonymData) {
 
 function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, synonymMap) {
     // se top of file for explanation of libraryMap datastructure
+    _library.libraryStatus = "Parsing library"
+
     var rows = fileData.trim().split("\n").map((row) => row.split("\t"))
     _library.headers = rows.shift()
     const headerLen = _library.headers.length
@@ -112,9 +114,18 @@ function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, syn
         return {}
     }
     libraryMap = {}
-    rows.forEach(row => {
+    var additionalStatus = ""
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i]
+        if (row.length < headerLen) {
+            additionalStatus = `Row number ${i - 1} is to short to parse\n` //+1 to acount for header
+            continue
+        }
+
         const symbol = row[symbolColumn - 1].trim()
-        const symbolLower = row[symbolColumn - 1].toLowerCase().trim()
+        //const symbolLower = symbol.toLowerCase()
+        const symbolLower = symbol.toLowerCase().startsWith("ctrl") ? "ctrl" : symbol.toLowerCase() // all ctrl symbols should be under same symbol(ctrl) regardless of number after
+
         if (libraryMap[symbolLower]) {
             libraryMap[symbolLower].rows.push(row)
         } else {
@@ -123,10 +134,11 @@ function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, syn
                 "symbolSynonyms": synonymMap[symbolLower] ? Array.from(synonymMap[symbolLower]) : [],
                 "originalSymbol": symbol
             }
-            libraryMap[symbolLower].symbolSynonyms.push(symbolLower)
+            libraryMap[symbolLower].symbolSynonyms.push(symbolLower) // is synonym with self
         }
-    })
-    _library.libraryStatus = `${Object.keys(libraryMap).length} symbols found`
+
+    }
+    _library.libraryStatus = additionalStatus + `${Object.keys(libraryMap).length} symbols found`
     return libraryMap
 }
 

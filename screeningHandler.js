@@ -17,7 +17,7 @@ function SCR_startScreening(library, settings, usedSynonyms) {
         const symbol = symbols[i]
         library.statusSearch = `${i}/${symbols.length} symbols searched`
         if (_match(symbol, settings, swappedSynonyms)) {
-            filteredLibraryMap[symbol] = library.libraryMap[symbol]
+            filteredLibraryMap[symbol] = { ...library.libraryMap[symbol] } //creates coppy
         }
     }
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
@@ -27,16 +27,7 @@ function SCR_startScreening(library, settings, usedSynonyms) {
     if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
-    //filteredLibraryMap = _postProcessing(filteredLibraryMap, settings) //adds trim and adapter sequences
 
-    /*
-    const textOutputFull = _createFullTxtOutput(settings, filteredLibraryMap, library.headers)
-    const textOutputNotFound = _createSymboldNotFound(settings, usedSynonyms)
-    var searchOutput = {
-        "numSymbolsFound": Object.keys(filteredLibraryMap).length,
-        "textOutputFull": textOutputFull,
-        "textOutputNotFound": textOutputNotFound
-    }*/
     searchOutput = {
         "headers": library.headers,
         "filteredLibraryMap": filteredLibraryMap,
@@ -85,15 +76,5 @@ function _getTopRankingElements(libraryMap, n) {
     return libraryMap
 }
 
-/*
-function _postProcessing(libraryMap, settings) {
-    for (const symbol in libraryMap) {
-        for (let i = 0; i < libraryMap[symbol].rows.length; i++) {
-            libraryMap[symbol].rows[i][settings.RNAColumn - 1] = _applyPostProcessing(libraryMap[symbol].rows[i][settings.RNAColumn - 1], settings)
-        }
-    }
-    return libraryMap
-}
-*/
 
 

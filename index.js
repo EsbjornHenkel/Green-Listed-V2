@@ -111,7 +111,8 @@ function _createCompactOutput(libraryMap) {
     var out = out + "Symbol\tgRNA+adapter\n"
     for (var symbol of Object.keys(libraryMap)) {
         libraryMap[symbol].rows.forEach(row => {
-            out = out + `${libraryMap[symbol].originalSymbol}\t ${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
+            console.log()
+            out = out + `${row[settings.symbolColumn - 1]}\t ${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
         })
     }
     return out
@@ -130,12 +131,14 @@ function _createFullTxtOutput(libraryMap, headers) {
 }
 
 function _createSymbolNotFound(usedSynonyms) {
+    var out = ""
     for (var symbol of Object.keys(usedSynonyms)) {
         if (settings.enableSynonyms && (usedSynonyms[symbol] != "")) {
             out = `${symbol}\t${usedSynonyms[symbol]}\n` + out
-            continue
         }
-        out = out + `${symbol}\t\n`
+        else {
+            out = out + `${symbol}\t\n`
+        }
     }
     out = "Symbol searched\t Symonym used\r\n" + out
     const date = new Date()
@@ -189,30 +192,6 @@ function _toggleLigtBox() {
         box.classList.remove("fazeOut")
         box.classList.add("fazeIn")
     }
-}
-
-function _outputNotFound() {
-    console.log("IN")
-    var usedSynonyms = SER_getSynonymMap(settings.searchSymbols)
-    if (Object.keys(usedSynonyms).length == 0) {
-        out = out + "All symbols found in file"
-        return out
-    }
-    var out = out + "Symbols not found\t"
-    if (settings.enableSynonyms) {
-        out = out + "Used synonym"
-    }
-    out = out + "\n"
-    Object.keys(usedSynonyms).forEach(symbol => {
-        if (settings.enableSynonyms) {
-            out = out + `${symbol}\t${usedSynonyms[symbol]}\n`
-        }
-        else {
-            out = out + `${symbol}\n`
-        }
-
-    })
-    return out.replace(/(?:\r\n|\r|\n)/g, '\n')
 }
 
 function _createDownloadLink(text, name, element) {
@@ -382,7 +361,7 @@ async function _displaySymbolsNotFound(synonymMap) {
             numSynonyms++
         }
         else {
-            displayText = `${displayText} ${symbol}\n`
+            displayText = `${displayText}${symbol}\n`
             numNotFound++
         }
     })
