@@ -5,9 +5,10 @@
 // Gets data from the grnaService & displays it
 //
 
-var searchOutput = {
+var outputTexts = {
     "textOutputFull": "",
-    "textOutputNotFound": ""
+    "textOutputNotFound": "",
+    "textOutputCompact": ""
 }
 
 // Warn user if reload
@@ -70,18 +71,28 @@ async function runScreening() {
     var statusText = document.getElementById("statusSearch")
     statusText.classList.add("pulse")
     var statusInterval = setInterval(_statusSearchUpdate, 10);
-    await new Promise(r => setTimeout(r, 100))
+    await new Promise(r => setTimeout(r, 100)) //waits for animation
+
     try {
         searchOutput = await SER_runScreening(settings)
-        searchOutput.notFound = _outputNotFound()
+        const fullOutput = _createFullTxtOutput(searchOutput.filteredLibraryMap, searchOutput.headers)
+        const notFoundOutput = _createSymbolNotFound(searchOutput.usedSynonyms)
+        const compactOutput = _createCompactOutput(searchOutput.filteredLibraryMap)
 
-        _createDownloadLink(searchOutput.textOutputFull, settings["outputName"] + " Output", document.getElementById("fullDownload"))
+        outputTexts = {
+            "textOutputFull": fullOutput,
+            "textOutputNotFound": notFoundOutput,
+            "textOutputCompact": compactOutput
+        }
 
-        _createDownloadLink(searchOutput.notFound, settings["outputName"] + " not found", document.getElementById("notFoundDownload"))
+        _createDownloadLink(compactOutput, settings["outputName"] + " compact", document.getElementById("compactDownload"))
+        _createDownloadLink(fullOutput, settings["outputName"] + " Output", document.getElementById("fullDownload"))
+        _createDownloadLink(notFoundOutput, settings["outputName"] + " not found", document.getElementById("notFoundDownload"))
     }
     catch (error) {
         console.error(`Screening failed:\n`, error);
     }
+
     //setStatus("fileContent", searchOutput.textOutputFull.replace(/(?:\r\n|\r|\n)/g, '<br>'))
 
     _toggleLigtBox()
@@ -92,6 +103,79 @@ async function runScreening() {
     document.getElementById("outputTable").style.display = "table"
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
+}
+
+function _createCompactOutput(libraryMap) {
+    const date = new Date()
+    var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
+    var out = out + "Symbol\tgRNA+adapter\n"
+    for (var symbol of Object.keys(libraryMap)) {
+        libraryMap[symbol].rows.forEach(row => {
+            out = out + `${libraryMap[symbol].originalSymbol}\t ${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
+        })
+    }
+    return out
+}
+
+function _createFullTxtOutput(libraryMap, headers) {
+    const date = new Date()
+    var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
+    var out = out + headers.join("\t") + "\n" //the original headers are placed att the top of the output
+    for (var symbol of Object.keys(libraryMap)) {
+        libraryMap[symbol].rows.forEach(row => {
+            out = out + `${row.join("\t")}`
+        })
+    }
+    return out
+}
+
+function _createSymbolNotFound(usedSynonyms) {
+    for (var symbol of Object.keys(usedSynonyms)) {
+        if (settings.enableSynonyms && (usedSynonyms[symbol] != "")) {
+            out = `${symbol}\t${usedSynonyms[symbol]}\n` + out
+            continue
+        }
+        out = out + `${symbol}\t\n`
+    }
+    out = "Symbol searched\t Symonym used\r\n" + out
+    const date = new Date()
+    var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n` + out
+    return out
+}
+
+function _complimentSequence(gRNASequence) {
+    var complimentMap = {
+        "A": "T",
+        "a": "t",
+        "T": "A",
+        "t": "a",
+        "C": "G",
+        "c": "g",
+        "G": "C",
+        "g": "c",
+    }
+    // Replace each character using the mapping table
+    var complimentStr = gRNASequence.split('').map(char => {
+        return complimentMap[char] !== undefined ? complimentMap[char] : char;
+    }).join('')
+    return complimentStr
+}
+
+
+function _applyPostProcessing(text) {
+    if (settings.adapterAfter.lenth == 0) {
+        adaptoerAfter = ""
+    }
+    if (settings.adapterBefore.lenth == 0) {
+        adapterBefore = ""
+    }
+    text = text.slice(settings.trimBefore)
+    if (settings.trimAfter != 0) {
+        text = text.slice(0, -settings.trimAfter)
+    }
+    text = settings.adapterBefore + text + settings.adapterAfter
+
+    return text
 }
 
 // show/hide lightbox - used to cover screen when running search
@@ -108,9 +192,8 @@ function _toggleLigtBox() {
 }
 
 function _outputNotFound() {
+    console.log("IN")
     var usedSynonyms = SER_getSynonymMap(settings.searchSymbols)
-    const date = new Date()
-    var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
     if (Object.keys(usedSynonyms).length == 0) {
         out = out + "All symbols found in file"
         return out
@@ -133,19 +216,22 @@ function _outputNotFound() {
 }
 
 function _createDownloadLink(text, name, element) {
-    console.log(name)
     text = text.replace("    ", "\t")
     var blob = new Blob([text], { type: 'text/tab-separated-values' })
     element.href = URL.createObjectURL(blob)
     element.download = name + ".tsv"
 }
 
+function showCompactOutput() {
+    _setStatus("fileContent", outputTexts.textOutputCompact.replace(/\n/g, "<br>"))
+}
+
 function showFullOutput() {
-    _setStatus("fileContent", searchOutput.textOutputFull.replace(/\n/g, "<br>"))
+    _setStatus("fileContent", outputTexts.textOutputFull.replace(/\n/g, "<br>"))
 }
 
 function showNotFoundOutput() {
-    _setStatus("fileContent", searchOutput.notFound.replace(/\n/g, "<br>"))
+    _setStatus("fileContent", outputTexts.textOutputNotFound.replace(/\n/g, "<br>"))
 }
 
 function showSettingsOutput() {
@@ -156,7 +242,6 @@ function dowloadSettingsOutput() {
     element = document.getElementById("settingsDowload")
     _createDownloadLink(SET_settingsToStr(), settings.outputName + " Settings", element)
 }
-
 
 async function _displayLibraryCitation(libraryCitation) {
     const libraryInfoContainer = document.getElementById("libraryInfo")
@@ -214,10 +299,10 @@ function changeSymbols() {
 function changeLibraryColumn() {
     //User input fields only called when adding a custom library
     const symbolIndex = document.getElementById("GeneSymbolIndex").value
-    const gRNAIndex = document.getElementById("gRNAIndex").value
+    const RNAColumn = document.getElementById("gRNAIndex").value
     const rankingIndex = document.getElementById("rankingIndex").value
 
-    SET_settingsSetIndexes(gRNAIndex, symbolIndex, rankingIndex)
+    SET_settingsSetIndexes(RNAColumn, symbolIndex, rankingIndex)
     updateCustomlibrary()
 }
 
@@ -267,26 +352,9 @@ function updateCustomlibrary() {
 
 }
 
-
-
 function _updateExampleText() {
     //Displays the text SEQUENCE modified by trim and adapter sequences
-    var examplesequence = "SEQUENCE"
-    var example = examplesequence
-    if (settings.adapterAfter.lenth == 0) {
-        adapterAfter = ""
-    }
-    if (settings.adapterAfter.lenth == 0) {
-        adapterBefore = ""
-    }
-    example = example.slice(settings.trimBefore)
-
-    if (settings.trimAfter != 0) {
-        example = example.slice(0, -settings.trimAfter)
-    }
-
-
-    example = settings.adapterBefore + example + settings.adapterAfter
+    const example = _applyPostProcessing("SEQUENCE")
     document.getElementById("ExampleSequance").innerHTML = example
 }
 

@@ -23,17 +23,24 @@ function SCR_startScreening(library, settings, usedSynonyms) {
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
         filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
     }
+
     if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
-    filteredLibraryMap = _postProcessing(filteredLibraryMap, settings) //adds trim and adapter sequences
+    //filteredLibraryMap = _postProcessing(filteredLibraryMap, settings) //adds trim and adapter sequences
 
-    const textOutputFull = _createFullTxtOutput(settings, filteredLibraryMap, library.headers, swappedSynonyms)
+    /*
+    const textOutputFull = _createFullTxtOutput(settings, filteredLibraryMap, library.headers)
     const textOutputNotFound = _createSymboldNotFound(settings, usedSynonyms)
     var searchOutput = {
         "numSymbolsFound": Object.keys(filteredLibraryMap).length,
         "textOutputFull": textOutputFull,
         "textOutputNotFound": textOutputNotFound
+    }*/
+    searchOutput = {
+        "headers": library.headers,
+        "filteredLibraryMap": filteredLibraryMap,
+        "usedSynonyms": usedSynonyms
     }
     return searchOutput
 }
@@ -71,13 +78,14 @@ function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
 }
 
 function _getTopRankingElements(libraryMap, n) {
-    var filteredLibraryMap = {}
     for (let symbol in libraryMap) {
-        filteredLibraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n);
+        libraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n)
+
     }
     return libraryMap
 }
 
+/*
 function _postProcessing(libraryMap, settings) {
     for (const symbol in libraryMap) {
         for (let i = 0; i < libraryMap[symbol].rows.length; i++) {
@@ -86,63 +94,6 @@ function _postProcessing(libraryMap, settings) {
     }
     return libraryMap
 }
+*/
 
 
-function _applyPostProcessing(gRNASequence, settings) {
-    if (settings.adapterAfter.lenth == 0) {
-        adaptoerAfter = ""
-    }
-    if (settings.adapterBefore.lenth == 0) {
-        adapterBefore = ""
-    }
-    gRNASequence = gRNASequence.slice(settings.trimBefore)
-    if (settings.trimAfter != 0) {
-        gRNASequence = gRNASequence.slice(0, -settings.trimAfter)
-    }
-    gRNASequence = settings.adapterBefore + gRNASequence + settings.adapterAfter
-
-    return gRNASequence
-}
-
-
-function _createFullTxtOutput(settings, libraryMap, headers, swapedSynonyms) {
-    headers.splice(settings.RNAColumn, 0, "Target Sequence Compliment")
-    var out = headers.join("\t") + "\n" //the original headers are placed att the top of the output
-    for (var symbol of Object.keys(libraryMap)) {
-        libraryMap[symbol].rows.forEach(row => {
-            row.splice(settings.RNAColumn, 0, _complimentSequence(row[settings.RNAColumn - 1]))
-            out = out + `${row.join("\t")} \n`
-        })
-    }
-    return out
-}
-
-function _createSymboldNotFound(settings, usedSynonyms) {
-    out = "Symbol searched\t Symonym used\r\n"
-    for (var symbol of Object.keys(usedSynonyms)) {
-        if (settings.enableSynonyms && (usedSynonyms[symbol] != "")) {
-            out = `${symbol}\t${usedSynonyms[symbol]}` + out + "\n"
-            continue
-        }
-        out = out + `${symbol}\n`
-    }
-    return out
-}
-
-function _complimentSequence(gRNASequence) {
-    var complimentMap = {
-        "A": "T",
-        "a": "t",
-        "T": "A",
-        "t": "a",
-        "C": "G",
-        "c": "g",
-        "G": "C",
-        "g": "c",
-    }
-    // Replace each character using the mapping table
-    var complimentStr = gRNASequence.split('').map(char => {
-        return complimentMap[char] !== undefined ? complimentMap[char] : char;
-    }).join('')
-    return complimentStr
-}
