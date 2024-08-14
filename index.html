@@ -193,7 +193,10 @@
                                 <button id="startButton" onclick="runScreening()">&nbsp;Run <span
                                         id="startButtonText">▶</span></button>
                             </td>
-                            <td></td>
+                            <td>
+                                <a href="" id="settingsDowload" onclick="dowloadSettingsOutput()">Download settings</a>
+
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -232,42 +235,12 @@
                         <td><a href="" id="notFoundDownload">Download</a></td>
                         <td><button onclick="showNotFoundOutput()">Show</button></td>
                     </tr>
-                    <tr>
+                    <!--  <tr>
                         <td>Settings</td>
                         <td><a href="" id="settingsDowload" onclick="dowloadSettingsOutput()">Download</a></td>
                         <td><button onclick="showSettingsOutput()">Show</button></td>
-                    </tr>
+                    </tr>-->
                 </table>
-
-
-                <!--
-                <table id="outputTable">
-                    <tr>
-                        <td> Output with Adapters</td>
-                        <td><a href="" id="compactDownload">Download</a></td>
-                        <td><button onclick="showCompactOutput()">Show</button></td>
-                    </tr>
-                    <tr>
-                        <td>Full output</td>
-                        <td><a href="" id="fullDownload">Download</a></td>
-                    </tr>
-                    <tr>
-                        <td>Symbols not found</td>
-                        <td><a href="" id="notFoundDownload">Download</a></td>
-                        <td><button onclick="showNotFoundOutput()">Show</button></td>
-                    </tr>
-                    <tr>
-                        <td>Output for MAGeCK</td>
-                        <td><a href="" id="MAGeCKDownload">Download</a></td>
-                        <td><button onclick="showMAGeCKOutput()">Show</button></td>
-                    </tr>
-                    <tr>
-                        <td>Settings</td>
-                        <td><a href="" id="settingsDowload" onclick="dowloadSettingsOutput()">Download</a></td>
-                        <td><button onclick="showSettingsOutput()">Show</button></td>
-                    </tr>
-                </table>-->
-
 
                 <div class="plateContent">
                     <div id="fileContent">
