@@ -130,7 +130,7 @@ function _createMAGeCKOutput(libraryMap) {
 
         for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
             const row = libraryMap[symbol].rows[i]
-            out = out + `${symbol},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}_${i}\n`
+            out = out + `${symbol}_${i},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}\n`
 
         }
     }
