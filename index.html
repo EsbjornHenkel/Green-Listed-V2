@@ -112,7 +112,7 @@
                         <textarea id="searchSymbols" onchange="changeSymbols()">
                     </textarea>
                         <span class="justifyCenter">
-                            <button>Uppdate</button>
+                            <button>Uppdate</button> <!--pointless button just for user to have something to click on-->
                             <p id="statusSearchSymbolsRows"></p>
                         </span>
                     </div>
@@ -213,14 +213,19 @@
             <div class="plateContent">
                 <table id="outputTable">
                     <tr>
-                        <td>Compact output</td>
-                        <td><a href="" id="compactDownload">Download</a></td>
-                        <td><button onclick="showCompactOutput()">Show</button></td>
+                        <td> Output with Adapters</td>
+                        <td><a href="" id="adapterDownload">Download</a></td>
+                        <td><button onclick="showAdapterOutput()">Show</button></td>
+                    </tr>
+                    <tr>
+                        <td>Output for MAGeCK</td>
+                        <td><a href="" id="MAGeCKDownload">Download</a></td>
+                        <td><button onclick="showMAGeCKOutput()">Show</button></td>
                     </tr>
                     <tr>
                         <td>Full output</td>
                         <td><a href="" id="fullDownload">Download</a></td>
-                        <td><button onclick="showFullOutput()">Show</button></td>
+                        <td>Looks like the original file</td>
                     </tr>
                     <tr>
                         <td>Symbols not found</td>
@@ -233,6 +238,35 @@
                         <td><button onclick="showSettingsOutput()">Show</button></td>
                     </tr>
                 </table>
+
+
+                <!--
+                <table id="outputTable">
+                    <tr>
+                        <td> Output with Adapters</td>
+                        <td><a href="" id="compactDownload">Download</a></td>
+                        <td><button onclick="showCompactOutput()">Show</button></td>
+                    </tr>
+                    <tr>
+                        <td>Full output</td>
+                        <td><a href="" id="fullDownload">Download</a></td>
+                    </tr>
+                    <tr>
+                        <td>Symbols not found</td>
+                        <td><a href="" id="notFoundDownload">Download</a></td>
+                        <td><button onclick="showNotFoundOutput()">Show</button></td>
+                    </tr>
+                    <tr>
+                        <td>Output for MAGeCK</td>
+                        <td><a href="" id="MAGeCKDownload">Download</a></td>
+                        <td><button onclick="showMAGeCKOutput()">Show</button></td>
+                    </tr>
+                    <tr>
+                        <td>Settings</td>
+                        <td><a href="" id="settingsDowload" onclick="dowloadSettingsOutput()">Download</a></td>
+                        <td><button onclick="showSettingsOutput()">Show</button></td>
+                    </tr>
+                </table>-->
 
 
                 <div class="plateContent">

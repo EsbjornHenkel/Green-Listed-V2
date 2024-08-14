@@ -247,10 +247,10 @@ a:hover {
 }
 
 #watermark {
-    position: fixed;
-    top: 2%;
-    right: 2%;
+    position: absolute;
     max-width: 20%;
+    left: 2%;
+    top: 2%;
     opacity: 0.5;
 }
 
@@ -354,6 +354,20 @@ a:hover {
 
 #outputTable {
     display: none;
+
+}
+
+#outputTable>* {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#outputTable tr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .fazeIn {

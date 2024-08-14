@@ -28,6 +28,7 @@ function SCR_startScreening(library, settings, usedSynonyms) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
 
+    console.log(filteredLibraryMap)
     searchOutput = {
         "headers": library.headers,
         "filteredLibraryMap": filteredLibraryMap,

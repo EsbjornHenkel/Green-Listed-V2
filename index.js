@@ -8,7 +8,7 @@
 var outputTexts = {
     "textOutputFull": "",
     "textOutputNotFound": "",
-    "textOutputCompact": ""
+    "textOutputAdapter": ""
 }
 
 // Warn user if reload
@@ -77,17 +77,20 @@ async function runScreening() {
         searchOutput = await SER_runScreening(settings)
         const fullOutput = _createFullTxtOutput(searchOutput.filteredLibraryMap, searchOutput.headers)
         const notFoundOutput = _createSymbolNotFound(searchOutput.usedSynonyms)
-        const compactOutput = _createCompactOutput(searchOutput.filteredLibraryMap)
+        const adapterOutput = _createAdapterOutput(searchOutput.filteredLibraryMap)
+        const MAGeCKOutput = _createMAGeCKOutput(searchOutput.filteredLibraryMap)
 
         outputTexts = {
             "textOutputFull": fullOutput,
             "textOutputNotFound": notFoundOutput,
-            "textOutputCompact": compactOutput
+            "textOutputAdapter": adapterOutput,
+            "textOutputMAGeCK": MAGeCKOutput
         }
 
-        _createDownloadLink(compactOutput, settings["outputName"] + " compact", document.getElementById("compactDownload"))
-        _createDownloadLink(fullOutput, settings["outputName"] + " Output", document.getElementById("fullDownload"))
-        _createDownloadLink(notFoundOutput, settings["outputName"] + " not found", document.getElementById("notFoundDownload"))
+        _createDownloadLink(adapterOutput, settings["outputName"] + " with Adapters", document.getElementById("adapterDownload"), "text/tab-separated-values", ".tsv")
+        _createDownloadLink(fullOutput, settings["outputName"] + " Output", document.getElementById("fullDownload"), "text/tab-separated-values", ".tsv")
+        _createDownloadLink(notFoundOutput, settings["outputName"] + " not found", document.getElementById("notFoundDownload"), "text/tab-separated-values", ".tsv")
+        _createDownloadLink(MAGeCKOutput, settings["outputName"] + " MAGeCK", document.getElementById("MAGeCKDownload"), "text/csv", ".csv")
     }
     catch (error) {
         console.error(`Screening failed:\n`, error);
@@ -100,20 +103,36 @@ async function runScreening() {
     clearInterval(statusInterval)
 
     statusText.classList.remove("pulse")
-    document.getElementById("outputTable").style.display = "table"
+    document.getElementById("outputTable").style.display = "flex"
     document.getElementById("outputTable").classList.remove("statusFadeOut")
     document.getElementById("outputTable").classList.add("statusFadeIn")
 }
 
-function _createCompactOutput(libraryMap) {
+function _createAdapterOutput(libraryMap) {
     const date = new Date()
     var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
-    var out = out + "Symbol\tgRNA+adapter\n"
+    var out = out + "Symbol\tSymbol_ID\tgRNA+adapter\n"
+
     for (var symbol of Object.keys(libraryMap)) {
-        libraryMap[symbol].rows.forEach(row => {
-            console.log()
-            out = out + `${row[settings.symbolColumn - 1]}\t ${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
-        })
+
+        for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
+            const row = libraryMap[symbol].rows[i]
+            out = out + `${symbol}\t${symbol}_${i}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
+
+        }
+    }
+    return out
+}
+
+function _createMAGeCKOutput(libraryMap) {
+    var out = ""
+    for (var symbol of Object.keys(libraryMap)) {
+
+        for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
+            const row = libraryMap[symbol].rows[i]
+            out = out + `${symbol},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}_${i}\n`
+
+        }
     }
     return out
 }
@@ -146,7 +165,7 @@ function _createSymbolNotFound(usedSynonyms) {
     return out
 }
 
-function _complimentSequence(gRNASequence) {
+/*function _complimentSequence(gRNASequence) {
     var complimentMap = {
         "A": "T",
         "a": "t",
@@ -162,23 +181,33 @@ function _complimentSequence(gRNASequence) {
         return complimentMap[char] !== undefined ? complimentMap[char] : char;
     }).join('')
     return complimentStr
-}
+}*/
 
 
 function _applyPostProcessing(text) {
+    var newText = _applyTrim(text)
+    newText = _applyAdapter(newText)
+    return newText
+}
+
+function _applyTrim(text) {
+    var newText = text.slice(settings.trimBefore)
+    if (settings.trimAfter != 0) {
+        newText = newText.slice(0, -settings.trimAfter)
+    }
+    return newText
+}
+
+function _applyAdapter(text) {
     if (settings.adapterAfter.lenth == 0) {
         adaptoerAfter = ""
     }
     if (settings.adapterBefore.lenth == 0) {
         adapterBefore = ""
     }
-    text = text.slice(settings.trimBefore)
-    if (settings.trimAfter != 0) {
-        text = text.slice(0, -settings.trimAfter)
-    }
     text = settings.adapterBefore + text + settings.adapterAfter
-
     return text
+
 }
 
 // show/hide lightbox - used to cover screen when running search
@@ -194,15 +223,19 @@ function _toggleLigtBox() {
     }
 }
 
-function _createDownloadLink(text, name, element) {
+function _createDownloadLink(text, name, element, filetype, fileEnding) {
     text = text.replace("    ", "\t")
-    var blob = new Blob([text], { type: 'text/tab-separated-values' })
+    var blob = new Blob([text], { type: filetype })
     element.href = URL.createObjectURL(blob)
-    element.download = name + ".tsv"
+    element.download = name + fileEnding
 }
 
-function showCompactOutput() {
-    _setStatus("fileContent", outputTexts.textOutputCompact.replace(/\n/g, "<br>"))
+function showAdapterOutput() {
+    _setStatus("fileContent", outputTexts.textOutputAdapter.replace(/\n/g, "<br>"))
+}
+
+function showMAGeCKOutput() {
+    _setStatus("fileContent", outputTexts.textOutputMAGeCK.replace(/\n/g, "<br>"))
 }
 
 function showFullOutput() {
@@ -233,14 +266,15 @@ async function changeLibrary() {
     const useSynonyms = document.getElementById("enableSynonyms")
 
     const libraryName = document.getElementById("libraries").value
+    settings.libraryName = libraryName
     const customLibrarie = document.getElementById("User Upload")
+    await _displayLibraryCitation("")
 
     if (libraryName == "custom") { //shows new input fields for custom library
         useSynonyms.disabled = "disabled"
         document.getElementById("enableDirectMatches").checked = true
 
         customLibrarie.classList.remove("inactive")
-        await _displayLibraryCitation("")
         changeLibraryColumn()
     }
     else { //uppdates library if it was not custom
@@ -250,7 +284,6 @@ async function changeLibrary() {
         try {
             const librarySettings = await SER_selectLibrary(libraryName) //uppdates library
             useSynonyms.disabled = ""
-            settings.libraryName = libraryName
             await _displayLibraryCitation(SER_getLibraryCitation())
 
             SET_settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
@@ -357,7 +390,7 @@ async function _displaySymbolsNotFound(synonymMap) {
     Object.keys(synonymMap).forEach(symbol => {
         if (settings.enableSynonyms && (synonymMap[symbol].length != 0)) {
 
-            displayText = `${symbol}→ synonym ${synonymMap[symbol]}\n${displayText}`
+            displayText = `${symbol} → ${synonymMap[symbol]}\n${displayText}`
             numSynonyms++
         }
         else {

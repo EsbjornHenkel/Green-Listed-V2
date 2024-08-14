@@ -117,14 +117,10 @@ function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, syn
     var additionalStatus = ""
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i]
-        if (row.length < headerLen) {
-            additionalStatus = `Row number ${i - 1} is to short to parse\n` //+1 to acount for header
-            continue
-        }
 
         const symbol = row[symbolColumn - 1].trim()
         //const symbolLower = symbol.toLowerCase()
-        const symbolLower = symbol.toLowerCase().startsWith("ctrl") ? "ctrl" : symbol.toLowerCase() // all ctrl symbols should be under same symbol(ctrl) regardless of number after
+        const symbolLower = symbol.toLowerCase()
 
         if (libraryMap[symbolLower]) {
             libraryMap[symbolLower].rows.push(row)
