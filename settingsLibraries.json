@@ -1,20 +1,20 @@
 [
     {
         "name": "Brie (mouse)",
-        "fileName": "libraries/STable 22 Brie.txt",
+        "fileName": "libraries/Brie (mouse).txt",
         "symbolColumn": 2,
         "RNAColumn": 7,
         "RankColumn": 11,
-        "citationFileName": "libraries/STable 22 Brie.html",
+        "citationFileName": "libraries/Brie (mouse).html",
         "synonymFileName": "libraries/mouse synonym.txt"
     },
     {
         "name": "Brunello (human)",
-        "fileName": "libraries/STable 21 Brunello.txt",
+        "fileName": "libraries/Brunello (human).txt",
         "symbolColumn": 2,
         "RNAColumn": 7,
         "RankColumn": 11,
-        "citationFileName": "libraries/STable 21 Brunello.html",
+        "citationFileName": "libraries/Brunello (human).html",
         "synonymFileName": "libraries/human synonym.txt"
     },
     {
@@ -37,20 +37,20 @@
     },
     {
         "name": "Gattinara (human)",
-        "fileName": "libraries/Gattinara (human) library.txt",
+        "fileName": "libraries/Gattinara (human).txt",
         "symbolColumn": 2,
         "RNAColumn": 1,
         "RankColumn": null,
-        "citationFileName": "libraries/Gattinara (human) library.html",
+        "citationFileName": "libraries/Gattinara (human).html",
         "synonymFileName": "libraries/human synonym.txt"
     },
     {
         "name": "Gouda (mouse)",
-        "fileName": "libraries/Gouda (mouse) library.txt",
+        "fileName": "libraries/Gouda (mouse).txt",
         "symbolColumn": 2,
         "RNAColumn": 1,
         "RankColumn": null,
-        "citationFileName": "libraries/Gouda (mouse) library.html",
+        "citationFileName": "libraries/Gouda (mouse).html",
         "synonymFileName": "libraries/mouse synonym.txt"
     }
 ]

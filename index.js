@@ -191,7 +191,7 @@ function _createFullTxtOutput(libraryMap, headers) {
     var out = out + headers.join("\t") + "\n" //the original headers are placed att the top of the output
     for (var symbol of Object.keys(libraryMap)) {
         libraryMap[symbol].rows.forEach(row => {
-            out = out + `${row.join("\t")}`
+            out = out + `${row.join("\t")}\n`
         })
     }
     return out

@@ -18,18 +18,16 @@
 </head>
 
 <body onload="init()">
-    <header>
+    <header><!--
         <div id="watermark">This project was
             financially supported by the Swedish Research Council, the Swedish Cancer Society, the Swedish Foundation
             for Strategic Research, the Wenner-Green Foundations, the King Gustav V's 80th Anniversary Foundation, and
-            the Karolinska Institutet.</div>
+            the Karolinska Institutet.</div>-->
         <span class="centerContent">
             <img src="headerEven.jpg" alt="Green Listed">
             <nav>
                 <a target="_blank" href="https://wermelinglab.com/">Wermeling Lab</a>
-                <a target="_blank"
-                    href="https://www.youtube.com/watch?v=9A6WQAYCOvs&list=PLtETtjUFMYF1onsu-BpLIM6h34R6N5NP3">Videos</a>
-                <a target="_blank" href="infoHowToUse.html">How to use</a>
+                <a target="_blank" href="https://www.youtube.com/@fredrikwermeling1330">How to use</a>
                 <a target="_blank" href="infoHowToCite.html">How to cite</a>
             </nav>
         </span>
@@ -217,7 +215,7 @@
             <div class="plateContent">
                 <table id="outputTable">
                     <tr>
-                        <td> Output with adapters included</td>
+                        <td> Output with adapters</td>
                         <td><a href="" id="adapterDownload">Download</a></td>
                         <td><button onclick="showAdapterOutput()">Show</button></td>
                     </tr>
@@ -227,9 +225,9 @@
                         <td><button onclick="showMAGeCKOutput()">Show</button></td>
                     </tr>
                     <tr>
-                        <td>Full output</td>
+                        <td>Full<br> output</td>
                         <td><a href="" id="fullDownload">Download</a></td>
-                        <td>Formatted like the original library</td>
+                        <td><button onclick="showFullOutput()">Show</button></td>
                     </tr>
                     <tr>
                         <td>Symbols not found</td>
@@ -252,8 +250,12 @@
 
 
         </footer>
-
     </main>
+    <div>This project was
+        financially supported by the Swedish Research Council, the Swedish Cancer Society, the Swedish Foundation
+        for Strategic Research, the Wenner-Green Foundations, the King Gustav V's 80th Anniversary Foundation, and
+        the Karolinska Institutet.</div>
+
     <script>
 
     </script>
