@@ -35,6 +35,7 @@ async function init() {
     document.getElementById("numberToRank").value = data.rankingTop
     document.getElementById("searchSymbols").textContent = data.searchSymbols.join("\n")
     document.getElementById("outputFileName").value = data.outputName
+    document.getElementById("outputFileName").defaultValue = ""
 
     document.getElementById("partialMatches").checked = data.partialMatches
     document.getElementById("enableSynonyms").checked = data.enableSynonyms
@@ -299,7 +300,7 @@ function showSettingsOutput() {
 
 function dowloadSettingsOutput() {
     element = document.getElementById("settingsDowload")
-    _createDownloadLink(SET_settingsToStr(), settings.outputName + " Settings", element)
+    _createDownloadLink(SET_settingsToStr(), settings["outputName"] + " Settings", element, "text", ".txt")
 }
 
 async function _displayLibraryCitation(libraryCitation) {
