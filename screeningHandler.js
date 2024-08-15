@@ -6,20 +6,27 @@
 // used by the library so execute a search
 //
 
+
 function SCR_startScreening(library, settings, usedSynonyms) {
-    //starts screening
-    //This is the only function that gets called from outside in this file
-    const swappedSynonyms = Object.fromEntries(Object.entries(usedSynonyms).map(([key, value]) => [value, key])) //swaps keys and values
-    var symbols = Object.keys(library.libraryMap)
-    //creates a coppy of library map that just contains symbols that match the library symbols acording to the _match() function
-    var filteredLibraryMap = {}
-    for (let i = 0; i < symbols.length; i++) {
-        const symbol = symbols[i]
-        library.statusSearch = `${i}/${symbols.length} symbols searched`
-        if (_match(symbol, settings, swappedSynonyms)) {
-            filteredLibraryMap[symbol] = { ...library.libraryMap[symbol] } //creates coppy
-        }
+    const symbolsUsed = settings.searchSymbols.map(symbol => usedSynonyms[symbol] ? usedSynonyms[symbol] : symbol)
+
+
+    var machingSymbols = []
+    if (!settings.partialMatches) {
+        const symbolsUsedSet = new Set(symbolsUsed)
+        machingSymbols = Object.keys(library.libraryMap).filter(librarySymbol => symbolsUsedSet.has(librarySymbol))
     }
+    else {
+        machingSymbols = Object.keys(library.libraryMap).filter(librarySymbol =>
+            symbolsUsed.some(searchSymbol => librarySymbol.includes(searchSymbol))
+        )
+    }
+
+    var filteredLibraryMap = {}
+    for (let i = 0; i < machingSymbols.length; i++) {
+        filteredLibraryMap[machingSymbols[i]] = { ...library.libraryMap[machingSymbols[i]] } //creates copy
+    }
+
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
         filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
     }
@@ -28,7 +35,6 @@ function SCR_startScreening(library, settings, usedSynonyms) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
 
-    console.log(filteredLibraryMap)
     searchOutput = {
         "headers": library.headers,
         "filteredLibraryMap": filteredLibraryMap,

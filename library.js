@@ -46,10 +46,17 @@ function LIB_startScreening(settings) {
         throw new Error("No library selected")
     }
     _library.statusSearch = "Starting search"
+    var synonyms = {}
+    if (settings.enableSynonyms) {
+        synonyms = _createMatchingSynonyms(settings.searchSymbols)
+    }
+
     var st = performance.now()
-    var searchOutput = SCR_startScreening(_library, settings, _createMatchingSynonyms(settings.searchSymbols))
-    _library.statusSearch = `Done. Time to complete: ${Math.round((performance.now() - st) / 1000 * 10) / 10}s<br> Symbols found: ${Object.keys(searchOutput.filteredLibraryMap).length}`
+    var searchOutput = SCR_startScreening(_library, settings, synonyms)
+
     console.log(Math.round((performance.now() - st) / 1000 * 1000) / 1000)
+    _library.statusSearch = `Done. Time to complete: ${Math.round((performance.now() - st) / 1000 * 10) / 10}s<br> Symbols found: ${Object.keys(searchOutput.filteredLibraryMap).length}`
+
     return searchOutput
 }
 
@@ -127,18 +134,93 @@ function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, syn
         } else {
             libraryMap[symbolLower] = {
                 "rows": [row],
-                "symbolSynonyms": synonymMap[symbolLower] ? Array.from(synonymMap[symbolLower]) : [],
                 "originalSymbol": symbol
             }
-            libraryMap[symbolLower].symbolSynonyms.push(symbolLower) // is synonym with self
         }
-
     }
     _library.libraryStatus = additionalStatus + `${Object.keys(libraryMap).length} symbols found`
     return libraryMap
 }
 
+
+function LIB_libraryCitation() {
+    return _library.citationInfo
+}
+
+
+function LIB_statusSynonyms(searchSymbols) {
+    return _createMatchingSynonyms(searchSymbols, true)
+
+}
+function LIB_statusSynonymsOLD(searchSymbols) {
+    return _createMatchingSynonymsOLD(searchSymbols, true)
+}
+
+function LIB_statusScreening() {
+    return _library.statusSearch
+}
+
+function LIB_statusLibrarySymbols() {
+    return _library.libraryStatus
+}
+
 function _createMatchingSynonyms(searchSymbols, forDisplay) {
+    /*
+    returns object where each searched symbol is a key and the value is the first synonym to the key that existsts in the selected library
+    if the value in empty string the symbol has no mathchin synonyms
+    synonym map = {
+        symbol1: synonym1,
+        symbol2: synonym2
+        symbol3: "", (symbol3 has no matching synonyms in the selected library)
+        symobl4: ...
+    }
+    */
+    const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
+    const lib = new Set(Object.keys(_library.libraryMap))
+    const matchingSymbols = {}
+    symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
+        matchingSymbols[searchSymbol] = ""
+        if (_library.synonymMap[searchSymbol]) {
+            var inter = _library.synonymMap[searchSymbol].intersection(lib)
+            if (inter.size != 0) {
+                matchingSymbols[searchSymbol] = inter.values().next().value
+            }
+
+        }
+    })
+    return matchingSymbols
+}
+
+/*function _createMatchingSynonyms(searchSymbols, forDisplay) {
+    /*
+    returns object where each searched synbol is a key and the value is the first synonym to the key that existsts in the selected library
+    if the value in empty string the symbol has no mathchin synonyms
+    synonym map = {
+        symbol1: synonym1,
+        symbol2: synonym2
+        symbol3: "", (symbol3 has no matching synonyms in the selected library)
+        symobl4: ...
+    }
+    *//*
+const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
+const lib = new Set(Object.keys(_library.libraryMap))
+//const symbolsNotFound = searchSymbols.difference(lib)
+const matchingSymbols = {}
+symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
+matchingSymbols[searchSymbol] = ""
+if (_library.synonymMap[searchSymbol]) {
+var inter = _library.synonymMap[searchSymbol].intersection(lib)
+if (inter.size != 0) {
+matchingSymbols[searchSymbol] = inter.values().next().value
+}
+
+}
+})
+return matchingSymbols
+}*/
+
+
+function _createMatchingSynonymsOLD(searchSymbols, forDisplay) {
     /*
     returns object where each searched synbol is a key and the value is the first synonym to the key that existsts in the selected library
     if the value in empty string the symbol has no mathchin synonyms
@@ -149,22 +231,24 @@ function _createMatchingSynonyms(searchSymbols, forDisplay) {
         symobl4: ...
     }
     */
-    const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))
+    const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
     const matchingSymbols = {}
+    /*
     symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
         matchingSymbols[searchSymbol] = ""
         if (_library.synonymMap[searchSymbol]) { //symbol must have synonyms
-
+ 
             _library.synonymMap[searchSymbol].forEach(synonym => { //loop through all synonyms
                 Object.keys(_library.libraryMap).forEach(fileSymbol => { //loop through all symbols in library
-                    if (_library.libraryMap[fileSymbol].symbolSynonyms.includes(synonym)) { //synonym exists in library 
-                        matchingSymbols[searchSymbol] = forDisplay ? _library.libraryMap[fileSymbol].originalSymbol : fileSymbol //correct capitalisation is used for display
+                    if (Array.from(_library.libraryMap[fileSymbol].symbolSynonyms).includes(synonym)) { //synonym exists in library 
+                        // matchingSymbols[searchSymbol] = forDisplay ? _library.libraryMap[fileSymbol].originalSymbol : fileSymbol //correct capitalisation is used for display
+                        matchingSymbols[searchSymbol] = fileSymbol //correct capitalisation is used for display
                     }
                 })
-
             })
         }
-    })
+    })*/
+
     return matchingSymbols
 }
 

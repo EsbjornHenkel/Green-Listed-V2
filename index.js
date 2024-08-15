@@ -124,6 +124,53 @@ function _createAdapterOutput(libraryMap) {
     return out
 }
 
+
+function test() {
+
+    const allSynonyms = _library.synonymMap
+    const allSymbols = Object.keys(_library.libraryMap)
+    var out = "NUMBER\tOLD\tNEW\n"
+    var currentSymbols = []
+    for (var i = 0; i < 150; i++) {
+        const newSymbols = allSynonyms[allSymbols[i]]
+        if (!allSynonyms.hasOwnProperty(allSymbols[i])) {
+            continue
+        }
+
+        const newSynonym = newSymbols.values().next().value
+        currentSymbols.push(newSynonym)
+        _setStatus("searchSymbols", currentSymbols.join("\n"), false)
+
+        var st = performance.now()
+        var oldm = SER_getSynonymMapOLD(currentSymbols)
+        const oldt = Math.round((performance.now() - st) / 1000 * 1000) / 1000
+
+        var st = performance.now()
+        var newm = SER_getSynonymMap(currentSymbols)
+        const newt = Math.round((performance.now() - st) / 1000 * 1000) / 1000
+
+        /*
+        var same = true
+        for (var j = 0; j < Object.keys(oldm).length; j++) {
+            n = Object.keys(newm)[j]
+            o = Object.keys(oldm)[j]
+            if ((n != o) || (newm[n] != oldm[o])) {
+                same = false
+                console.log([n, newm[n], o, oldm[o]])
+            }
+        }*/
+        console.log(currentSymbols.length)
+        out = out + currentSymbols.length + "\t" + oldt + "\t" + newt + "\n"
+        //console.log([same, i])
+
+    }
+
+    _createDownloadLink(out, "test data", document.getElementById("aa"), "text/tab-separated-values", ".tsv")
+
+
+}
+
+
 function _createMAGeCKOutput(libraryMap) {
     var out = ""
     for (var symbol of Object.keys(libraryMap)) {
@@ -416,7 +463,7 @@ function _statusUpdateSymbols() {
     const statusSymbols = SER_statusLibrarySymbols()
     _setStatus("symbolsFound", statusSymbols)
 
-    _setStatus("searchSymbols", settings.searchSymbols.join("\n"), false)
+    _setStatus("searchSymbols", Array.from(settings.searchSymbols).join("\n"), false)
     _setStatus("fileContent", "")
 
     document.getElementById("outputTable").classList.add("statusFadeOut")

@@ -5,6 +5,7 @@
 // This corresponds to a server-side service API
 // Used by the UI
 
+//const SETTINGS_URL = 'settingsDefault.json'
 const SETTINGS_URL = 'settingsDefault.json'
 const LIBRARIES_URL = 'settingsLibraries.json'
 
@@ -111,6 +112,10 @@ function SER_getLibraryCitation() {
 // Return a map with symbols not found (keys) and an synonym used (value - often Null)
 function SER_getSynonymMap(searchSymbols) {
     return LIB_statusSynonyms(searchSymbols)
+}
+
+function SER_getSynonymMapOLD(searchSymbols) {
+    return LIB_statusSynonymsOLD(searchSymbols)
 }
 
 // ---------------------------- Status functions ------------------------------------------------
