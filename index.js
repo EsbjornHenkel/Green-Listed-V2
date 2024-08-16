@@ -33,6 +33,9 @@ async function init() {
     document.getElementById("adapterAfter").defaultValue = data.adaptorAfter;
 
     document.getElementById("numberToRank").value = data.rankingTop
+    document.getElementById("numberToRank").defaultValue = ""
+
+
     document.getElementById("searchSymbols").textContent = data.searchSymbols.join("\n")
     document.getElementById("outputFileName").value = data.outputName
     document.getElementById("outputFileName").defaultValue = ""

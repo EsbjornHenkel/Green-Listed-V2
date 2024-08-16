@@ -19,20 +19,20 @@
     },
     {
         "name": "GeCKO v2 (human) A+B",
-        "fileName": "libraries/GeCKO v2 (human) A+B library.txt",
+        "fileName": "libraries/GeCKO v2 (human) A+B.txt",
         "symbolColumn": 1,
         "RNAColumn": 3,
         "RankColumn": null,
-        "citationFileName": "libraries/GeCKO v2 (human) A+B library.html",
+        "citationFileName": "libraries/GeCKO v2 (human) A+B.html",
         "synonymFileName": "libraries/human synonym.txt"
     },
     {
         "name": "GeCKO v2 (mouse) A+B",
-        "fileName": "libraries/GeCKO v2 (mouse) A+B library.txt",
+        "fileName": "libraries/GeCKO v2 (mouse) A+B.txt",
         "symbolColumn": 1,
         "RNAColumn": 3,
         "RankColumn": null,
-        "citationFileName": "libraries/GeCKO v2 (mouse) A+B library.html",
+        "citationFileName": "libraries/GeCKO v2 (mouse) A+B.html",
         "synonymFileName": "libraries/mouse synonym.txt"
     },
     {
