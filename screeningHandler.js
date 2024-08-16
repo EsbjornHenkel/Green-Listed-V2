@@ -44,7 +44,7 @@ function SCR_startScreening(library, settings, usedSynonyms) {
 }
 
 function _match(symbol, settings, swapedSynonyms) {
-    //returns true is symbol is in library else false
+    //returns true is symbol is in library else false 
     //can hande synonyms and partial matches
     if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)) {
         symbol = swapedSynonyms[symbol]
