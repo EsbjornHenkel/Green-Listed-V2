@@ -16,6 +16,7 @@
         gtag('config', 'G-JRW1JYVPWQ');
     </script>
 </head>
+<a id="aa">out</a>
 
 <body onload="init()">
     <header><!--
@@ -41,7 +42,6 @@
         <div class="plate">
             <h2 class="plateTitle">1. Select library</h2>
             <div class="plateContent">
-
                 <div class="smallPlate">
                     <h3 class="smallTitle">
                         <select id="libraries" onchange="changeLibrary()" required>
@@ -49,6 +49,7 @@
                             <option value="custom">User Upload</option>
                         </select>
                     </h3>
+
                     <div class="plateContent">
                         <form id="User Upload" class="inactive">
                             <p class="flexRow">
@@ -110,7 +111,7 @@
                         <textarea id="searchSymbols" onchange="changeSymbols()">
                     </textarea>
                         <span class="justifyCenter">
-                            <button>Update</button>
+                            <button onclick="test()">Update</button>
                             <!--pointless button just for user to have something to click on-->
                             <p id="statusSearchSymbolsRows"></p>
                         </span>
@@ -237,10 +238,11 @@
                     </tr>
                 </table>
 
-                <div class="plateContent">
-                    <div id="fileContent">
+                <div class="plateContent" id="fileContentContainer">
+                    <textarea id="fileContent">
 
-                    </div>
+                    </textarea>
+
                 </div>
             </div>
 

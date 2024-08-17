@@ -19,6 +19,7 @@ var _library = {
     }
      */
     "libraryMap": {},
+    "librarySymbolSet": new Set(), //a set containing all symbols in the library
     "libraryStatus": "",
     /*
     synonym map contain all symbols that have synonyms as keys and all ther synonyms as values
@@ -52,9 +53,15 @@ function LIB_startScreening(settings) {
     }
 
     var st = performance.now()
-    var searchOutput = SCR_startScreening(_library, settings, synonyms)
+    try {
+        var searchOutput = SCR_startScreening(_library, settings, synonyms)
+    }
+    catch (e) {
+        _library.statusSearch = "Error run failed"
+        throw (e)
+    }
 
-    console.log(Math.round((performance.now() - st) / 1000 * 1000) / 1000)
+    console.log(Math.round((performance.now() - st) / 100 * 100) / 1000)
     _library.statusSearch = `Done. Time to complete: ${Math.round((performance.now() - st) / 1000 * 10) / 10}s<br> Symbols found: ${Object.keys(searchOutput.filteredLibraryMap).length}`
 
     return searchOutput
@@ -64,7 +71,8 @@ function LIB_setLibraryCustomData(fileData, settings) {
     //uppdates library Map
     console.log("LIB_setLibraryCustomData()start scol=" + settings.symbolColumn)
     var libraryMap = _createLibraryMap(fileData, settings.symbolColumn, settings.RNAColumn, settings.rankingColumn, {})
-    _library.libraryMap = libraryMap
+    _library.librarySymbolSet = new Set(Object.keys(libraryMap)), //a set containing all symbols in the library
+        _library.libraryMap = libraryMap
     //console.log("LIB_setLibraryCustomData()end rcol=" + settings.RNAColumn)
 }
 
@@ -74,7 +82,8 @@ function LIB_setLibraryData(librarySettings, fileData, synonymData, citationInfo
     _library.citationInfo = citationInfo
     _library.synonymMap = _createSynonymMap(synonymData)
     var libraryMap = _createLibraryMap(fileData, librarySettings.symbolColumn, librarySettings.RNAColumn, librarySettings.rankingColumn, _library.synonymMap)
-    _library.libraryMap = libraryMap
+    _library.librarySymbolSet = new Set(Object.keys(libraryMap)), //a set containing all symbols in the library
+        _library.libraryMap = libraryMap
 }
 
 function _createSynonymMap(synonymData) {
@@ -175,53 +184,26 @@ function _createMatchingSynonyms(searchSymbols, forDisplay) {
         symobl4: ...
     }
     */
-    const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
-    const lib = new Set(Object.keys(_library.libraryMap))
+    const symbolsNotFound = searchSymbols.filter(symbol => !_library.librarySymbolSet.has(symbol))// only symbols not in the library are considered
     const matchingSymbols = {}
     symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
-        matchingSymbols[searchSymbol] = ""
+        //smatchingSymbols[searchSymbol] = "" //if synboll does not hava synonym in library it defaults to empty string
         if (_library.synonymMap[searchSymbol]) {
-            var inter = _library.synonymMap[searchSymbol].intersection(lib)
-            if (inter.size != 0) {
+            matchingSymbols[searchSymbol] = Array.from(_library.synonymMap[searchSymbol].intersection(_library.librarySymbolSet)) // every symbol thats boath in the library and is a synonym to the searched symbol
+            /*if (inter.size != 0) {
                 matchingSymbols[searchSymbol] = inter.values().next().value
-            }
-
+            }*/
+        }
+        else {
+            matchingSymbols[searchSymbol] = []
         }
     })
     return matchingSymbols
 }
 
-/*function _createMatchingSynonyms(searchSymbols, forDisplay) {
-    /*
-    returns object where each searched synbol is a key and the value is the first synonym to the key that existsts in the selected library
-    if the value in empty string the symbol has no mathchin synonyms
-    synonym map = {
-        symbol1: synonym1,
-        symbol2: synonym2
-        symbol3: "", (symbol3 has no matching synonyms in the selected library)
-        symobl4: ...
-    }
-    *//*
-const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
-const lib = new Set(Object.keys(_library.libraryMap))
-//const symbolsNotFound = searchSymbols.difference(lib)
-const matchingSymbols = {}
-symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
-matchingSymbols[searchSymbol] = ""
-if (_library.synonymMap[searchSymbol]) {
-var inter = _library.synonymMap[searchSymbol].intersection(lib)
-if (inter.size != 0) {
-matchingSymbols[searchSymbol] = inter.values().next().value
-}
-
-}
-})
-return matchingSymbols
-}*/
-
-
+/*
 function _createMatchingSynonymsOLD(searchSymbols, forDisplay) {
-    /*
+
     returns object where each searched synbol is a key and the value is the first synonym to the key that existsts in the selected library
     if the value in empty string the symbol has no mathchin synonyms
     synonym map = {
@@ -230,27 +212,27 @@ function _createMatchingSynonymsOLD(searchSymbols, forDisplay) {
         symbol3: "", (symbol3 has no matching synonyms in the selected library)
         symobl4: ...
     }
-    */
+
     const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
     const matchingSymbols = {}
-    /*
     symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
         matchingSymbols[searchSymbol] = ""
         if (_library.synonymMap[searchSymbol]) { //symbol must have synonyms
- 
+
             _library.synonymMap[searchSymbol].forEach(synonym => { //loop through all synonyms
                 Object.keys(_library.libraryMap).forEach(fileSymbol => { //loop through all symbols in library
-                    if (Array.from(_library.libraryMap[fileSymbol].symbolSynonyms).includes(synonym)) { //synonym exists in library 
-                        // matchingSymbols[searchSymbol] = forDisplay ? _library.libraryMap[fileSymbol].originalSymbol : fileSymbol //correct capitalisation is used for display
-                        matchingSymbols[searchSymbol] = fileSymbol //correct capitalisation is used for display
+                    if (_library.synonymMap[fileSymbol]) {
+                        if (_library.synonymMap[fileSymbol].has(synonym)) { //synonym exists in library )
+                            matchingSymbols[searchSymbol] = fileSymbol //correct capitalisation is used for display
+                        }
                     }
                 })
             })
         }
-    })*/
+    })
 
     return matchingSymbols
-}
+}*/
 
 function LIB_libraryCitation() {
     return _library.citationInfo

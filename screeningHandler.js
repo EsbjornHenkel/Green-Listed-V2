@@ -8,17 +8,15 @@
 
 
 function SCR_startScreening(library, settings, usedSynonyms) {
-    const symbolsUsed = settings.searchSymbols.map(symbol => usedSynonyms[symbol] ? usedSynonyms[symbol] : symbol)
-
 
     var machingSymbols = []
     if (!settings.partialMatches) {
-        const symbolsUsedSet = new Set(symbolsUsed)
-        machingSymbols = Object.keys(library.libraryMap).filter(librarySymbol => symbolsUsedSet.has(librarySymbol))
+        machingSymbols = settings.searchSymbols.filter(symbol => library.librarySymbolSet.has(symbol)) //maches without synonyms
+        machingSymbols.push(...Object.values(usedSynonyms).flat()) //synonym maches
     }
     else {
         machingSymbols = Object.keys(library.libraryMap).filter(librarySymbol =>
-            symbolsUsed.some(searchSymbol => librarySymbol.includes(searchSymbol))
+            settings.searchSymbols.some(searchSymbol => librarySymbol.includes(searchSymbol))
         )
     }
 
@@ -41,26 +39,6 @@ function SCR_startScreening(library, settings, usedSynonyms) {
         "usedSynonyms": usedSynonyms
     }
     return searchOutput
-}
-
-function _match(symbol, settings, swapedSynonyms) {
-    //returns true is symbol is in library else false 
-    //can hande synonyms and partial matches
-    if (settings.enableSynonyms && swapedSynonyms.hasOwnProperty(symbol)) {
-        symbol = swapedSynonyms[symbol]
-    }
-    if (settings.partialMatches) {
-        return _matchPartial(symbol, settings.searchSymbols)
-    }
-    return _matchNonpartial(symbol, settings.searchSymbols)
-}
-
-function _matchPartial(symbol, searchSymbols) {
-    return searchSymbols.some(searchSymbol => symbol.includes(searchSymbol))
-}
-
-function _matchNonpartial(symbol, searchSymbols) {
-    return searchSymbols.includes(symbol.trim())
 }
 
 function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {

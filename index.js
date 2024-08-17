@@ -74,7 +74,6 @@ async function runScreening() {
     button = document.getElementById("startButton")
     var statusText = document.getElementById("statusSearch")
     statusText.classList.add("pulse")
-    var statusInterval = setInterval(_statusSearchUpdate, 10);
     await new Promise(r => setTimeout(r, 100)) //waits for animation
 
     try {
@@ -104,7 +103,6 @@ async function runScreening() {
 
     _toggleLigtBox()
     _statusSearchUpdate()
-    clearInterval(statusInterval)
 
     statusText.classList.remove("pulse")
     document.getElementById("outputTable").style.display = "flex"
@@ -146,12 +144,12 @@ function test() {
         _setStatus("searchSymbols", currentSymbols.join("\n"), false)
 
         var st = performance.now()
-        var oldm = SER_getSynonymMapOLD(currentSymbols)
-        const oldt = Math.round((performance.now() - st) / 1000 * 1000) / 1000
+        //var oldm = _createMatchingSynonymsOLD(currentSymbols, false)
+        const oldt = Math.round((performance.now() - st))
 
         var st = performance.now()
-        var newm = SER_getSynonymMap(currentSymbols)
-        const newt = Math.round((performance.now() - st) / 1000 * 1000) / 1000
+        var newm = _createMatchingSynonyms(currentSymbols, false)
+        const newt = Math.round((performance.now() - st))
 
         /*
         var same = true
@@ -203,8 +201,10 @@ function _createFullTxtOutput(libraryMap, headers) {
 function _createSymbolNotFound(usedSynonyms) {
     var out = ""
     for (var symbol of Object.keys(usedSynonyms)) {
-        if (settings.enableSynonyms && (usedSynonyms[symbol] != "")) {
-            out = `${symbol}\t${usedSynonyms[symbol]}\n` + out
+        if (settings.enableSynonyms && (usedSynonyms[symbol].length > 0)) {
+            for (var synonym of usedSynonyms[symbol]) {
+                out = `${symbol}\t${synonym}\n` + out
+            }
         }
         else {
             out = out + `${symbol}\t\n`
@@ -282,23 +282,28 @@ function _createDownloadLink(text, name, element, filetype, fileEnding) {
 }
 
 function showAdapterOutput() {
-    _setStatus("fileContent", outputTexts.textOutputAdapter.replace(/\n/g, "<br>"))
+    document.getElementById("fileContentContainer").style.display = "flex"
+    _setStatus("fileContent", outputTexts.textOutputAdapter, false)
 }
 
 function showMAGeCKOutput() {
-    _setStatus("fileContent", outputTexts.textOutputMAGeCK.replace(/\n/g, "<br>"))
+    document.getElementById("fileContentContainer").style.display = "flex"
+    _setStatus("fileContent", outputTexts.textOutputMAGeCK, false)
 }
 
 function showFullOutput() {
-    _setStatus("fileContent", outputTexts.textOutputFull.replace(/\n/g, "<br>"))
+    document.getElementById("fileContentContainer").style.display = "flex"
+    _setStatus("fileContent", outputTexts.textOutputFull, false)
 }
 
 function showNotFoundOutput() {
-    _setStatus("fileContent", outputTexts.textOutputNotFound.replace(/\n/g, "<br>"))
+    document.getElementById("fileContentContainer").style.display = "flex"
+    _setStatus("fileContent", outputTexts.textOutputNotFound, false)
 }
 
 function showSettingsOutput() {
-    _setStatus("fileContent", SET_settingsToStr().replace(/\n/g, "<br>"))
+    document.getElementById("fileContentContainer").style.display = "flex"
+    _setStatus("fileContent", SET_settingsToStr(), false)
 }
 
 function dowloadSettingsOutput() {
@@ -427,29 +432,30 @@ async function _displaySymbolsNotFound(synonymMap) {
         _setStatus("statusSearchSymbolsRows", ``)
         const synonymsUsed = document.getElementById("displaySynonyms")
         synonymsUsed.value = "Not available"
-        return
     }
+    else {
+        const synonymsUsed = document.getElementById("displaySynonyms")
 
-    const synonymsUsed = document.getElementById("displaySynonyms")
+        if (Object.keys(synonymMap).length == 0) {
+            displayText = "All symbols found in file"
+        }
+        var displayText = ""
+        var numSynonyms = 0
+        var numNotFound = 0
+        Object.keys(synonymMap).forEach(symbol => {
+            if (settings.enableSynonyms && (synonymMap[symbol].length != 0)) {
 
-    if (Object.keys(synonymMap).length == 0) {
-        displayText = "All symbols found in file"
+                displayText = `${symbol} → ${[...synonymMap[symbol]].join(', ')}\n${displayText}`
+                numSynonyms = numSynonyms + synonymMap[symbol].length
+            }
+            else {
+                displayText = `${displayText}${symbol}\n`
+                numNotFound++
+            }
+        })
+        synonymsUsed.value = displayText
+
     }
-    var displayText = ""
-    var numSynonyms = 0
-    var numNotFound = 0
-    Object.keys(synonymMap).forEach(symbol => {
-        if (settings.enableSynonyms && (synonymMap[symbol].length != 0)) {
-
-            displayText = `${symbol} → ${synonymMap[symbol]}\n${displayText}`
-            numSynonyms++
-        }
-        else {
-            displayText = `${displayText}${symbol}\n`
-            numNotFound++
-        }
-    })
-    synonymsUsed.value = displayText
 
     settings.enableSynonyms ? _setStatus("statusNumSynonyms", `(used: ${numSynonyms})`) : _setStatus("statusNumSynonyms", ``)
     settings.partialMatches ? _setStatus("statusSearchSymbolsRows", ``) : _setStatus("statusSearchSymbolsRows", `Symbols found in library: ${settings.searchSymbols.length - numNotFound} of ${settings.searchSymbols.length}`)
@@ -461,6 +467,7 @@ async function _displaySymbolsNotFound(synonymMap) {
 function _statusUpdateSymbols() {
     gtag('event', 'Symbols', { 'event_category': 'Processing' }) // Google Analytics
 
+
     const synonymMap = SER_getSynonymMap(settings.searchSymbols)
     _displaySymbolsNotFound(synonymMap)
 
@@ -468,14 +475,15 @@ function _statusUpdateSymbols() {
     _setStatus("symbolsFound", statusSymbols)
 
     _setStatus("searchSymbols", Array.from(settings.searchSymbols).join("\n"), false)
-    _setStatus("fileContent", "")
+
+    document.getElementById("fileContentContainer").style.display = "none"
 
     document.getElementById("outputTable").classList.add("statusFadeOut")
 }
 
 function _statusUpdateSettings() {
     document.getElementById("outputTable").classList.add("statusFadeOut")
-    _setStatus("fileContent", "")
+    document.getElementById("fileContentContainer").style.display = "none"
     _updateExampleText()
 }
 
