@@ -19,14 +19,14 @@ settings = {
 
     "searchSymbols": null,
 
-    "enableSynonyms": true,
     "synonyms": null
 }
 
-function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms) {
+function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms, defaultSynonym) {
     SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName)
     SET_settingsSetIndexes(RNAIndex, symbolIndex, rankingIndex)
     SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
+    settings["synonymName"] = defaultSynonym
 }
 
 function SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms) {
@@ -52,10 +52,6 @@ function SET_settingsSetIndexes(RNAColumn, symbolColumn, rankingColumn) {
     settings["rankingColumn"] = rankingColumn
 }
 
-function SET_settingsSwapSymbol(oldSymbol, newSymbol) {
-    const index = settings["searchSymbols"].indexOf(oldSymbol)
-    settings["searchSymbols"][index] = newSymbol
-}
 
 function SET_settingsToStr() {
     const date = new Date()

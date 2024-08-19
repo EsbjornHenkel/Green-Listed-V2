@@ -43,20 +43,32 @@ async function init() {
     document.getElementById("partialMatches").checked = data.partialMatches
     document.getElementById("enableSynonyms").checked = data.enableSynonyms
 
-    libraryNames = await SER_getLibraryNames()
-    var dropdown = document.getElementById("libraries")
+    const libraryNames = await SER_getLibraryNames()
+    const librarydropdown = document.getElementById("libraries")
     libraryNames.forEach(name => {
         var option = document.createElement('option')
         option.text = name
         option.value = name
-        dropdown.appendChild(option)
+        librarydropdown.appendChild(option)
     })
-    dropdown.value = data.defaultLibrary
 
-    const rankingOrder = document.getElementById("rankingOrder").value
+    librarydropdown.value = data.defaultLibrary ? data.defaultLibrary : libraryNames[0]
+
+    const synonymNames = await SER_getSynonymNamse()
+    const synonymDropdown = document.getElementById("synonymSelect")
+    synonymNames.forEach(name => {
+        var option = document.createElement('option')
+        option.text = name
+        option.value = name
+        synonymDropdown.appendChild(option)
+    })
+    synonymDropdown.value = data.defaultSynonyms ? data.defaultSynonyms : synonymNames[0]
 
     // store the settings in an object
-    SET_settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms)
+    SET_settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms, data.defaultSynonyms)
+
+    //uppdates wich synonym list to use
+    changeSynonyms()
 
     // load the library
     changeLibrary()
@@ -119,7 +131,7 @@ function _createAdapterOutput(libraryMap) {
 
         for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
             const row = libraryMap[symbol].rows[i]
-            out = out + `${symbol}\t${symbol}_${i}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
+            out = out + `${symbol}\t${symbol}_${i + 1}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
 
         }
     }
@@ -179,7 +191,7 @@ function _createMAGeCKOutput(libraryMap) {
 
         for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
             const row = libraryMap[symbol].rows[i]
-            out = out + `${symbol}_${i},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}\n`
+            out = out + `${symbol}_${i + 1},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}\n`
 
         }
     }
@@ -353,10 +365,16 @@ async function changeLibrary() {
     changeSymbols()
 }
 
+async function changeSynonyms() {
+    const synonymName = document.getElementById("synonymSelect").value
+    settings.synonymName = synonymName
+    await SER_changeSynonyms(synonymName)
+    _statusUpdateSymbols()
+}
+
 function changeSymbols() {
     const partialMatches = document.getElementById("partialMatches").checked
     const enableSynonyms = document.getElementById("enableSynonyms").checked
-
     //sets everything to lower case and clears any extra spaces 
     const searchSymbols = document.getElementById("searchSymbols").value.split("\n").filter(item => { return item.trim() }).map(symbol => symbol.trim().toLowerCase())
 

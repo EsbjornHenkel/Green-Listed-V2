@@ -77,13 +77,16 @@ function LIB_setLibraryCustomData(fileData, settings) {
 }
 
 
-function LIB_setLibraryData(librarySettings, fileData, synonymData, citationInfo) {
+function LIB_setLibraryData(librarySettings, fileData, citationInfo) {
     //uppdates synonymMap, citationInfo and libraryMap
     _library.citationInfo = citationInfo
-    _library.synonymMap = _createSynonymMap(synonymData)
     var libraryMap = _createLibraryMap(fileData, librarySettings.symbolColumn, librarySettings.RNAColumn, librarySettings.rankingColumn, _library.synonymMap)
     _library.librarySymbolSet = new Set(Object.keys(libraryMap)), //a set containing all symbols in the library
         _library.libraryMap = libraryMap
+}
+
+function LIB_changeSynonyms(synonymData) {
+    _library.synonymMap = _createSynonymMap(synonymData)
 }
 
 function _createSynonymMap(synonymData) {

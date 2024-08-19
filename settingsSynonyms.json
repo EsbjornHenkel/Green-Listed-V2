@@ -1,10 +1,14 @@
 [
     {
-        "name": "Human",
-        "fileName": "libraries/human synonyms.txt"
+        "name": "Mouse",
+        "fileName": "libraries/mouse synonym.txt"
     },
     {
-        "name": "Mouse",
-        "fileName": "libraries/mouse synonyms.txt"
+        "name": "Human",
+        "fileName": "libraries/human synonym.txt"
+    },
+    {
+        "name": "Human+Mouse",
+        "fileName": "libraries/human+mouse synonym.txt"
     }
 ]

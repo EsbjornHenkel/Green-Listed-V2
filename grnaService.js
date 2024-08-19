@@ -8,7 +8,7 @@
 //const SETTINGS_URL = 'settingsDefault.json'
 const SETTINGS_URL = 'settingsDefault.json'
 const LIBRARIES_URL = 'settingsLibraries.json'
-const SYNONYM_URL = 'settingsSynonms.json'
+const SYNONYM_URL = 'settingsSynonyms.json'
 
 // Selects/activates a library
 // does pre-processing of the library to optimaze search
@@ -50,18 +50,18 @@ async function SER_selectLibrary(libraryName) {
             throw new Error(`Could not find library file named: ${libSettings.fileName}`)
         }
 
-        var synonymData = ""
-        try { //get synonyme .txt file
-            if (libSettings.synonymFileName) {
-                synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
-            }
-        }
-        catch {
-            throw new Error(`Could not find synonym file named: ${libSettings.synonymFileName}`)
-        }
+        /*        var synonymData = ""
+                try { //get synonyme .txt file
+                    if (libSettings.synonymFileName) {
+                        synonymData = await FH_fetchTextFile(libSettings.synonymFileName)
+                    }
+                }
+                catch {
+                    throw new Error(`Could not find synonym file named: ${libSettings.synonymFileName}`)
+                }*/
         // read synonyms
         // pre-process to create search structure
-        LIB_setLibraryData(libSettings, libData, synonymData, libraryCitation)
+        LIB_setLibraryData(libSettings, libData, libraryCitation)
 
         //console.log(`grnaService.selectLibrary(${libraryName}) done.`)
         return libSettings
@@ -69,6 +69,26 @@ async function SER_selectLibrary(libraryName) {
     } catch (error) {
         throw error
     }
+}
+
+async function SER_changeSynonyms(synonymName) {
+    var synonymList = []
+    try {
+        synonymList = await FH_fetchJsonFile(SYNONYM_URL)
+    }
+    catch {
+        throw new Error(`Could not find synonym file named: ${SYNONYM_URL}`)
+    }
+    console.log(synonymList)
+    const synonymInfo = synonymList.find(synonym => synonym.name == synonymName).fileName
+    var synonymData = ""
+    try { //get synonyme .txt file
+        synonymData = await FH_fetchTextFile(synonymInfo)
+    }
+    catch {
+        throw new Error(`Could not find synonym file named: ${synonymInfo} for name ${synonymName}`)
+    }
+    LIB_changeSynonyms(synonymData)
 }
 
 function SER_selectCustomLibrary(data, settings) {
@@ -93,7 +113,7 @@ async function SER_getLibraryNames() {
     return libraryNames
 }
 
-async function SET_getSynonymNamse() {
+async function SER_getSynonymNamse() {
     const synonyms = await FH_fetchJsonFile(SYNONYM_URL)
     const synonymNames = synonyms.map(synonymSetting => synonymSetting.name)
     return synonymNames

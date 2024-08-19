@@ -97,14 +97,18 @@
                                 <input name="a" type="radio" id="enableDirectMatches" onchange="changeSymbols()">
                                 Only direct matches <span></span>
                             </label>
-                            <label class="justifyCenter">
-                                <input name="a" type="radio" id="enableSynonyms" onchange="changeSymbols()">
-                                Use synonyms <span id="statusNumSynonyms"></span>
-                            </label>
 
                             <label class="justifyCenter">
                                 <input name="a" type="radio" id="partialMatches" onchange="changeSymbols()">
                                 Allow for partial matches
+                            </label>
+                            <label class="justifyCenter">
+                                <input name="a" type="radio" id="enableSynonyms" onchange="changeSymbols()">
+                                Use synonyms
+                                <select id="synonymSelect" onchange="changeSynonyms()">
+                                </select>
+                                <span id="statusNumSynonyms"></span>
+
                             </label>
                         </form>
                         <textarea id="searchSymbols" onchange="changeSymbols()">

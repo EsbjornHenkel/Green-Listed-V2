@@ -336,6 +336,11 @@ a:hover {
     /* font-family: 'Times New Roman', Times, serif; */
 }
 
+#synonymSelect {
+    border: 0px;
+    padding: 0px;
+}
+
 #libraryInfo p {
     margin-bottom: 0.4rem;
 }
