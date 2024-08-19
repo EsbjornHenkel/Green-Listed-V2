@@ -1,14 +1,5 @@
 [
     {
-        "name": "Brie (mouse)",
-        "fileName": "libraries/Brie (mouse).txt",
-        "symbolColumn": 2,
-        "RNAColumn": 7,
-        "RankColumn": 11,
-        "citationFileName": "libraries/Brie (mouse).html",
-        "synonymFileName": "libraries/mouse synonym.txt"
-    },
-    {
         "name": "Brunello (human)",
         "fileName": "libraries/Brunello (human).txt",
         "symbolColumn": 2,
@@ -16,6 +7,15 @@
         "RankColumn": 11,
         "citationFileName": "libraries/Brunello (human).html",
         "synonymFileName": "libraries/human synonym.txt"
+    },
+    {
+        "name": "Brie (mouse)",
+        "fileName": "libraries/Brie (mouse).txt",
+        "symbolColumn": 2,
+        "RNAColumn": 7,
+        "RankColumn": 11,
+        "citationFileName": "libraries/Brie (mouse).html",
+        "synonymFileName": "libraries/mouse synonym.txt"
     },
     {
         "name": "GeCKO v2 (human) A+B",

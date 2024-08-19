@@ -27,7 +27,6 @@ async function SER_selectLibrary(libraryName) {
             throw new Error(`Could not find library settings file:\n${LIBRARIES_URL}`)
         }
 
-        console.log(libraries)
         const libSettings = libraries.find(library => library.name == libraryName)
         if (!libSettings) {
             throw new Error(`Could not find library with name: ${libraryName}`)
