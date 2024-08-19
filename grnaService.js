@@ -8,7 +8,7 @@
 //const SETTINGS_URL = 'settingsDefault.json'
 const SETTINGS_URL = 'settingsDefault.json'
 const LIBRARIES_URL = 'settingsLibraries.json'
-
+const SYNONYM_URL = 'settingsSynonms.json'
 
 // Selects/activates a library
 // does pre-processing of the library to optimaze search
@@ -93,6 +93,11 @@ async function SER_getLibraryNames() {
     return libraryNames
 }
 
+async function SET_getSynonymNamse() {
+    const synonyms = await FH_fetchJsonFile(SYNONYM_URL)
+    const synonymNames = synonyms.map(synonymSetting => synonymSetting.name)
+    return synonymNames
+}
 // Start the screening. 
 // Settings contains all param, see default settings in settingsDefault.json
 function SER_runScreening(settings) {

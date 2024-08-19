@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Human",
+        "fileName": "libraries/human synonyms.txt"
+    },
+    {
+        "name": "Mouse",
+        "fileName": "libraries/mouse synonyms.txt"
+    }
+]
