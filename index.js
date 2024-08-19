@@ -287,8 +287,13 @@ async function changeLibrary() {
             SET_settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
 
             const synonymNames = await SER_getSynonymNames()
-            if (synonymNames.includes(librarySettings.synonymName)) {
-                document.getElementById("synonymSelect").value = librarySettings.synonymName
+            console.log(synonymNames)
+            console.log(librarySettings.synonymName)
+            if (synonymNames.length != 0) {
+
+                if (synonymNames.includes(librarySettings.synonymName)) {
+                    document.getElementById("synonymSelect").value = librarySettings.synonymName
+                }
             }
         }
         catch (error) {
