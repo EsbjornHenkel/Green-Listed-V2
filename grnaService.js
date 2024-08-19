@@ -113,7 +113,7 @@ async function SER_getLibraryNames() {
     return libraryNames
 }
 
-async function SER_getSynonymNamse() {
+async function SER_getSynonymNames() {
     const synonyms = await FH_fetchJsonFile(SYNONYM_URL)
     const synonymNames = synonyms.map(synonymSetting => synonymSetting.name)
     return synonymNames

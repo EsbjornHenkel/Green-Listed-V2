@@ -54,7 +54,7 @@ async function init() {
 
     librarydropdown.value = data.defaultLibrary ? data.defaultLibrary : libraryNames[0]
 
-    const synonymNames = await SER_getSynonymNamse()
+    const synonymNames = await SER_getSynonymNames()
     const synonymDropdown = document.getElementById("synonymSelect")
     synonymNames.forEach(name => {
         var option = document.createElement('option')
@@ -139,52 +139,6 @@ function _createAdapterOutput(libraryMap) {
 }
 
 
-function test() {
-
-    const allSynonyms = _library.synonymMap
-    const allSymbols = Object.keys(_library.libraryMap)
-    var out = "NUMBER\tOLD\tNEW\n"
-    var currentSymbols = []
-    for (var i = 0; i < 150; i++) {
-        const newSymbols = allSynonyms[allSymbols[i]]
-        if (!allSynonyms.hasOwnProperty(allSymbols[i])) {
-            continue
-        }
-
-        const newSynonym = newSymbols.values().next().value
-        currentSymbols.push(newSynonym)
-        _setStatus("searchSymbols", currentSymbols.join("\n"), false)
-
-        var st = performance.now()
-        //var oldm = _createMatchingSynonymsOLD(currentSymbols, false)
-        const oldt = Math.round((performance.now() - st))
-
-        var st = performance.now()
-        var newm = _createMatchingSynonyms(currentSymbols, false)
-        const newt = Math.round((performance.now() - st))
-
-        /*
-        var same = true
-        for (var j = 0; j < Object.keys(oldm).length; j++) {
-            n = Object.keys(newm)[j]
-            o = Object.keys(oldm)[j]
-            if ((n != o) || (newm[n] != oldm[o])) {
-                same = false
-                console.log([n, newm[n], o, oldm[o]])
-            }
-        }*/
-        console.log(currentSymbols.length)
-        out = out + currentSymbols.length + "\t" + oldt + "\t" + newt + "\n"
-        //console.log([same, i])
-
-    }
-
-    _createDownloadLink(out, "test data", document.getElementById("aa"), "text/tab-separated-values", ".tsv")
-
-
-}
-
-
 function _createMAGeCKOutput(libraryMap) {
     var out = ""
     for (var symbol of Object.keys(libraryMap)) {
@@ -227,24 +181,6 @@ function _createSymbolNotFound(usedSynonyms) {
     var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n` + out
     return out
 }
-
-/*function _complimentSequence(gRNASequence) {
-    var complimentMap = {
-        "A": "T",
-        "a": "t",
-        "T": "A",
-        "t": "a",
-        "C": "G",
-        "c": "g",
-        "G": "C",
-        "g": "c",
-    }
-    // Replace each character using the mapping table
-    var complimentStr = gRNASequence.split('').map(char => {
-        return complimentMap[char] !== undefined ? complimentMap[char] : char;
-    }).join('')
-    return complimentStr
-}*/
 
 
 function _applyPostProcessing(text) {
@@ -331,7 +267,6 @@ async function _displayLibraryCitation(libraryCitation) {
 async function changeLibrary() {
     //called when library changes through (droopdown under 1. Select library)
     //uppdates library to contin relevant information for the new library
-    const useSynonyms = document.getElementById("enableSynonyms")
 
     const libraryName = document.getElementById("libraries").value
     settings.libraryName = libraryName
@@ -339,9 +274,6 @@ async function changeLibrary() {
     await _displayLibraryCitation("")
 
     if (libraryName == "custom") { //shows new input fields for custom library
-        useSynonyms.disabled = "disabled"
-        document.getElementById("enableDirectMatches").checked = true
-
         customLibrarie.classList.remove("inactive")
         changeLibraryColumn()
     }
@@ -351,10 +283,13 @@ async function changeLibrary() {
         await new Promise(r => setTimeout(r, 10)) //wait for status animation to end
         try {
             const librarySettings = await SER_selectLibrary(libraryName) //uppdates library
-            useSynonyms.disabled = ""
             await _displayLibraryCitation(SER_getLibraryCitation())
-
             SET_settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
+
+            const synonymNames = await SER_getSynonymNames()
+            if (synonymNames.includes(librarySettings.synonymName)) {
+                document.getElementById("synonymSelect").value = librarySettings.synonymName
+            }
         }
         catch (error) {
             _setStatus("symbolsFound", "Error failed to fetch library")
@@ -453,11 +388,8 @@ async function _displaySymbolsNotFound(synonymMap) {
     }
     else {
         const synonymsUsed = document.getElementById("displaySynonyms")
-
-        if (Object.keys(synonymMap).length == 0) {
-            displayText = "All symbols found in file"
-        }
         var displayText = ""
+
         var numSynonyms = 0
         var numNotFound = 0
         Object.keys(synonymMap).forEach(symbol => {

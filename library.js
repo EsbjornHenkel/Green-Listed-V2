@@ -10,11 +10,7 @@
 var _library = {
     /*
     libraryMap ={
-        symbol1(in lower case) = {
-            "rows": [all rows containing symbol1 splitt by \t],
-            "symbolSynonyms": [a array of all synonyms to symbol1 (all lower case)],
-            "originalSymbol": symbol1 with the same capitalisation as in the library
-        },
+        symbol1(in lower case) :[all rows containing symbol1 splitt by \t]
         symbol2: ...
     }
      */
@@ -68,12 +64,8 @@ function LIB_startScreening(settings) {
 }
 
 function LIB_setLibraryCustomData(fileData, settings) {
-    //uppdates library Map
+    LIB_setLibraryData(settings, fileData, "")
     console.log("LIB_setLibraryCustomData()start scol=" + settings.symbolColumn)
-    var libraryMap = _createLibraryMap(fileData, settings.symbolColumn, settings.RNAColumn, settings.rankingColumn, {})
-    _library.librarySymbolSet = new Set(Object.keys(libraryMap)), //a set containing all symbols in the library
-        _library.libraryMap = libraryMap
-    //console.log("LIB_setLibraryCustomData()end rcol=" + settings.RNAColumn)
 }
 
 
@@ -142,12 +134,9 @@ function _createLibraryMap(fileData, symbolColumn, RNAColumn, rankingColumn, syn
         const symbolLower = symbol.toLowerCase()
 
         if (libraryMap[symbolLower]) {
-            libraryMap[symbolLower].rows.push(row)
+            libraryMap[symbolLower].push(row)
         } else {
-            libraryMap[symbolLower] = {
-                "rows": [row],
-                "originalSymbol": symbol
-            }
+            libraryMap[symbolLower] = [row]
         }
     }
     _library.libraryStatus = additionalStatus + `${Object.keys(libraryMap).length} symbols found`
@@ -176,26 +165,22 @@ function LIB_statusLibrarySymbols() {
     return _library.libraryStatus
 }
 
-function _createMatchingSynonyms(searchSymbols, forDisplay) {
+function _createMatchingSynonyms(searchSymbols) {
     /*
-    returns object where each searched symbol is a key and the value is the first synonym to the key that existsts in the selected library
-    if the value in empty string the symbol has no mathchin synonyms
+    returns object where each searched symbol is a key and the value is the a list of all synonyms to the key that are in the selected library
+    if the value is empty list the symbol has no machig synonyms
     synonym map = {
-        symbol1: synonym1,
-        symbol2: synonym2
-        symbol3: "", (symbol3 has no matching synonyms in the selected library)
+        symbol1: [synonym1.1, synonym1.2],
+        symbol2: [synonym2.1]
+        symbol3: [], (symbol3 has no matching synonyms in the selected library)
         symobl4: ...
     }
     */
     const symbolsNotFound = searchSymbols.filter(symbol => !_library.librarySymbolSet.has(symbol))// only symbols not in the library are considered
     const matchingSymbols = {}
     symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
-        //smatchingSymbols[searchSymbol] = "" //if synboll does not hava synonym in library it defaults to empty string
         if (_library.synonymMap[searchSymbol]) {
             matchingSymbols[searchSymbol] = Array.from(_library.synonymMap[searchSymbol].intersection(_library.librarySymbolSet)) // every symbol thats boath in the library and is a synonym to the searched symbol
-            /*if (inter.size != 0) {
-                matchingSymbols[searchSymbol] = inter.values().next().value
-            }*/
         }
         else {
             matchingSymbols[searchSymbol] = []
@@ -204,45 +189,12 @@ function _createMatchingSynonyms(searchSymbols, forDisplay) {
     return matchingSymbols
 }
 
-/*
-function _createMatchingSynonymsOLD(searchSymbols, forDisplay) {
-
-    returns object where each searched synbol is a key and the value is the first synonym to the key that existsts in the selected library
-    if the value in empty string the symbol has no mathchin synonyms
-    synonym map = {
-        symbol1: synonym1,
-        symbol2: synonym2
-        symbol3: "", (symbol3 has no matching synonyms in the selected library)
-        symobl4: ...
-    }
-
-    const symbolsNotFound = searchSymbols.filter(symbol => !_library.libraryMap.hasOwnProperty(symbol))// only symbols not in the library are considered
-    const matchingSymbols = {}
-    symbolsNotFound.forEach(searchSymbol => { // loop through all symbols in search feild that does not have a direct match
-        matchingSymbols[searchSymbol] = ""
-        if (_library.synonymMap[searchSymbol]) { //symbol must have synonyms
-
-            _library.synonymMap[searchSymbol].forEach(synonym => { //loop through all synonyms
-                Object.keys(_library.libraryMap).forEach(fileSymbol => { //loop through all symbols in library
-                    if (_library.synonymMap[fileSymbol]) {
-                        if (_library.synonymMap[fileSymbol].has(synonym)) { //synonym exists in library )
-                            matchingSymbols[searchSymbol] = fileSymbol //correct capitalisation is used for display
-                        }
-                    }
-                })
-            })
-        }
-    })
-
-    return matchingSymbols
-}*/
-
 function LIB_libraryCitation() {
     return _library.citationInfo
 }
 
 function LIB_statusSynonyms(searchSymbols) {
-    return _createMatchingSynonyms(searchSymbols, true)
+    return _createMatchingSynonyms(searchSymbols)
 }
 
 function LIB_statusScreening() {

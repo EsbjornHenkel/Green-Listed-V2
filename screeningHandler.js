@@ -44,10 +44,10 @@ function SCR_startScreening(library, settings, usedSynonyms) {
 function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
     for (const symbol in libraryMap) {
         if (rankingOrder == "ascending") {
-            libraryMap[symbol].rows.sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
+            libraryMap[symbol].sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
         }
         else {
-            libraryMap[symbol].rows.sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
+            libraryMap[symbol].sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
         }
     }
     return libraryMap
@@ -55,8 +55,7 @@ function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
 
 function _getTopRankingElements(libraryMap, n) {
     for (let symbol in libraryMap) {
-        libraryMap[symbol].rows = libraryMap[symbol].rows.slice(0, n)
-
+        libraryMap[symbol] = libraryMap[symbol].slice(0, n)
     }
     return libraryMap
 }
