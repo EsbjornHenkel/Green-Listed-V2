@@ -27,6 +27,7 @@ async function SER_selectLibrary(libraryName) {
             throw new Error(`Could not find library settings file:\n${LIBRARIES_URL}`)
         }
 
+        console.log(libraries)
         const libSettings = libraries.find(library => library.name == libraryName)
         if (!libSettings) {
             throw new Error(`Could not find library with name: ${libraryName}`)
@@ -79,7 +80,6 @@ async function SER_changeSynonyms(synonymName) {
     catch {
         throw new Error(`Could not find synonym file named: ${SYNONYM_URL}`)
     }
-    console.log(synonymList)
     const synonymInfo = synonymList.find(synonym => synonym.name == synonymName).fileName
     var synonymData = ""
     try { //get synonyme .txt file
