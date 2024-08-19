@@ -42,7 +42,6 @@ async function SER_selectLibrary(libraryName) {
             libraryCitation = "No citation file found"
         }
 
-        console.log(libSettings.fileName)
 
         var libData = ""
         try { //get library .txt file

@@ -55,7 +55,6 @@ async function init() {
     librarydropdown.value = data.defaultLibrary ? data.defaultLibrary : libraryNames[0]
 
     const synonymNames = await SER_getSynonymNamse()
-    console.log(synonymNames)
     const synonymDropdown = document.getElementById("synonymSelect")
     synonymNames.forEach(name => {
         var option = document.createElement('option')
