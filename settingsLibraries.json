@@ -52,5 +52,23 @@
         "RankColumn": null,
         "citationFileName": "libraries/Gouda (mouse).html",
         "synonymName": "Mouse"
+    },
+    {
+        "name": "VBC (human)",
+        "fileName": "libraries/VBC (human).txt",
+        "symbolColumn": 1,
+        "RNAColumn": 2,
+        "RankColumn": 5,
+        "citationFileName": "libraries/VBC (human).html",
+        "synonymName": "Human"
+    },
+    {
+        "name": "VBC (mouse)",
+        "fileName": "libraries/VBC (mouse).txt",
+        "symbolColumn": 1,
+        "RNAColumn": 2,
+        "RankColumn": 5,
+        "citationFileName": "libraries/VBC (mouse).html",
+        "synonymName": "Mouse"
     }
 ]
