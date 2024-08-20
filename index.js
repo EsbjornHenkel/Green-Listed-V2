@@ -101,7 +101,6 @@ async function runScreening() {
             "textOutputAdapter": adapterOutput,
             "textOutputMAGeCK": MAGeCKOutput
         }
-
         _createDownloadLink(adapterOutput, settings["outputName"] + " with Adapters", document.getElementById("adapterDownload"), "text/tab-separated-values", ".tsv")
         _createDownloadLink(fullOutput, settings["outputName"] + " Output", document.getElementById("fullDownload"), "text/tab-separated-values", ".tsv")
         _createDownloadLink(notFoundOutput, settings["outputName"] + " not found", document.getElementById("notFoundDownload"), "text/tab-separated-values", ".tsv")
@@ -128,9 +127,8 @@ function _createAdapterOutput(libraryMap) {
     var out = out + "Symbol\tSymbol_ID\tgRNA+adapter\n"
 
     for (var symbol of Object.keys(libraryMap)) {
-
-        for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
-            const row = libraryMap[symbol].rows[i]
+        for (var i = 0; i < libraryMap[symbol].length; i++) {
+            const row = libraryMap[symbol][i]
             out = out + `${symbol}\t${symbol}_${i + 1}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
 
         }
@@ -143,8 +141,8 @@ function _createMAGeCKOutput(libraryMap) {
     var out = ""
     for (var symbol of Object.keys(libraryMap)) {
 
-        for (var i = 0; i < libraryMap[symbol].rows.length; i++) {
-            const row = libraryMap[symbol].rows[i]
+        for (var i = 0; i < libraryMap[symbol].length; i++) {
+            const row = libraryMap[symbol][i]
             out = out + `${symbol}_${i + 1},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}\n`
 
         }
@@ -157,7 +155,7 @@ function _createFullTxtOutput(libraryMap, headers) {
     var out = `Library: ${settings.libraryName}, Date: ${date.toLocaleString()}\n`
     var out = out + headers.join("\t") + "\n" //the original headers are placed att the top of the output
     for (var symbol of Object.keys(libraryMap)) {
-        libraryMap[symbol].rows.forEach(row => {
+        libraryMap[symbol].forEach(row => {
             out = out + `${row.join("\t")}\n`
         })
     }
@@ -287,8 +285,6 @@ async function changeLibrary() {
             SET_settingsSetIndexes(librarySettings.RNAColumn, librarySettings.symbolColumn, librarySettings.RankColumn)
 
             const synonymNames = await SER_getSynonymNames()
-            console.log(synonymNames)
-            console.log(librarySettings.synonymName)
             if (synonymNames.length != 0) {
 
                 if (synonymNames.includes(librarySettings.synonymName)) {

@@ -22,7 +22,7 @@ function SCR_startScreening(library, settings, usedSynonyms) {
 
     var filteredLibraryMap = {}
     for (let i = 0; i < machingSymbols.length; i++) {
-        filteredLibraryMap[machingSymbols[i]] = { ...library.libraryMap[machingSymbols[i]] } //creates copy
+        filteredLibraryMap[machingSymbols[i]] = [...library.libraryMap[machingSymbols[i]]]  //creates copy
     }
 
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
@@ -32,7 +32,6 @@ function SCR_startScreening(library, settings, usedSynonyms) {
     if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
-
     searchOutput = {
         "headers": library.headers,
         "filteredLibraryMap": filteredLibraryMap,
