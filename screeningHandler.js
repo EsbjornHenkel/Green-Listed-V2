@@ -43,10 +43,10 @@ function SCR_startScreening(library, settings, usedSynonyms) {
 function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
     for (const symbol in libraryMap) {
         if (rankingOrder == "ascending") {
-            libraryMap[symbol].sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
+            libraryMap[symbol].sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
         }
         else {
-            libraryMap[symbol].sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
+            libraryMap[symbol].sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
         }
     }
     return libraryMap
