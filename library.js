@@ -171,7 +171,7 @@ function LIB_statusLibrarySymbols() {
 function _createMatchingSynonyms(searchSymbols) {
     /*
     returns object where each searched symbol is a key and the value is the a list of all synonyms to the key that are in the selected library
-    if the value is empty list the symbol has no machig synonyms
+    if the value is empty list the symbol has no machig synonyms 
     synonym map = {
         symbol1: [synonym1.1, synonym1.2],
         symbol2: [synonym2.1]
