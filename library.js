@@ -64,8 +64,10 @@ function LIB_startScreening(settings) {
 }
 
 function LIB_setLibraryCustomData(fileData, settings) {
+    console.log(settings)
+    console.log(fileData)
     LIB_setLibraryData(settings, fileData, "")
-    console.log("LIB_setLibraryCustomData()start scol=" + settings.symbolColumn)
+    //console.log("LIB_setLibraryCustomData()start scol=" + settings.symbolColumn)
 }
 
 
@@ -89,6 +91,7 @@ function _createSynonymMap(synonymData) {
     rows.forEach(row => {
         const symbol1 = row[0].toLowerCase().trim()
         const symbol2 = row[1].toLowerCase().trim()
+
         if (symbol1 != "" && symbol2 != "") {
 
             if (!synonymMap[symbol1]) {

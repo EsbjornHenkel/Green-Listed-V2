@@ -61,7 +61,7 @@ async function init() {
     synonymDropdown.value = data.defaultSynonyms ? data.defaultSynonyms : synonymNames[0]
 
     // store the settings in an object
-    SET_settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.gRNAIndex, data.symbolIndex, data.rankingIndex, data.enableSynonyms, data.defaultSynonyms)
+    SET_settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.enableSynonyms, data.defaultSynonyms)
 
     //uppdates wich synonym list to use
     changeSynonyms()
@@ -125,7 +125,8 @@ function _createAdapterOutput(libraryMap) {
     for (var symbol of Object.keys(libraryMap)) {
         for (var i = 0; i < libraryMap[symbol].length; i++) {
             const row = libraryMap[symbol][i]
-            out = out + `${symbol}\t${symbol}_${i + 1}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
+            const capitalizedSymbol = row[settings.symbolColumn - 1]
+            out = out + `${capitalizedSymbol}\t${capitalizedSymbol}_${i + 1}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
 
         }
     }
@@ -139,7 +140,8 @@ function _createMAGeCKOutput(libraryMap) {
 
         for (var i = 0; i < libraryMap[symbol].length; i++) {
             const row = libraryMap[symbol][i]
-            out = out + `${symbol}_${i + 1},${_applyTrim(row[settings.RNAColumn - 1])},${symbol}\n`
+            const capitalizedSymbol = row[settings.symbolColumn - 1]
+            out = out + `${capitalizedSymbol}_${i + 1},${_applyTrim(row[settings.RNAColumn - 1])},${capitalizedSymbol}\n`
 
         }
     }
@@ -316,11 +318,11 @@ function changeSymbols() {
 
 function changeLibraryColumn() {
     //User input fields only called when adding a custom library
-    const symbolIndex = document.getElementById("GeneSymbolIndex").value
+    const symbolColumn = document.getElementById("GeneSymbolIndex").value
     const RNAColumn = document.getElementById("gRNAIndex").value
     const rankingIndex = document.getElementById("rankingIndex").value
 
-    SET_settingsSetIndexes(RNAColumn, symbolIndex, rankingIndex)
+    SET_settingsSetIndexes(RNAColumn, symbolColumn, rankingIndex)
     updateCustomlibrary()
 }
 
@@ -350,9 +352,13 @@ function updateCustomlibrary() {
 
     if (file) {
         const reader = new FileReader()
-
+        console.log("SELECTED")
         reader.onload = function (e) {
-            const content = e.target.result
+            var content = e.target.result
+            if (file.name.endsWith(".csv")) {
+                content = content.replaceAll(",", "\t")
+            }
+
             SER_selectCustomLibrary(content, settings)
             _statusUpdateSymbols()
             console.log("updateCustomlibrary() file")
@@ -364,6 +370,7 @@ function updateCustomlibrary() {
 
         reader.readAsText(file)
     } else {
+        console.log("NOT SELECTED")
         SER_selectCustomLibrary("", settings)
         console.log("updateCustomlibrary() no file")
     }

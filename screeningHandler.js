@@ -20,6 +20,8 @@ function SCR_startScreening(library, settings, usedSynonyms) {
         )
     }
 
+    //machingSymbols now contains all symbols found in library maching the searched symbols
+    //creates map containing maching symbols
     var filteredLibraryMap = {}
     for (let i = 0; i < machingSymbols.length; i++) {
         filteredLibraryMap[machingSymbols[i]] = [...library.libraryMap[machingSymbols[i]]]  //creates copy

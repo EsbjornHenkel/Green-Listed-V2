@@ -22,9 +22,8 @@ settings = {
     "synonyms": null
 }
 
-function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName, RNAIndex, symbolIndex, rankingIndex, enableSynonyms, defaultSynonym) {
+function SET_settingsSetAll(searchSymbols, partialMatches, trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName, enableSynonyms, defaultSynonym) {
     SET_settingsSetSettings(trimBefore, trimAfter, adapterBefore, adapterAfter, rankingTop, rankingOrder, outputName)
-    SET_settingsSetIndexes(RNAIndex, symbolIndex, rankingIndex)
     SET_settingsSetLibrary(searchSymbols, partialMatches, enableSynonyms)
     settings["synonymName"] = defaultSynonym
 }
