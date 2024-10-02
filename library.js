@@ -64,8 +64,6 @@ function LIB_startScreening(settings) {
 }
 
 function LIB_setLibraryCustomData(fileData, settings) {
-    console.log(settings)
-    console.log(fileData)
     LIB_setLibraryData(settings, fileData, "")
     //console.log("LIB_setLibraryCustomData()start scol=" + settings.symbolColumn)
 }
