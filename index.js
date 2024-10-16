@@ -126,12 +126,10 @@ function _createAdapterOutput(libraryMap) {
         for (var i = 0; i < libraryMap[symbol].length; i++) {
             const row = libraryMap[symbol][i]
             const capitalizedSymbol = row[settings.symbolColumn - 1].trim()
-            console.log(`${capitalizedSymbol}\t${capitalizedSymbol}_${i + 1}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`)
             out = out + `${capitalizedSymbol}\t${capitalizedSymbol}_${i + 1}\t${_applyPostProcessing(row[settings.RNAColumn - 1])}\n`
 
         }
     }
-    console.log(out)
     return out
 }
 
@@ -229,7 +227,6 @@ function _createDownloadLink(text, name, element, filetype, fileEnding) {
 
 function showAdapterOutput() {
     document.getElementById("fileContentContainer").style.display = "flex"
-    console.log(outputTexts.textOutputAdapter)
     _setStatus("fileContent", outputTexts.textOutputAdapter, false)
 }
 
@@ -372,7 +369,6 @@ function updateCustomlibrary() {
 
         reader.readAsText(file)
     } else {
-        console.log("NOT SELECTED")
         SER_selectCustomLibrary("", settings)
         //console.log("updateCustomlibrary() no file")
     }
