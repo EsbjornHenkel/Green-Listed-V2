@@ -29,7 +29,7 @@ var _library = {
     /* string with tab-separetd column headers*/
     "headers": "",
 
-    /* status of the last screening, for example "Done. Found 2345 symbols" */
+    /* status of the last screening, for example "Done. Found 2345 symbols"  */
     "statusSearch": "",
 
     /* string with html describing the library */
