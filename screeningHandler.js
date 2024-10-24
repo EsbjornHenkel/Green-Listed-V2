@@ -29,12 +29,17 @@ function SCR_startScreening(library, settings, usedSynonyms) {
     }
 
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
-        filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
+        filteredLibraryMap = _sortOnScore(filteredLibraryMap, "Descending", settings.rankingColumn)
     }
 
     if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
+
+    if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
+        filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
+    }
+
     searchOutput = {
         "headers": library.headers,
         "filteredLibraryMap": filteredLibraryMap,
@@ -46,10 +51,10 @@ function SCR_startScreening(library, settings, usedSynonyms) {
 function _sortOnScore(libraryMap, rankingOrder, rankingColumn) {
     for (const symbol in libraryMap) {
         if (rankingOrder == "ascending") {
-            libraryMap[symbol].sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
+            libraryMap[symbol].sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
         }
         else {
-            libraryMap[symbol].sort((a, b) => a[rankingColumn - 1] - b[rankingColumn - 1])
+            libraryMap[symbol].sort((a, b) => b[rankingColumn - 1] - a[rankingColumn - 1])
         }
     }
     return libraryMap

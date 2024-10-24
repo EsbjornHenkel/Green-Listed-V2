@@ -62,7 +62,11 @@ async function insertData(data) {
 
     const libraryNames = await SER_getLibraryNames()
     const librarydropdown = document.getElementById("libraries")
-    libraryNames.forEach(name => {
+    const existingValues = Array.from(librarydropdown.options).map(option => option.value)
+    const namesToAdd = libraryNames.filter(value => !existingValues.includes(value))
+
+    namesToAdd.forEach(name => {
+
         var option = document.createElement('option')
         option.text = name
         option.value = name

@@ -1,8 +1,8 @@
 {
     "trimBefore": 0,
     "trimAfter": 0,
-    "adaptorBefore": "atcttgtggaaaggacgaaacaccgaaa",
-    "adaptorAfter": "gttttagagctagaaatagcaagttbbb",
+    "adaptorBefore": "atcttgtggaaaggacgaaacaccg",
+    "adaptorAfter": "gttttagagctagaaatagcaagtt",
     "partialMatches": false,
     "enableSynonyms": true,
     "rankingTop": "2",
