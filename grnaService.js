@@ -9,6 +9,7 @@
 const SETTINGS_URL = 'settingsDefault.json'
 const LIBRARIES_URL = 'settingsLibraries.json'
 const SYNONYM_URL = 'settingsSynonyms.json'
+const TEST_SETTINGS_URL = 'settingsTestData.json' //loads when user requests test data
 
 // Selects/activates a library
 // does pre-processing of the library to optimaze search
@@ -103,6 +104,18 @@ async function SER_getDefaultSettings() {
     }
     catch (error) {
         throw new Error(`GRNAService.getDefaultSettings(${SETTINGS_URL}) invalid callback: \n ${error.message}`)
+    }
+
+}
+
+// returns settings json, see settingsDefault.json for an example
+async function SER_getTestSettings() {
+    try {
+        const settings = await FH_fetchJsonFile(TEST_SETTINGS_URL)
+        return settings
+    }
+    catch (error) {
+        throw new Error(`GRNAService.getDefaultSettings(${TEST_SETTINGS_URL}) invalid callback: \n ${error.message}`)
     }
 
 }

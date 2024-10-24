@@ -13,12 +13,33 @@ var outputTexts = {
 
 
 async function init() {
+    var data = null
     try {
         data = await SER_getDefaultSettings()
     }
     catch (error) {
         throw new Error(`Failed to get default settings:\n ${error.message}`)
     }
+    await insertData(data)
+}
+
+async function loadTestSettings() {
+    var data = null
+    try {
+        data = await SER_getTestSettings()
+    }
+    catch (error) {
+        throw new Error(`Failed to get default settings:\n ${error.message}`)
+    }
+    insertData(data)
+    return false
+}
+
+
+
+
+async function insertData(data) {
+    console.log(data)
     document.getElementById("trimBefore").min = 0
     document.getElementById("trimBefore").value = data.trimBefore
 
@@ -59,7 +80,6 @@ async function init() {
         synonymDropdown.appendChild(option)
     })
     synonymDropdown.value = data.defaultSynonyms ? data.defaultSynonyms : synonymNames[0]
-
     // store the settings in an object
     SET_settingsSetAll(data.searchSymbols, data.partialMatches, data.trimBefore, data.trimAfter, data.adaptorBefore, data.adaptorAfter, data.rankingTop, rankingOrder, data.outputName, data.enableSynonyms, data.defaultSynonyms)
 
@@ -72,6 +92,7 @@ async function init() {
     // update example sequence
     _updateExampleText()
 }
+
 
 
 async function runScreening() {

@@ -1,0 +1,22 @@
+{
+    "trimBefore": 0,
+    "trimAfter": 0,
+    "adaptorBefore": "atcttgtggaaaggacgaaacaccgaaa",
+    "adaptorAfter": "gttttagagctagaaatagcaagttbbb",
+    "partialMatches": false,
+    "enableSynonyms": true,
+    "rankingTop": "2",
+    "outputName": "Test data",
+    "defaultLibrary": "Brunello (human)",
+    "defaultSynonyms": "Human+Mouse",
+    "searchSymbols": [
+        "p53",
+        "mdmx",
+        "il4r",
+        "kras",
+        "myc",
+        "braf",
+        "egfr",
+        "src"
+    ]
+}
