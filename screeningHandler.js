@@ -29,16 +29,13 @@ function SCR_startScreening(library, settings, usedSynonyms) {
     }
 
     if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
-        filteredLibraryMap = _sortOnScore(filteredLibraryMap, "Descending", settings.rankingColumn)
+        filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
     }
 
     if (settings.rankingTop > 0) {
         filteredLibraryMap = _getTopRankingElements(filteredLibraryMap, settings.rankingTop)
     }
 
-    if ((settings.rankingColumn != 0) || (settings.rankingColumn == null)) {
-        filteredLibraryMap = _sortOnScore(filteredLibraryMap, settings.rankingOrder, settings.rankingColumn)
-    }
 
     searchOutput = {
         "headers": library.headers,
