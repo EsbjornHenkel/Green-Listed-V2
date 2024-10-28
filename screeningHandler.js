@@ -8,8 +8,6 @@
 
 
 function SCR_startScreening(library, settings, usedSynonyms) {
-
-    console.log(library.libraryMap)
     var machingSymbols = []
     if (!settings.partialMatches) {
         machingSymbols = settings.searchSymbols.filter(symbol => library.librarySymbolSet.has(symbol)) //maches without synonyms

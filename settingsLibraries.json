@@ -6,7 +6,8 @@
         "RNAColumn": 7,
         "RankColumn": 11,
         "citationFileName": "libraries/Brie (mouse).html",
-        "synonymName": "Mouse"
+        "synonymName": "Mouse",
+        "defaultRangingOrder": 0
     },
     {
         "name": "Brunello (human)",
@@ -15,7 +16,8 @@
         "RNAColumn": 7,
         "RankColumn": 11,
         "citationFileName": "libraries/Brunello (human).html",
-        "synonymName": "Human"
+        "synonymName": "Human",
+        "defaultRangingOrder": 0
     },
     {
         "name": "GeCKO v2 (human) A+B",
@@ -24,7 +26,8 @@
         "RNAColumn": 3,
         "RankColumn": null,
         "citationFileName": "libraries/GeCKO v2 (human) A+B.html",
-        "synonymName": "Human"
+        "synonymName": "Human",
+        "defaultRangingOrder": 0
     },
     {
         "name": "GeCKO v2 (mouse) A+B",
@@ -33,7 +36,8 @@
         "RNAColumn": 3,
         "RankColumn": null,
         "citationFileName": "libraries/GeCKO v2 (mouse) A+B.html",
-        "synonymName": "Mouse"
+        "synonymName": "Mouse",
+        "defaultRangingOrder": 0
     },
     {
         "name": "Gattinara (human)",
@@ -42,7 +46,8 @@
         "RNAColumn": 1,
         "RankColumn": null,
         "citationFileName": "libraries/Gattinara (human).html",
-        "synonymName": "Human"
+        "synonymName": "Human",
+        "defaultRangingOrder": 0
     },
     {
         "name": "Gouda (mouse)",
@@ -51,7 +56,8 @@
         "RNAColumn": 1,
         "RankColumn": null,
         "citationFileName": "libraries/Gouda (mouse).html",
-        "synonymName": "Mouse"
+        "synonymName": "Mouse",
+        "defaultRangingOrder": 0
     },
     {
         "name": "VBC (human)",
@@ -60,7 +66,8 @@
         "RNAColumn": 2,
         "RankColumn": 5,
         "citationFileName": "libraries/VBC (human).html",
-        "synonymName": "Human"
+        "synonymName": "Human",
+        "defaultRangingOrder": 1
     },
     {
         "name": "VBC (mouse)",
@@ -69,6 +76,7 @@
         "RNAColumn": 2,
         "RankColumn": 5,
         "citationFileName": "libraries/VBC (mouse).html",
-        "synonymName": "Mouse"
+        "synonymName": "Mouse",
+        "defaultRangingOrder": 1
     }
 ]
