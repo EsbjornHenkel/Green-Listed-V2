@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts for analysis</title>
+    <link rel="stylesheet" media="all" href="index.css">
+</head>
+<header></header>
+
+<body>
+    <div class="plate">
+        <h1 class="plateTitle">Scripts for analysis</h1>
+        <div class="plateContent">
+            <a target="_blank"
+                href="https://www.youtube.com/watch?v=IdG_FfYCpqw&list=PLtETtjUFMYF0OR80KaWjKY4gIcO52I3-Y&index=4">
+                Link to video explanation of analysis script.</a>
+            <a target="_blank" href="https://github.com/fredrikwermeling/Correlation-script">
+                Link to github for script download</a>
+            <details>
+                <summary>See code</summary>
+                <pre>
+                        # User parameters
+                        reference_list_path <- "C:/path/to/Your_Reference_List.csv" 
+                        gene_list_path <- "C:/path/to/Your_Gene_List.txt"
+                        analysis_mode <- "design"  # "analysis" = correlations within the gene list, "design" = correlations with all genes
+                        correlation_cutoff <- 0.5
+                        
+                        # Load necessary libraries
+                        if (!requireNamespace("data.table", quietly = TRUE)) install.packages("data.table")
+                        if (!requireNamespace("igraph", quietly = TRUE)) install.packages("igraph")
+                        if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+                        if (!requireNamespace("ggraph", quietly = TRUE)) install.packages("ggraph")
+                        
+                        library(data.table)
+                        library(igraph)
+                        library(ggplot2)
+                        library(ggraph)
+                        
+                        # Determine folder label based on mode
+                        mode_label <- if (analysis_mode == "analysis") "Analysis" else "Design"
+                        
+                        # Create output folder in same directory as the Gene list
+                        base_output_dir <- file.path(dirname(gene_list_path), paste0(format(Sys.Date(), "%Y-%m-%d"), "_", mode_label))
+                        output_dir <- base_output_dir
+                        suffix <- 0
+                        while (dir.exists(output_dir)) {
+                            suffix <- suffix + 1
+                            output_dir <- paste0(base_output_dir, "_", suffix)
+                        }
+                        dir.create(output_dir)
+                        
+                        # Load the Reference list
+                        reference_data <- fread(reference_list_path)
+                        
+                        # If the first column holds sample IDs (e.g., text), remove it
+                        if (is.character(reference_data[[1]])) {
+                            reference_data <- reference_data[, -1, with = FALSE]
+                        }
+                        
+                        # Clean column names for matching
+                        original_colnames <- colnames(reference_data)
+                        colnames(reference_data) <- toupper(trimws(gsub(" \\(.*\\)$", "", original_colnames)))
+                        
+                        # Load the Gene list
+                        gene_list_raw <- scan(gene_list_path, what = "character", quiet = TRUE)
+                        gene_list <- toupper(trimws(gene_list_raw))
+                        
+                        matched_columns <- colnames(reference_data)[colnames(reference_data) %in% gene_list]
+                        not_found_genes <- setdiff(gene_list, matched_columns)
+                        
+                        if (length(matched_columns) == 0) {
+                            stop("No matching columns found in the Reference list for the symbols in the Gene list.")
+                        }
+                        
+                        # Correlation table
+                        if (analysis_mode == "analysis") {
+                            filtered_data <- reference_data[, ..matched_columns]
+                            cor_matrix <- cor(filtered_data, use = "pairwise.complete.obs")
+                            
+                            row_hclust <- hclust(dist(cor_matrix))
+                            col_hclust <- hclust(dist(t(cor_matrix)))
+                            row_order <- row_hclust$order
+                            col_order <- col_hclust$order
+                            cor_matrix <- cor_matrix[row_order, col_order]
+                            
+                            genes_in_matrix <- colnames(cor_matrix)
+                            output_table <- data.table(
+                                Gene1 = rep(genes_in_matrix, times = length(genes_in_matrix)),
+                                Gene2 = rep(genes_in_matrix, each = length(genes_in_matrix)),
+                                Correlation = as.vector(cor_matrix)
+                            )
+                        } else {
+                            filtered_data <- reference_data[, ..matched_columns]
+                            cor_matrix <- cor(reference_data, filtered_data, use = "pairwise.complete.obs")
+                            
+                            all_genes <- rownames(cor_matrix)
+                            matched_genes <- colnames(cor_matrix)
+                            output_table <- data.table(
+                                Gene1 = rep(matched_genes, each = length(all_genes)),
+                                Gene2 = rep(all_genes, times = length(matched_genes)),
+                                Correlation = as.vector(cor_matrix)
+                            )
+                        }
+                        
+                        filtered_correlations <- output_table[
+                            abs(Correlation) > correlation_cutoff & (Gene1 != Gene2)
+                        ]
+                        filtered_correlations[, Correlation := round(Correlation, 3)]
+                        
+                        # Build graph
+                        graph <- graph_from_data_frame(filtered_correlations[, .(Gene1, Gene2, Correlation)], directed = FALSE)
+                        
+                        clusters_info <- components(graph)
+                        cluster_membership <- clusters_info$membership
+                        filtered_correlations[, Cluster := cluster_membership[Gene1]]
+                        
+                        # Add star columns for "design" mode only
+                        if (analysis_mode == "design") {
+                            filtered_correlations[, InGeneList_Gene1 := ifelse(Gene1 %in% matched_columns, "*", "")]
+                            filtered_correlations[, InGeneList_Gene2 := ifelse(Gene2 %in% matched_columns, "*", "")]
+                        }
+                        
+                        # Save correlation data
+                        setorder(filtered_correlations, Cluster)
+                        if (analysis_mode == "analysis") {
+                            fwrite(filtered_correlations, file.path(output_dir, "Correlations_Analysis.csv"))
+                        } else {
+                            fwrite(filtered_correlations, file.path(output_dir, "Correlations_Design.csv"))
+                        }
+                        
+                        # Clusters file
+                        found_genes <- V(graph)$name
+                        found_clusters <- cluster_membership[found_genes]
+                        if (analysis_mode == "design") {
+                            cluster_dt <- data.table(
+                                Gene = found_genes,
+                                Cluster = found_clusters,
+                                Found_in_GeneList = ifelse(found_genes %in% matched_columns, "*", "")
+                            )
+                        } else {
+                            cluster_dt <- data.table(
+                                Gene = found_genes,
+                                Cluster = found_clusters
+                            )
+                        }
+                        
+                        # Add Mean and SD of effect sizes
+                        if (length(found_genes) > 0) {
+                            effect_size_stats_long <- data.table(Gene = found_genes)
+                            
+                            effect_size_stats_long[, `:=`(
+                                Mean_Effect_Size = sapply(Gene, function(gene) {
+                                    if (gene %in% colnames(reference_data)) {
+                                        round(mean(reference_data[[gene]], na.rm = TRUE), 2)
+                                    } else {
+                                        NA
+                                    }
+                                }),
+                                SD_Effect_Size = sapply(Gene, function(gene) {
+                                    if (gene %in% colnames(reference_data)) {
+                                        round(sd(reference_data[[gene]], na.rm = TRUE), 2)
+                                    } else {
+                                        NA
+                                    }
+                                })
+                            )]
+                            
+                            cluster_dt <- merge(cluster_dt, effect_size_stats_long, by = "Gene", all.x = TRUE)
+                        }
+                        
+                        setorder(cluster_dt, Cluster)
+                        fwrite(cluster_dt, file.path(output_dir, "Clusters.csv"))
+                        
+                        # Save settings
+                        settings_file <- file.path(output_dir, "Settings_and_Genes_not_found.txt")
+                        f_con <- file(settings_file, "wt")
+                        
+                        analysis_mode_text <- if (analysis_mode == "analysis") {
+                            "Analysis (correlations within the Gene list)"
+                        } else {
+                            "Design (correlations with all genes)"
+                        }
+                        
+                        cat(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n", file = f_con)
+                        cat("Reference list: ", reference_list_path, "\n", file = f_con)
+                        cat("Gene list: ", gene_list_path, "\n", file = f_con)
+                        cat("Analysis mode: ", analysis_mode_text, "\n", file = f_con)
+                        cat("Correlation cutoff: ", correlation_cutoff, "\n\n", file = f_con)
+                        
+                        cat("Symbols found in the Gene list: ", paste(matched_columns, collapse = ", "), "\n\n", file = f_con)
+                        cat("Symbols not found in the Gene list:\n", file = f_con)
+                        if (length(not_found_genes) > 0) {
+                            for (gene in not_found_genes) cat(gene, "\n", file = f_con)
+                        } else {
+                            cat("None\n", file = f_con)
+                        }
+                        
+                        close(f_con)
+                        
+                        # Plot
+                        E(graph)$EdgeColor <- ifelse(E(graph)$Correlation > 0, "blue", "red")
+                        
+                        if (analysis_mode == "design") {
+                            node_labels <- ifelse(V(graph)$name %in% matched_columns, paste0(V(graph)$name, "*"), V(graph)$name)
+                            plot_title <- "Correlation Network (Design)"
+                            note_sub <- "\n* = found in Gene list"
+                        } else {
+                            node_labels <- V(graph)$name
+                            plot_title <- "Correlation Network (Analysis)"
+                            note_sub <- ""
+                        }
+                        
+                        # Plot configuration
+                        graph_plot <- ggraph(graph, layout = "fr") +
+                            geom_edge_link(aes(edge_color = EdgeColor, edge_width = abs(Correlation)), alpha = 1) +
+                            geom_node_point(size = 5, color = "blue") +
+                            geom_node_text(
+                                aes(label = node_labels),
+                                repel = TRUE,
+                                family = "Arial",
+                                force = 2,
+                                force_pull = 0.5,
+                                max.overlaps = Inf,
+                                box.padding = 0.5,
+                                point.padding = 0.3
+                            ) +
+                            scale_edge_color_identity(
+                                guide = "legend",
+                                labels = c("red" = "Negative", "blue" = "Positive"),
+                                breaks = c("red", "blue"),
+                                name = "Correlation"
+                            ) +
+                            scale_edge_width(name = "Correlation (absolute)", range = c(0.5, 2)) +
+                            ggtitle(
+                                paste0(plot_title, " (Cut-off: ", correlation_cutoff, ")"),
+                                subtitle = paste0("Reference list: ", basename(reference_list_path), note_sub)
+                            ) +
+                            theme_minimal(base_family = "Arial") +
+                            theme(
+                                panel.background = element_rect(fill = "white", color = NA),
+                                plot.background = element_rect(fill = "white", color = NA),
+                                legend.position = "right"
+                            )
+                        
+                        # Save both PNG and EPS outputs
+                        ggsave(file.path(output_dir, "Correlation_Network.png"), plot = graph_plot, width = 10, height = 10)
+                        ggsave(file.path(output_dir, "Correlation_Network.eps"), plot = graph_plot, width = 10, height = 10, device = cairo_ps)
+                        
+                        cat("Files saved to", output_dir, "\n")
+                    </pre>
+            </details>
+        </div>
+    </div>
+</body>
+
+</html>

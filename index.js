@@ -102,8 +102,6 @@ async function insertData(data) {
 async function runScreening() {
     _toggleLigtBox()
 
-    gtag('event', 'Run', { 'event_category': 'Processing' }); // Google Analytics
-
     button = document.getElementById("startButton")
     var statusText = document.getElementById("statusSearch")
     statusText.classList.add("pulse")
@@ -449,9 +447,6 @@ async function _displaySymbolsNotFound(synonymMap) {
 /* ------------------ STATUS ----------------- */
 
 function _statusUpdateSymbols() {
-    //gtag('event', 'Symbols', { 'event_category': 'Processing' }) // Google Analytics
-
-
     const synonymMap = SER_getSynonymMap(settings.searchSymbols)
     _displaySymbolsNotFound(synonymMap)
 
