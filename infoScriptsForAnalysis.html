@@ -13,6 +13,8 @@
     <div class="plate">
         <h1 class="plateTitle">Scripts for analysis</h1>
         <div class="plateContent">
+            This R script performs correlation analysis on a user-provided gene set using DepMap CRISPR screen datasets. It identifies connections between genes that can help expand custom CRISPR screen libraries during the design phase and reveal functional gene families in an analysis setting—for example, when interpreting a CRISPR screen hit list.
+
             <a target="_blank"
                 href="https://www.youtube.com/watch?v=IdG_FfYCpqw&list=PLtETtjUFMYF0OR80KaWjKY4gIcO52I3-Y&index=4">
                 Link to video explanation of analysis script.</a>
@@ -20,7 +22,7 @@
                 Link to github for script download</a>
             <details>
                 <summary>See code</summary>
-                <pre>
+                <pre><code>
                         # User parameters
                         reference_list_path <- "C:/path/to/Your_Reference_List.csv" 
                         gene_list_path <- "C:/path/to/Your_Gene_List.txt"
@@ -249,9 +251,12 @@
                         ggsave(file.path(output_dir, "Correlation_Network.eps"), plot = graph_plot, width = 10, height = 10, device = cairo_ps)
                         
                         cat("Files saved to", output_dir, "\n")
-                    </pre>
+                    </code></pre>
             </details>
         </div>
+
+        <img src="infoScriptsForAnalysisResult.png"     alt="Analysis Result Script Info"    style="width: 50%;">
+
     </div>
 </body>
 

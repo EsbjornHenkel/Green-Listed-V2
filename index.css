@@ -40,6 +40,7 @@ body {
     padding-left: 10%;
 }
 
+
 @media only screen and (max-width: 1280px) {
     body {
         padding-right: 5%;
@@ -90,6 +91,10 @@ main>*:last-child {
     grid-column: span 3;
 }
 
+code {
+    font-family: monospace;
+}
+
 select {
     border-radius: var(--inputRadius);
     border: 1px solid var(--outlineColor);
@@ -129,6 +134,11 @@ input {
     background: var(--inputColor);
     border: 1px solid var(--outlineColor);
     border-radius: var(--inputRadius);
+}
+
+
+summary {
+    cursor: pointer;
 }
 
 table {
