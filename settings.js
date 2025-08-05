@@ -13,7 +13,9 @@ settings = {
     "adapterAfter": null,
 
     "partialMatches": null,
+
     "rankingTop": null,
+    "rankingOrder": null,
 
     "outputName": null,
 

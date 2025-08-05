@@ -312,13 +312,16 @@ async function changeLibrary() {
                     document.getElementById("synonymSelect").value = librarySettings.synonymName
                 }
             }
-            console.log(librarySettings.defaultRangingOrder)
+            //console.log(librarySettings.defaultRangingOrder)
             if (librarySettings.defaultRangingOrder == 0) {
                 document.getElementById("rankingOrder").value = "descending"
             }
             if (librarySettings.defaultRangingOrder == 1) {
                 document.getElementById("rankingOrder").value = "ascending"
             }
+
+            // update the settings based on the values in the UI
+            changeSettings()
         }
         catch (error) {
             _setStatus("symbolsFound", "Error failed to fetch library")
